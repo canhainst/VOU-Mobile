@@ -1,7 +1,6 @@
-package com.example.vou_mobile.ViewModels
+package com.example.vou_mobile.activity
 
 import android.content.Context
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.KeyEvent
@@ -10,7 +9,6 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.example.vou_mobile.R
-import com.example.vou_mobile.RegisterMethod.PhoneRegister
 
 class VerifyCodeActivity : AppCompatActivity() {
     private lateinit var codeViews: List<TextView>

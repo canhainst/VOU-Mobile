@@ -1,4 +1,4 @@
-package com.example.vou_mobile.ViewModels
+package com.example.vou_mobile.activity
 
 import android.annotation.SuppressLint
 import android.content.Intent

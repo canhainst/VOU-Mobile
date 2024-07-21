@@ -1,12 +1,8 @@
-package com.example.vou_mobile.RegisterMethod
+package com.example.vou_mobile.model.registerMethod
 
 import android.app.Activity
 import android.content.ContentValues.TAG
-import android.content.Intent
 import android.util.Log
-import androidx.core.content.ContextCompat.startActivity
-import com.example.vou_mobile.ViewModels.HomePageActivity
-import com.example.vou_mobile.ViewModels.VerifyCodeActivity
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.FirebaseAuth

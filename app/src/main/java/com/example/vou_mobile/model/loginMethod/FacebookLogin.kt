@@ -1,4 +1,4 @@
-package com.example.vou_mobile.LoginMethod
+package com.example.vou_mobile.model.loginMethod
 
 class FacebookLogin : LoginMethod {
     override fun login(callback: (Boolean, String?) -> Unit) {

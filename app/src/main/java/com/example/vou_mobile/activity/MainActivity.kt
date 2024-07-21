@@ -1,9 +1,8 @@
-package com.example.vou_mobile.ViewModels
+package com.example.vou_mobile.activity
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.vou_mobile.R
 
 class MainActivity : AppCompatActivity() {
 

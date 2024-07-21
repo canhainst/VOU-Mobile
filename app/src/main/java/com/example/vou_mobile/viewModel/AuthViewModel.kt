@@ -1,10 +1,10 @@
-package com.example.vou_mobile.ViewModels
+package com.example.vou_mobile.viewModel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.vou_mobile.LoginMethod.LoginMethod
-import com.example.vou_mobile.RegisterMethod.RegisterMethod
+import com.example.vou_mobile.model.loginMethod.LoginMethod
+import com.example.vou_mobile.model.registerMethod.RegisterMethod
 
 class AuthViewModel : ViewModel() {
     private val _authStatus = MutableLiveData<Boolean>()

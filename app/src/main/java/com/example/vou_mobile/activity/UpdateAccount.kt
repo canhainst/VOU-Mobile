@@ -1,4 +1,4 @@
-package com.example.vou_mobile.ViewModels
+package com.example.vou_mobile.activity
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity

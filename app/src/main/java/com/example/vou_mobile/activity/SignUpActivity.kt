@@ -1,4 +1,4 @@
-package com.example.vou_mobile.ViewModels
+package com.example.vou_mobile.activity
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -9,12 +9,8 @@ import android.widget.RadioButton
 import android.widget.TextView
 import android.widget.Toast
 import com.example.vou_mobile.R
-import com.example.vou_mobile.RegisterMethod.PhoneRegister
+import com.example.vou_mobile.model.registerMethod.PhoneRegister
 import com.google.android.material.textfield.TextInputEditText
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.PhoneAuthOptions
-import com.google.firebase.auth.PhoneAuthProvider
-import java.util.concurrent.TimeUnit
 
 class SignUpActivity : AppCompatActivity() {
     private lateinit var username: String
