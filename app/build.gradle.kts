@@ -48,6 +48,8 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     // Add the dependency for the Firebase Authentication library
     implementation("com.google.firebase:firebase-auth")
+    // Firebase Realtime
+    implementation("com.google.firebase:firebase-database-ktx:21.0.0")
 
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.appcompat:appcompat:1.7.0")

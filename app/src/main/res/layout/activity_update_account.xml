@@ -135,6 +135,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/textView2">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/inputEmail"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:background="@drawable/custom_edit_text"
@@ -165,6 +166,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/textView3">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/inputDOB"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:background="@drawable/custom_edit_text"
