@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="180dp"
+    android:layout_height="200dp">
+
+    <ImageView
+        android:id="@+id/voucherPicture"
+        android:layout_width="160dp"
+        android:layout_height="105dp"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/placeholder_image_2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:importantForAccessibility="no" />
+
+    <TextView
+        android:id="@+id/brand_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="Brand"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/voucherPicture"
+        app:layout_constraintTop_toBottomOf="@+id/voucherPicture"
+        tools:ignore="HardcodedText" />
+
+    <ImageButton
+        android:id="@+id/imageButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="10dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:backgroundTint="@android:color/transparent"
+        android:src="@drawable/local_activity_24px"
+        app:layout_constraintBottom_toBottomOf="@+id/brand_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/brand_name"
+        android:importantForAccessibility="no" />
+
+    <TextView
+        android:id="@+id/voucher_detail"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:maxHeight="50dp"
+        android:text="description of voucher"
+        android:textSize="13sp"
+        app:layout_constraintStart_toStartOf="@+id/brand_name"
+        app:layout_constraintTop_toBottomOf="@+id/brand_name"
+        tools:ignore="HardcodedText" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

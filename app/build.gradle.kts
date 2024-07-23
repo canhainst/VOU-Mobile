@@ -42,7 +42,6 @@ android {
 dependencies {
     // lottie file
     implementation("com.airbnb.android:lottie:5.2.0")
-
     // Import the Firebase BoM
     implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
     implementation("com.google.firebase:firebase-analytics")
@@ -50,6 +49,10 @@ dependencies {
     implementation("com.google.firebase:firebase-auth")
     // Firebase Realtime
     implementation("com.google.firebase:firebase-database-ktx:21.0.0")
+    // Recyclerview
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
+    // Picasso
+    implementation("com.squareup.picasso:picasso:2.71828")
 
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.appcompat:appcompat:1.7.0")

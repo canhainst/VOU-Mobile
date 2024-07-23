@@ -7,10 +7,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import com.example.vou_mobile.R
 import com.example.vou_mobile.activity.SignInActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.squareup.picasso.Picasso
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -26,6 +29,7 @@ class Account : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    private lateinit var currentUserID: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +44,37 @@ class Account : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_account, container, false)
+
+        val username = "Nguyen Thanh"
+        val userPictureUrl = "https://scontent.fsgn2-8.fna.fbcdn.net/v/t39.30808-6/446651424_1681220119288938_4828402852445544478_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=MHCPT2zDHoEQ7kNvgG2yjD-&_nc_ht=scontent.fsgn2-8.fna&oh=00_AYCz7QsbOTWFy-oLUAowm7ba85crAps7UHZfvK4xn-ewPA&oe=66A4CB11"
+
+        Picasso.get()
+            .load(userPictureUrl)
+            .into(view.findViewById<ImageView>(R.id.userAvatar))
+        view.findViewById<TextView>(R.id.username).text = username
+
+        val currentUser = FirebaseAuth.getInstance().currentUser
+
+        if (currentUser != null){
+            currentUserID = currentUser.uid
+            view.findViewById<TextView>(R.id.userID).text = currentUserID
+        }
+
+        view.findViewById<TextView>(R.id.itemWarehouse).setOnClickListener {
+            replaceFragment(ItemWarehouse())
+        }
+
+        view.findViewById<TextView>(R.id.myVoucher).setOnClickListener {
+            replaceFragment(MyVoucher())
+        }
+
+        view.findViewById<TextView>(R.id.giftHistory).setOnClickListener {
+            replaceFragment(GiftHistory())
+        }
+
+        view.findViewById<TextView>(R.id.account).setOnClickListener {
+
+        }
 
         // Initialize the logout button
         val logoutButton: Button = view.findViewById(R.id.logout)
@@ -56,6 +91,13 @@ class Account : Fragment() {
         val loginIntent = Intent(activity, SignInActivity::class.java)
         startActivity(loginIntent)
         activity?.finish()
+    }
+
+    private fun replaceFragment(fragment: Fragment){
+        val fragmentManager = parentFragmentManager
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.replace(R.id.frameLayout, fragment)
+        fragmentTransaction.commit()
     }
 
     companion object {
