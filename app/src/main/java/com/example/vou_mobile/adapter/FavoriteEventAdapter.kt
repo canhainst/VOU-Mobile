@@ -1,6 +1,7 @@
 package com.example.vou_mobile.adapter
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -36,10 +37,30 @@ class FavoriteEventAdapter (private var events: List<Event>): RecyclerView.Adapt
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val event = events[position]
         holder.brand.text = event.brand
+        holder.notifButton.setOnClickListener {
+            showConfirmDialog(event)
+        }
         Picasso.get()
             .load(event.imageUrl)
             .into(holder.imageView)
 
         holder.time.text = "${event.startTime} - ${event.endTime}"
+    }
+
+    private fun showConfirmDialog(event: Event) {
+        val dialogBuilder = AlertDialog.Builder(context)
+            .setTitle("Confirm")
+            .setMessage("Are you sure you want to remove this event from your favorites?")
+            .setPositiveButton("Confirm") { dialog, which ->
+                // Xử lý khi người dùng chọn "Có"
+
+            }
+            .setNegativeButton("Cancel") { dialog, which ->
+                // Xử lý khi người dùng chọn "Không"
+                dialog.dismiss()
+            }
+
+        val alertDialog = dialogBuilder.create()
+        alertDialog.show()
     }
 }
