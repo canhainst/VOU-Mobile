@@ -6,7 +6,7 @@ import androidx.fragment.app.Fragment
 import com.example.vou_mobile.R
 import com.example.vou_mobile.databinding.ActivityHomePageBinding
 import com.example.vou_mobile.fragment.Account
-import com.example.vou_mobile.fragment.Event
+import com.example.vou_mobile.fragment.FavoriteEvent
 import com.example.vou_mobile.fragment.HomePage
 import com.google.firebase.auth.FirebaseAuth
 
@@ -30,7 +30,7 @@ class HomePageActivity : AppCompatActivity() {
         binding.bottomNavigationView.setOnItemSelectedListener {
             when(it.itemId){
                 R.id.home -> replaceFragment(HomePage())
-                R.id.event -> replaceFragment(Event())
+                R.id.event -> replaceFragment(FavoriteEvent())
                 R.id.account -> replaceFragment(Account())
                 else -> {
 

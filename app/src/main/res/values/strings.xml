@@ -11,4 +11,7 @@
     <string name="login_failed">"Login failed"</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="event">Event</string>
+    <string name="this_is_events_list">This is events list</string>
+    <string name="event_image">event_image</string>
 </resources>

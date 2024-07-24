@@ -37,6 +37,9 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    dataBinding{
+        enable = true
+    }
 }
 
 dependencies {
@@ -50,8 +53,11 @@ dependencies {
     implementation("com.google.firebase:firebase-auth")
     // Firebase Realtime
     implementation("com.google.firebase:firebase-database-ktx:21.0.0")
-
     implementation("androidx.core:core-ktx:1.13.1")
+
+    //picasso
+    implementation("com.squareup.picasso:picasso:2.71828")
+
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
