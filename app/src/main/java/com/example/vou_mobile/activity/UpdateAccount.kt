@@ -5,21 +5,15 @@ import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.ContactsContract.CommonDataKinds.Email
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
-import androidx.lifecycle.ViewModelProvider
 import com.example.vou_mobile.R
 import com.example.vou_mobile.Utilities.UserUtils
-import com.example.vou_mobile.classData.User
-import com.example.vou_mobile.viewModel.AuthViewModel
+import com.example.vou_mobile.model.User
 import com.google.android.material.textfield.TextInputEditText
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.core.utilities.Utilities
 
 class UpdateAccount : AppCompatActivity() {
     private lateinit var email: String

@@ -7,7 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.vou_mobile.R
-import com.example.vou_mobile.classData.Brand
+import com.example.vou_mobile.model.Brand
 import com.squareup.picasso.Picasso
 
 class HorizontalBrandsAdapter(private val itemList: List<Brand>): RecyclerView.Adapter<HorizontalBrandsAdapter.MyViewHolder>(){

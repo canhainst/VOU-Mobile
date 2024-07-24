@@ -10,6 +10,9 @@
         android:layout_width="300dp"
         android:layout_height="170dp"
         android:src="@drawable/placeholder_image_2"
+        android:background="@drawable/rounded_bg"
+        android:clipToOutline="true"
+        android:scaleType="centerCrop"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -18,8 +21,11 @@
 
     <ImageButton
         android:id="@+id/markEvent"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="37dp"
+        android:layout_height="37dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="4dp"
+        android:background="@drawable/rounded_bg"
         android:importantForAccessibility="no"
         android:src="@drawable/baseline_notifications_none_24"
         app:layout_constraintEnd_toEndOf="@+id/event"

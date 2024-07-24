@@ -23,6 +23,8 @@
                 android:layout_marginTop="20dp"
                 android:contentDescription="avt"
                 android:src="@drawable/avatar_placeholder"
+                android:background="@drawable/circle_background_imageview"
+                android:clipToOutline="true"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:ignore="HardcodedText" />
@@ -81,11 +83,13 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/brand"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
                 android:orientation="horizontal"
                 android:scrollbars="horizontal"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/allBrands"
                 app:layout_constraintTop_toBottomOf="@+id/allBrands" />
 
@@ -105,11 +109,12 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/event"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:scrollbars="horizontal"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toEndOf="@+id/brand"
                 app:layout_constraintStart_toStartOf="@+id/allEvent"
                 app:layout_constraintTop_toBottomOf="@+id/allEvent" />
 
@@ -129,11 +134,12 @@
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/voucher"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:scrollbars="horizontal"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toEndOf="@+id/event"
                 app:layout_constraintStart_toStartOf="@+id/allVoucher"
                 app:layout_constraintTop_toBottomOf="@+id/allVoucher" />
         </androidx.constraintlayout.widget.ConstraintLayout>

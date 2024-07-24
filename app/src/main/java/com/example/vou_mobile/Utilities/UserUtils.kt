@@ -1,13 +1,10 @@
 package com.example.vou_mobile.Utilities
 
-import android.util.Log
-import com.example.vou_mobile.classData.User
+import com.example.vou_mobile.model.User
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
-import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.database
 
 object UserUtils {
     private var auth: FirebaseAuth = Firebase.auth

@@ -36,12 +36,12 @@ class FavoriteEventAdapter (private var events: List<Event>): RecyclerView.Adapt
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val event = events[position]
-        holder.brand.text = event.brand
+        holder.brand.text = event.brandName
         holder.notifButton.setOnClickListener {
             showConfirmDialog(event)
         }
         Picasso.get()
-            .load(event.imageUrl)
+            .load(event.eventPictureUrl)
             .into(holder.imageView)
 
         holder.time.text = "${event.startTime} - ${event.endTime}"

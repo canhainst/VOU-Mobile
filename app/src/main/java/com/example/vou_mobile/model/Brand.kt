@@ -1,4 +1,4 @@
-package com.example.vou_mobile.classData
+package com.example.vou_mobile.model
 
 data class Brand (
     var brandAvtUrl: String?,

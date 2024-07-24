@@ -13,9 +13,9 @@ import com.example.vou_mobile.R
 import com.example.vou_mobile.adapter.HorizontalBrandsAdapter
 import com.example.vou_mobile.adapter.HorizontalEventsAdapter
 import com.example.vou_mobile.adapter.HorizontalVouchersAdapter
-import com.example.vou_mobile.classData.Brand
-import com.example.vou_mobile.classData.Event
-import com.example.vou_mobile.classData.Voucher
+import com.example.vou_mobile.model.Brand
+import com.example.vou_mobile.model.Event
+import com.example.vou_mobile.model.Voucher
 import com.squareup.picasso.Picasso
 
 // TODO: Rename parameter arguments, choose names that match
@@ -75,10 +75,10 @@ class HomePage : Fragment() {
         allEventRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
         val eventTest = listOf(
-            Event("https://thanhnien.mediacdn.vn/Uploaded/nthanhluan/2022_03_01/shopee-15-3-sieu-hoi-tieu-dung-4607.jpg", "Shopee", "Lắc xì may mắn", "01/01/2000", "01/02/2000", "CONTINUOUS_EVENT", "Thu thập đủ 5 loại ngọc bằng cách lắc xì để đổi lấy phần thưởng. Tham gia ngay!"),
-            Event("https://down-vn.img.susercontent.com/file/40d21efdf195faccb7710ae93fb5d0ea", "Shopee", "Lắc xì may mắn", "01/01/2000", "01/02/2000", "CONTINUOUS_EVENT", "Thu thập đủ 5 loại ngọc bằng cách lắc xì để đổi lấy phần thưởng. Tham gia ngay!"),
-            Event("https://images.bloggiamgia.vn/full/07-02-2023/Shopee-sale-99-1-1675759490515.png", "Shopee", "Lắc xì may mắn", "01/01/2000", "01/02/2000", "CONTINUOUS_EVENT", "Thu thập đủ 5 loại ngọc bằng cách lắc xì để đổi lấy phần thưởng. Tham gia ngay!"),
-            Event("https://cdn.xanhsm.com/2024/07/258f4321-xanh-creator-1024x576.jpg", "Xanh SM", "HQ Trivia", "12:00 PM - 01/01/2000","12:10 PM 01/01/2000", "INSTANT_EVENT","Trả lời đúng càng nhiều câu hỏi để nhận được các voucher giá trị\n" + "Sự kiện sẽ đóng tham gia sau 10p bắt đầu. Hãy nhanh tay")
+            Event(null, "Lắc xì may mắn", "Shopee", "https://thanhnien.mediacdn.vn/Uploaded/nthanhluan/2022_03_01/shopee-15-3-sieu-hoi-tieu-dung-4607.jpg", 100, "01/01/2000", "01/02/2000", 0, "Thu thập đủ 5 loại ngọc bằng cách lắc xì để đổi lấy phần thưởng. Tham gia ngay!"),
+            Event(null, "Lắc xì may mắn", "Shopee", "https://down-vn.img.susercontent.com/file/40d21efdf195faccb7710ae93fb5d0ea", 100, "01/01/2000", "01/02/2000", 0, "Thu thập đủ 5 loại ngọc bằng cách lắc xì để đổi lấy phần thưởng. Tham gia ngay!"),
+            Event(null, "Lắc xì may mắn", "Shopee", "https://images.bloggiamgia.vn/full/07-02-2023/Shopee-sale-99-1-1675759490515.png", 100, "01/01/2000", "01/02/2000", 0, "Thu thập đủ 5 loại ngọc bằng cách lắc xì để đổi lấy phần thưởng. Tham gia ngay!"),
+            Event(null, "HQ Trivia", "Xanh SM","https://cdn.xanhsm.com/2024/07/258f4321-xanh-creator-1024x576.jpg", 100, "12:00 PM - 01/01/2000","12:10 PM 01/01/2000", 1, "Trả lời đúng càng nhiều câu hỏi để nhận được các voucher giá trị\n" + "Sự kiện sẽ đóng tham gia sau 10p bắt đầu. Hãy nhanh tay")
         )
 
         allEventRecyclerView.adapter = HorizontalEventsAdapter(eventTest)

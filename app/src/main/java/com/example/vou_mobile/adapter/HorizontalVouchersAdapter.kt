@@ -11,7 +11,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.vou_mobile.R
-import com.example.vou_mobile.classData.Voucher
+import com.example.vou_mobile.model.Voucher
 import com.squareup.picasso.Picasso
 
 class HorizontalVouchersAdapter(private val itemList: List<Voucher>) : RecyclerView.Adapter<HorizontalVouchersAdapter.MyViewHolder>(){

@@ -12,8 +12,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.vou_mobile.R
-import com.example.vou_mobile.classData.Event
-import com.example.vou_mobile.fragment.HomePage
+import com.example.vou_mobile.model.Event
 import com.squareup.picasso.Picasso
 
 class HorizontalEventsAdapter(private val itemList: List<Event>): RecyclerView.Adapter<HorizontalEventsAdapter.MyViewHolder>(){
@@ -61,8 +60,8 @@ class HorizontalEventsAdapter(private val itemList: List<Event>): RecyclerView.A
             .into(dialogView.findViewById<ImageView>(R.id.picture))
         dialogView.findViewById<TextView>(R.id.Time).text =
             when (itemList[position].typeOfEvent){
-                "CONTINUOUS_EVENT" -> "${itemList[position].startTime} - ${itemList[position].endTime}"
-                "INSTANT_EVENT" -> itemList[position].startTime
+                0 -> "${itemList[position].startTime} - ${itemList[position].endTime}"
+                1 -> itemList[position].startTime
                  else -> ""
             }
         dialogView.findViewById<TextView>(R.id.script2).text = itemList[position].eventName
