@@ -1,5 +1,6 @@
 package com.example.vou_mobile.fragment
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -11,6 +12,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import com.example.vou_mobile.R
+import com.example.vou_mobile.activity.ChangePassword
+import com.example.vou_mobile.activity.ResetPasswordActivity
 import com.example.vou_mobile.activity.SignInActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.squareup.picasso.Picasso
@@ -73,7 +76,24 @@ class Account : Fragment() {
         }
 
         view.findViewById<TextView>(R.id.account).setOnClickListener {
+            val options = arrayOf("Change Password", "Reset Password")
 
+            val builder = AlertDialog.Builder(requireContext())
+
+            builder.setItems(options) { dialog, which ->
+                when (which) {
+                    0 -> {
+                        val changePwd = Intent(requireContext(), ChangePassword::class.java)
+                        startActivity(changePwd)
+                    }
+                    1 -> {
+                        val rsPwd = Intent(requireContext(), ResetPasswordActivity::class.java)
+                        startActivity(rsPwd)
+                    }
+                }
+            }
+
+            builder.show()
         }
 
         // Initialize the logout button
