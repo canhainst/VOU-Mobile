@@ -52,6 +52,7 @@
         android:layout_marginTop="-25dp"
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
+        android:elevation="4dp"
         android:background="@drawable/background_sign_in"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout">
 
