@@ -12,6 +12,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.vou_mobile.R
+import com.example.vou_mobile.helper.Helper
 import com.example.vou_mobile.model.Event
 import com.squareup.picasso.Picasso
 
@@ -58,15 +59,13 @@ class HorizontalEventsAdapter(private val itemList: List<Event>): RecyclerView.A
         Picasso.get()
             .load(itemList[position].eventPictureUrl)
             .into(dialogView.findViewById<ImageView>(R.id.picture))
-        dialogView.findViewById<TextView>(R.id.Time).text =
-            when (itemList[position].typeOfEvent){
-                0 -> "${itemList[position].startTime} - ${itemList[position].endTime}"
-                1 -> itemList[position].startTime
-                 else -> ""
-            }
+        dialogView.findViewById<TextView>(R.id.Time).text = Helper.getTimeRangeString(itemList[position])
         dialogView.findViewById<TextView>(R.id.script2).text = itemList[position].eventName
         dialogView.findViewById<TextView>(R.id.detail).text = itemList[position].eventDetail
         dialogView.findViewById<Button>(R.id.btnDirection).text = "Play"
+        dialogView.findViewById<Button>(R.id.btnBack).setOnClickListener {
+            dialogBuilder.dismiss()
+        }
 
         dialogBuilder.show()
     }

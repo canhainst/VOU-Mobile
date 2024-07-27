@@ -53,7 +53,7 @@ class FavoriteEvent : Fragment() {
     private fun initFavoriteEvents() {
         viewModel.favoriteEvents.observe(viewLifecycleOwner, Observer { items ->
             binding.rcvEvents.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-            binding.rcvEvents.adapter = FavoriteEventAdapter(items)
+            binding.rcvEvents.adapter = FavoriteEventAdapter(items, viewModel)
         })
         viewModel.loadFavoriteEvents()
     }
