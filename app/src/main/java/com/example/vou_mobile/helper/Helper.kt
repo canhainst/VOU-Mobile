@@ -43,6 +43,11 @@ object Helper {
         return dateFormat.format(date)
     }
 
+    fun stringToDate(date: String): Date? {
+        val dateFormat = SimpleDateFormat("HH:mm dd/MM/yyyy", Locale.getDefault())
+        return dateFormat.parse(date)
+    }
+
     fun getTimeRangeString(event: Event): String?{
         return when (event.typeOfEvent){
             0 -> "${event.startTime} - ${event.endTime}"
@@ -50,4 +55,6 @@ object Helper {
             else -> ""
         }
     }
+
+
 }

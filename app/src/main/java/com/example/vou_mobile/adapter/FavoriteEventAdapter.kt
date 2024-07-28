@@ -19,13 +19,15 @@ import com.example.vou_mobile.activity.ShakingGameActivity
 import com.example.vou_mobile.databinding.DetailDialogBinding
 import com.example.vou_mobile.helper.Helper
 import com.example.vou_mobile.model.Event
+import com.example.vou_mobile.viewModel.GameViewModel
 import com.example.vou_mobile.viewModel.MainViewModel
 import com.squareup.picasso.Picasso
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
-class FavoriteEventAdapter(private var events: List<Event>, private val viewModel: MainViewModel) : RecyclerView.Adapter<FavoriteEventAdapter.ViewHolder>() {
+class FavoriteEventAdapter(private var events: List<Event>, private val viewModel: MainViewModel, private val gameViewModel: GameViewModel) : RecyclerView.Adapter<FavoriteEventAdapter.ViewHolder>() {
     private lateinit var context: Context
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -103,10 +105,15 @@ class FavoriteEventAdapter(private var events: List<Event>, private val viewMode
 
         //lay ngay hien tai
         val curTime = Helper.dateToString(Date())
+        val calendar = Calendar.getInstance()
+        calendar.time = Helper.stringToDate(event.startTime!!)!!
+        calendar.add(Calendar.MINUTE, 10)
+        val time2 = Helper.dateToString(calendar.time)
+
         if (event.typeOfEvent == 0 && Helper.isTimeAfter(curTime, event.endTime)) {
             binding.btnDirection.visibility = View.GONE
             Toast.makeText(context, "The event has ended!", Toast.LENGTH_SHORT).show()
-        } else if (event.typeOfEvent == 1 && Helper.isTimeAfter(curTime, event.startTime)){
+        } else if (event.typeOfEvent == 1 && !Helper.isTimeInRange(curTime, event.startTime, time2)){
             binding.btnDirection.visibility = View.GONE
             Toast.makeText(context, "The event has started!", Toast.LENGTH_SHORT).show()
         }
@@ -115,8 +122,8 @@ class FavoriteEventAdapter(private var events: List<Event>, private val viewMode
             if (Helper.isTimeBefore(curTime, event.startTime)){
                 Toast.makeText(context, "The event has not started yet!", Toast.LENGTH_SHORT).show()
             }  else{
-                val intent = Intent(context, ShakingGameActivity::class.java)
-                context.startActivity(intent)
+                gameViewModel.setGame(event.typeOfEvent, context)
+                gameViewModel.startGame()
             }
         }
 

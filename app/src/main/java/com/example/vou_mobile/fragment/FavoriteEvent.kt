@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.vou_mobile.adapter.FavoriteEventAdapter
 import com.example.vou_mobile.databinding.FragmentFavoriteEventBinding
 import com.example.vou_mobile.model.Event
+import com.example.vou_mobile.viewModel.GameViewModel
 import com.example.vou_mobile.viewModel.MainViewModel
 
 // TODO: Rename parameter arguments, choose names that match
@@ -30,6 +31,7 @@ class FavoriteEvent : Fragment() {
     private var param2: String? = null
 
     private var viewModel = MainViewModel()
+    private val gameViewModel = GameViewModel()
     private lateinit var binding: FragmentFavoriteEventBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -53,7 +55,7 @@ class FavoriteEvent : Fragment() {
     private fun initFavoriteEvents() {
         viewModel.favoriteEvents.observe(viewLifecycleOwner, Observer { items ->
             binding.rcvEvents.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-            binding.rcvEvents.adapter = FavoriteEventAdapter(items, viewModel)
+            binding.rcvEvents.adapter = FavoriteEventAdapter(items, viewModel, gameViewModel)
         })
         viewModel.loadFavoriteEvents()
     }
