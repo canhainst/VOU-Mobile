@@ -3,4 +3,9 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="red">#FF0000</color>
+    <color name="bg_nav">#F3EDF7</color>
+    <color name="nav_item_color">#454249</color>
+    <color name="nav_item_color_selected">#7A4883</color>
+    <color name="orange">#D47A39</color>
+    <color name="light_white">#D9D9D9</color>
 </resources>

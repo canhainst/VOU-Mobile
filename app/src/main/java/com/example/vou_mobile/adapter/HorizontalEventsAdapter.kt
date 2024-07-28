@@ -10,12 +10,18 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.vou_mobile.R
+import com.example.vou_mobile.helper.Helper
 import com.example.vou_mobile.model.Event
+import com.example.vou_mobile.viewModel.GameViewModel
+import com.example.vou_mobile.viewModel.MainViewModel
 import com.squareup.picasso.Picasso
+import java.util.Calendar
+import java.util.Date
 
-class HorizontalEventsAdapter(private val itemList: List<Event>): RecyclerView.Adapter<HorizontalEventsAdapter.MyViewHolder>(){
+class HorizontalEventsAdapter(private val itemList: List<Event>, private val gameViewModel: GameViewModel): RecyclerView.Adapter<HorizontalEventsAdapter.MyViewHolder>(){
     private var listener: OnItemClickListener? = null
 
     interface OnItemClickListener {
@@ -58,19 +64,39 @@ class HorizontalEventsAdapter(private val itemList: List<Event>): RecyclerView.A
         Picasso.get()
             .load(itemList[position].eventPictureUrl)
             .into(dialogView.findViewById<ImageView>(R.id.picture))
-        dialogView.findViewById<TextView>(R.id.Time).text =
-            when (itemList[position].typeOfEvent){
-                0 -> "${itemList[position].startTime} - ${itemList[position].endTime}"
-                1 -> itemList[position].startTime
-                 else -> ""
-            }
+        dialogView.findViewById<TextView>(R.id.Time).text = Helper.getTimeRangeString(itemList[position])
         dialogView.findViewById<TextView>(R.id.script2).text = itemList[position].eventName
         dialogView.findViewById<TextView>(R.id.detail).text = itemList[position].eventDetail
         dialogView.findViewById<Button>(R.id.btnDirection).text = "Play"
-        dialogView.findViewById<Button>(R.id.btnDirection2).text = "Back"
-        dialogView.findViewById<Button>(R.id.btnDirection2).setOnClickListener {
+        dialogView.findViewById<Button>(R.id.btnBack).text = "Back"
+        dialogView.findViewById<Button>(R.id.btnBack).setOnClickListener {
             dialogBuilder.dismiss()
         }
+
+        //lay ngay hien tai
+        val curTime = Helper.dateToString(Date())
+        val calendar = Calendar.getInstance()
+        calendar.time = Helper.stringToDate(itemList[position].startTime!!)!!
+        calendar.add(Calendar.MINUTE, 10)
+        val time2 = Helper.dateToString(calendar.time)
+
+        if (itemList[position].typeOfEvent == 0 && Helper.isTimeAfter(curTime, itemList[position].endTime)) {
+            dialogView.findViewById<Button>(R.id.btnDirection).visibility = View.GONE
+            Toast.makeText(context, "The event has ended!", Toast.LENGTH_SHORT).show()
+        } else if (itemList[position].typeOfEvent == 1 && !Helper.isTimeInRange(curTime, itemList[position].startTime, time2)){
+            dialogView.findViewById<Button>(R.id.btnDirection).visibility = View.GONE
+            Toast.makeText(context, "The event has started!", Toast.LENGTH_SHORT).show()
+        }
+
+        dialogView.findViewById<Button>(R.id.btnDirection).setOnClickListener {
+            if (Helper.isTimeBefore(curTime, itemList[position].startTime)){
+                Toast.makeText(context, "The event has not started yet!", Toast.LENGTH_SHORT).show()
+            }  else{
+                gameViewModel.setGame(itemList[position].typeOfEvent, context)
+                gameViewModel.startGame()
+            }
+        }
+
 
         dialogBuilder.show()
     }

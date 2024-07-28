@@ -14,4 +14,6 @@
     <string name="event">Event</string>
     <string name="this_is_events_list">This is events list</string>
     <string name="event_image">event_image</string>
+    <string name="heart_icon">heart_icon</string>
+    <string name="add_turn_button">Add_turn_button</string>
 </resources>
