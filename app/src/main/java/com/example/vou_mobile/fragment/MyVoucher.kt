@@ -5,7 +5,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.viewpager2.widget.ViewPager2
 import com.example.vou_mobile.R
+import com.example.vou_mobile.adapter.TabHostVouchersAdapter
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -35,7 +41,52 @@ class MyVoucher : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_my_voucher, container, false)
+        val view = inflater.inflate(R.layout.fragment_my_voucher, container, false)
+
+        val viewPager: ViewPager2 = view.findViewById(R.id.viewPager)
+        val tabLayout: TabLayout = view.findViewById(R.id.tabLayout)
+
+        val adapter = TabHostVouchersAdapter(requireActivity())
+        viewPager.adapter = adapter
+
+        TabLayoutMediator(tabLayout, viewPager) { tab, position ->
+            tab.setCustomView(createTabView(position))
+        }.attach()
+
+        // Set listener to update icon visibility on tab selection
+        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                updateTab(tab, true)
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab) {
+                updateTab(tab, false)
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab) {
+                // Optional: Handle tab reselection if needed
+            }
+        })
+
+        // Initialize the first tab as selected
+        updateTab(tabLayout.getTabAt(tabLayout.selectedTabPosition)!!, true)
+
+        return view
+    }
+    private fun createTabView(position: Int): View {
+        val view = LayoutInflater.from(requireContext()).inflate(R.layout.custom_tabhost, null)
+        val tabText = view.findViewById<TextView>(R.id.tabText)
+        tabText.text = when (position) {
+            0 -> "Vouchers"
+            else -> "Used"
+        }
+        return view
+    }
+
+    private fun updateTab(tab: TabLayout.Tab, isSelected: Boolean) {
+        val tabView = tab.customView
+        val tabIcon = tabView?.findViewById<ImageView>(R.id.tabIcon)
+        tabIcon?.visibility = if (isSelected) View.VISIBLE else View.INVISIBLE
     }
 
     companion object {

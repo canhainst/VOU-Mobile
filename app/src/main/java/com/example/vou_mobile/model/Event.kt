@@ -2,6 +2,7 @@ package com.example.vou_mobile.model
 
 data class Event(
     var id: String?,
+    var brandID: String,
     var eventName: String?,
     var brandName: String?,
     var eventPictureUrl: String?,

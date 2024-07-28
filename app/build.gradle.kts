@@ -56,7 +56,8 @@ dependencies {
     implementation("androidx.recyclerview:recyclerview:1.3.2")
     // Picasso
     implementation("com.squareup.picasso:picasso:2.71828")
-
+    // Tap host
+    implementation("androidx.viewpager2:viewpager2:1.1.0")
     implementation("androidx.core:core-ktx:1.13.1")
 
     implementation("androidx.appcompat:appcompat:1.7.0")

@@ -67,6 +67,10 @@ class HorizontalEventsAdapter(private val itemList: List<Event>): RecyclerView.A
         dialogView.findViewById<TextView>(R.id.script2).text = itemList[position].eventName
         dialogView.findViewById<TextView>(R.id.detail).text = itemList[position].eventDetail
         dialogView.findViewById<Button>(R.id.btnDirection).text = "Play"
+        dialogView.findViewById<Button>(R.id.btnDirection2).text = "Back"
+        dialogView.findViewById<Button>(R.id.btnDirection2).setOnClickListener {
+            dialogBuilder.dismiss()
+        }
 
         dialogBuilder.show()
     }
