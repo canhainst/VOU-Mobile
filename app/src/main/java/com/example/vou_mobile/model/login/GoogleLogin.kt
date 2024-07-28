@@ -1,4 +1,4 @@
-package com.example.vou_mobile.model.loginMethod
+package com.example.vou_mobile.model.login
 
 class GoogleLogin : LoginMethod {
     override fun login(callback: (Boolean, String?) -> Unit) {

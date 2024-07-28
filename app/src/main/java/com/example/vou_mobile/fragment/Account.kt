@@ -13,8 +13,10 @@ import android.widget.TextView
 import android.widget.Toast
 import com.example.vou_mobile.R
 import com.example.vou_mobile.activity.ChangePassword
+import com.example.vou_mobile.activity.HomePageActivity
 import com.example.vou_mobile.activity.ResetPasswordActivity
 import com.example.vou_mobile.activity.SignInActivity
+import com.example.vou_mobile.activity.UpdateAccount
 import com.google.firebase.auth.FirebaseAuth
 import com.squareup.picasso.Picasso
 
@@ -63,32 +65,33 @@ class Account : Fragment() {
             view.findViewById<TextView>(R.id.userID).text = currentUserID
         }
 
+        val mainActivity = requireActivity() as HomePageActivity
         view.findViewById<TextView>(R.id.itemWarehouse).setOnClickListener {
-            replaceFragment(ItemWarehouse())
+            mainActivity.replaceFragment(ItemWarehouse())
         }
 
         view.findViewById<TextView>(R.id.myVoucher).setOnClickListener {
-            replaceFragment(MyVoucher())
+            mainActivity.replaceFragment(MyVoucher())
         }
 
         view.findViewById<TextView>(R.id.giftHistory).setOnClickListener {
-            replaceFragment(GiftHistory())
+            mainActivity.replaceFragment(GiftHistory())
         }
 
         view.findViewById<TextView>(R.id.account).setOnClickListener {
-            val options = arrayOf("Change Password", "Reset Password")
+            val options = arrayOf("Edit Profile", "Change Password")
 
             val builder = AlertDialog.Builder(requireContext())
 
             builder.setItems(options) { dialog, which ->
                 when (which) {
                     0 -> {
-                        val changePwd = Intent(requireContext(), ChangePassword::class.java)
-                        startActivity(changePwd)
+                        val updateAcc = Intent(requireContext(), UpdateAccount::class.java)
+                        startActivity(updateAcc)
                     }
                     1 -> {
-                        val rsPwd = Intent(requireContext(), ResetPasswordActivity::class.java)
-                        startActivity(rsPwd)
+                        val changePwd = Intent(requireContext(), ChangePassword::class.java)
+                        startActivity(changePwd)
                     }
                 }
             }
@@ -111,13 +114,6 @@ class Account : Fragment() {
         val loginIntent = Intent(activity, SignInActivity::class.java)
         startActivity(loginIntent)
         activity?.finish()
-    }
-
-    private fun replaceFragment(fragment: Fragment){
-        val fragmentManager = parentFragmentManager
-        val fragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.frameLayout, fragment)
-        fragmentTransaction.commit()
     }
 
     companion object {

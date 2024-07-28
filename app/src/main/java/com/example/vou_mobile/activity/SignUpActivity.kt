@@ -11,7 +11,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.example.vou_mobile.R
-import com.example.vou_mobile.model.registerMethod.PhoneRegister
+import com.example.vou_mobile.model.register.PhoneRegister
 import com.example.vou_mobile.viewModel.AuthViewModel
 import com.google.android.material.textfield.TextInputEditText
 

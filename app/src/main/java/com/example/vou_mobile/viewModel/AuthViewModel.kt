@@ -3,8 +3,8 @@ package com.example.vou_mobile.viewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.vou_mobile.model.loginMethod.LoginMethod
-import com.example.vou_mobile.model.registerMethod.RegisterMethod
+import com.example.vou_mobile.model.login.LoginMethod
+import com.example.vou_mobile.model.register.RegisterMethod
 
 class AuthViewModel : ViewModel() {
     private val _loginResult = MutableLiveData<Pair<Boolean, String?>>()

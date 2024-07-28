@@ -1,11 +1,9 @@
 package com.example.vou_mobile.activity
 
-import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.KeyEvent
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
@@ -14,12 +12,9 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.example.vou_mobile.R
-import com.example.vou_mobile.model.registerMethod.PhoneRegister
-import com.example.vou_mobile.model.registerMethod.RegisterMethod
+import com.example.vou_mobile.model.register.PhoneRegister
+import com.example.vou_mobile.model.register.RegisterMethod
 import com.example.vou_mobile.viewModel.AuthViewModel
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.PhoneAuthCredential
 import com.google.firebase.auth.PhoneAuthProvider
 
 class VerifyCodeActivity : AppCompatActivity() {

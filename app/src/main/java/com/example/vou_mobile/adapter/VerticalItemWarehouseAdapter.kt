@@ -9,17 +9,15 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.vou_mobile.R
-import com.example.vou_mobile.fragment.ItemWarehouse
+import com.example.vou_mobile.activity.HomePageActivity
 import com.example.vou_mobile.fragment.SendItem
 import com.example.vou_mobile.model.Brand
 import com.example.vou_mobile.model.Event
 import com.example.vou_mobile.model.Item
 import com.example.vou_mobile.model.ItemsOfEvent
-import com.example.vou_mobile.model.Warehouse
 import com.squareup.picasso.Picasso
 
 class VerticalItemWarehouseAdapter(private val itemList: List<ItemsOfEvent>) : RecyclerView.Adapter<VerticalItemWarehouseAdapter.MyViewHolder>() {
@@ -126,22 +124,13 @@ class VerticalItemWarehouseAdapter(private val itemList: List<ItemsOfEvent>) : R
             dialogBuilder.dismiss()
 
             if (context is FragmentActivity) {
-                val fragmentManager = context.supportFragmentManager
-                val fragmentTransaction = fragmentManager.beginTransaction()
-                fragmentTransaction.setCustomAnimations(
-                    R.anim.enter_from_right,
-                    R.anim.exit_to_left,
-                    R.anim.enter_from_left,
-                    R.anim.exit_to_right
-                )
-                fragmentTransaction.replace(R.id.frameLayout, SendItem())
-                fragmentTransaction.addToBackStack(null)
-                fragmentTransaction.commit()
+                val mainActivity = context as HomePageActivity
+                mainActivity.replaceFragment(SendItem())
             }
         }
 
-        dialogView.findViewById<Button>(R.id.btnDirection2).text = "Done"
-        dialogView.findViewById<Button>(R.id.btnDirection2).setOnClickListener {
+        dialogView.findViewById<Button>(R.id.btnBack).text = "Done"
+        dialogView.findViewById<Button>(R.id.btnBack).setOnClickListener {
             dialogBuilder.dismiss()
         }
 

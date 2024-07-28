@@ -65,8 +65,8 @@ class HorizontalVouchersAdapter(private val itemList: List<Voucher>) : RecyclerV
         dialogView.findViewById<TextView>(R.id.script2).text = itemList[position].script
         dialogView.findViewById<TextView>(R.id.detail).text = itemList[position].voucherDetail
         dialogView.findViewById<Button>(R.id.btnDirection).text = "Get"
-        dialogView.findViewById<Button>(R.id.btnDirection2).text = "Back"
-        dialogView.findViewById<Button>(R.id.btnDirection2).setOnClickListener {
+        dialogView.findViewById<Button>(R.id.btnBack).text = "Back"
+        dialogView.findViewById<Button>(R.id.btnBack).setOnClickListener {
             dialogBuilder.dismiss()
         }
 

@@ -16,6 +16,7 @@ import com.example.vou_mobile.adapter.HorizontalVouchersAdapter
 import com.example.vou_mobile.model.Brand
 import com.example.vou_mobile.model.Event
 import com.example.vou_mobile.model.Voucher
+import com.example.vou_mobile.viewModel.GameViewModel
 import com.squareup.picasso.Picasso
 
 // TODO: Rename parameter arguments, choose names that match
@@ -32,6 +33,8 @@ class HomePage : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+
+    private val gameViewModel = GameViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,13 +78,13 @@ class HomePage : Fragment() {
         allEventRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
         val eventTest = listOf(
-            Event(null, "3","Lắc xì may mắn", "Shopee", "https://thanhnien.mediacdn.vn/Uploaded/nthanhluan/2022_03_01/shopee-15-3-sieu-hoi-tieu-dung-4607.jpg", 100, "01/01/2000", "01/02/2000", 0, "Thu thập đủ 5 loại ngọc bằng cách lắc xì để đổi lấy phần thưởng. Tham gia ngay!"),
+            Event(null, "3","Lắc xì may mắn", "Shopee", "https://thanhnien.mediacdn.vn/Uploaded/nthanhluan/2022_03_01/shopee-15-3-sieu-hoi-tieu-dung-4607.jpg", 100, "01/01/2024", "01/12/2024", 0, "Thu thập đủ 5 loại ngọc bằng cách lắc xì để đổi lấy phần thưởng. Tham gia ngay!"),
             Event(null, "3","Lắc xì may mắn", "Shopee", "https://down-vn.img.susercontent.com/file/40d21efdf195faccb7710ae93fb5d0ea", 100, "01/01/2000", "01/02/2000", 0, "Thu thập đủ 5 loại ngọc bằng cách lắc xì để đổi lấy phần thưởng. Tham gia ngay!"),
             Event(null, "3","Lắc xì may mắn", "Shopee", "https://images.bloggiamgia.vn/full/07-02-2023/Shopee-sale-99-1-1675759490515.png", 100, "01/01/2000", "01/02/2000", 0, "Thu thập đủ 5 loại ngọc bằng cách lắc xì để đổi lấy phần thưởng. Tham gia ngay!"),
-            Event(null, "4", "HQ Trivia", "Xanh SM","https://cdn.xanhsm.com/2024/07/258f4321-xanh-creator-1024x576.jpg", 100, "12:00 PM - 01/01/2000","12:10 PM 01/01/2000", 1, "Trả lời đúng càng nhiều câu hỏi để nhận được các voucher giá trị\n" + "Sự kiện sẽ đóng tham gia sau 10p bắt đầu. Hãy nhanh tay")
+            Event(null, "4", "HQ Trivia", "Xanh SM","https://cdn.xanhsm.com/2024/07/258f4321-xanh-creator-1024x576.jpg", 100, "12:00 01/01/2000","12:10 01/01/2000", 1, "Trả lời đúng càng nhiều câu hỏi để nhận được các voucher giá trị\n" + "Sự kiện sẽ đóng tham gia sau 10p bắt đầu. Hãy nhanh tay")
         )
 
-        allEventRecyclerView.adapter = HorizontalEventsAdapter(eventTest)
+        allEventRecyclerView.adapter = HorizontalEventsAdapter(eventTest, gameViewModel)
 
         val allVouchersRecyclerView = view.findViewById<RecyclerView>(R.id.voucher)
         allVouchersRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
