@@ -119,6 +119,7 @@ class VerticalItemWarehouseAdapter(private val itemList: List<ItemsOfEvent>) : R
         dialogView.findViewById<TextView>(R.id.Time).text = "Expiration: ${event.startTime} - ${event.endTime}"
         dialogView.findViewById<TextView>(R.id.script2).text = event.eventName
         dialogView.findViewById<TextView>(R.id.detail).text = getItemsListByEventID(event.id!!)
+
         dialogView.findViewById<Button>(R.id.btnDirection).text = "Send Item"
         dialogView.findViewById<Button>(R.id.btnDirection).setOnClickListener {
             dialogBuilder.dismiss()

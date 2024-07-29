@@ -16,4 +16,13 @@
     <string name="event_image">event_image</string>
     <string name="heart_icon">heart_icon</string>
     <string name="add_turn_button">Add_turn_button</string>
+    <string name="request_play_turns_from_friends">Get more play turns</string>
+    <string name="brandname">BrandName</string>
+    <string name="eventname">eventName</string>
+    <string name="enter_the_player_s_id_phone_number_email">Enter the player\'s ID/ Phone Number/ Email</string>
+    <string name="id_phone_number_email">ID/ Phone Number/ Email</string>
+    <string name="request">Request</string>
+    <string name="congratulations">Congratulations</string>
+    <string name="you_have_received_1_turn">You have received 1 turn</string>
+    <string name="floating_button">Floating button</string>
 </resources>
