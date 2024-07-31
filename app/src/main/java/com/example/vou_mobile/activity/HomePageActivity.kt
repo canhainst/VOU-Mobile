@@ -6,6 +6,7 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import com.example.vou_mobile.R
 import com.example.vou_mobile.databinding.ActivityHomePageBinding
 import com.example.vou_mobile.fragment.Account
@@ -17,7 +18,6 @@ class HomePageActivity : AppCompatActivity() {
     private lateinit var currentUserID: String
     private lateinit var binding: ActivityHomePageBinding
 
-    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -41,6 +41,19 @@ class HomePageActivity : AppCompatActivity() {
                 }
             }
             true
+        }
+
+        // Add OnBackStackChangedListener
+        supportFragmentManager.addOnBackStackChangedListener {
+            updateBottomNavigationView()
+        }
+    }
+
+    private fun updateBottomNavigationView() {
+        when (supportFragmentManager.findFragmentById(R.id.frameLayout)) {
+            is HomePage -> binding.bottomNavigationView.menu.findItem(R.id.home).isChecked = true
+            is FavoriteEvent -> binding.bottomNavigationView.menu.findItem(R.id.event).isChecked = true
+            is Account -> binding.bottomNavigationView.menu.findItem(R.id.account).isChecked = true
         }
     }
 

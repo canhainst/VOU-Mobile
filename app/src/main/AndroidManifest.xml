@@ -11,6 +11,9 @@
         android:theme="@style/Theme.VOUMobile"
         tools:targetApi="31">
         <activity
+            android:name=".activity.GetVoucherActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.RequestTurnAtivity"
             android:exported="false" />
         <activity

@@ -112,7 +112,8 @@
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/mc"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="HardcodedText" />
 
     <ImageView
         android:id="@+id/btn_close"

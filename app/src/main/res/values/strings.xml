@@ -25,4 +25,6 @@
     <string name="congratulations">Congratulations</string>
     <string name="you_have_received_1_turn">You have received 1 turn</string>
     <string name="floating_button">Floating button</string>
+    <string name="get_vouchers">Get Vouchers</string>
+    <string name="get">GET</string>
 </resources>

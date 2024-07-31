@@ -1,6 +1,7 @@
 package com.example.vou_mobile.activity
 
 import android.animation.AnimatorListenerAdapter
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Typeface
@@ -11,12 +12,15 @@ import android.text.SpannableString
 import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.Button
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
 import com.example.vou_mobile.R
 import com.example.vou_mobile.databinding.ActivityHomePageBinding
 import com.example.vou_mobile.databinding.ActivityShakingGameBinding
 import com.example.vou_mobile.databinding.DetailDialogBinding
+import com.example.vou_mobile.fragment.SendItem
 import com.example.vou_mobile.helper.Helper
 import com.example.vou_mobile.model.Event
 import com.example.vou_mobile.viewModel.GameViewModel
@@ -48,7 +52,8 @@ class ShakingGameActivity : AppCompatActivity() {
         }
 
         binding.getVoucherFab.setOnClickListener {
-
+            val intent = Intent(binding.root.context, GetVoucherActivity::class.java)
+            startActivity(intent)
         }
 
         binding.itemsFab.setOnClickListener {
@@ -58,6 +63,7 @@ class ShakingGameActivity : AppCompatActivity() {
 
     }
 
+    @SuppressLint("SetTextI18n")
     private fun showItemsDialog(event: Event) {
         val binding = DetailDialogBinding.inflate(LayoutInflater.from(binding.root.context))
         val dialogBuilder = AlertDialog.Builder(binding.root.context)
@@ -79,7 +85,12 @@ class ShakingGameActivity : AppCompatActivity() {
         binding.detail.setLineSpacing(10f, 1.2f) // điều chỉnh khoảng cách giữa các dòng
 
 
-        binding.btnDirection.visibility = View.GONE
+        binding.btnDirection.text = "Send Item"
+        binding.btnDirection.setOnClickListener {
+                dialogBuilder.dismiss()
+                val mainActivity = binding.root.context as HomePageActivity
+                mainActivity.replaceFragment(SendItem())
+            }
         binding.btnBack.setOnClickListener {
             dialogBuilder.dismiss()
         }
@@ -112,7 +123,6 @@ class ShakingGameActivity : AppCompatActivity() {
         if (rotate){
             showIn(binding.getVoucherLL)
             showIn(binding.itemsLL)
-            binding.backgroundOverlay.visibility = View.VISIBLE
         } else{
             showOut(binding.getVoucherLL)
             showOut(binding.itemsLL)
