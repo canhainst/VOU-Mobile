@@ -9,13 +9,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.vou_mobile.R
 import com.example.vou_mobile.adapter.VerticalItemWarehouseAdapter
-import com.example.vou_mobile.model.Event
-import com.example.vou_mobile.model.GiftExchangesHistory
-import com.example.vou_mobile.model.Item
 import com.example.vou_mobile.model.Items
 import com.example.vou_mobile.model.ItemsOfEvent
-import com.example.vou_mobile.model.VouchersList
-import com.example.vou_mobile.model.Warehouse
 import com.google.firebase.auth.FirebaseAuth
 
 // TODO: Rename parameter arguments, choose names that match

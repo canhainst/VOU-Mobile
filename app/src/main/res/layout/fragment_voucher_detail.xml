@@ -14,11 +14,13 @@
             android:id="@+id/brandImg"
             android:layout_width="match_parent"
             android:layout_height="200dp"
+            android:clipToOutline="true"
             android:importantForAccessibility="no"
             android:src="@drawable/placeholder_image_2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="UnusedAttribute" />
 
         <TextView
             android:id="@+id/brand_name"
@@ -75,7 +77,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
-            android:text="TextView"
+            android:text="Voucher Detail"
             android:textColor="@color/black"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"

@@ -1,6 +1,6 @@
 package com.example.vou_mobile.model
 
-data class VouchersList(val voucherID: String, val isUsed: Boolean)
+data class IsUsedVouchers(val voucherID: String, val isUsed: Boolean)
 data class Voucher (
     var id: String,
     var brandID: String,
