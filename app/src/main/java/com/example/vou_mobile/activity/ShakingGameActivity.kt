@@ -30,7 +30,9 @@ import java.util.Date
 
 class ShakingGameActivity : AppCompatActivity() {
     private lateinit var binding: ActivityShakingGameBinding
+    private val gameViewModel = GameViewModel()
     private var rotate = false
+    private val typeOfEvent = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityShakingGameBinding.inflate(layoutInflater)
@@ -43,7 +45,8 @@ class ShakingGameActivity : AppCompatActivity() {
         }
 
         binding.btnClose.setOnClickListener {
-            finish()
+            gameViewModel.setGame(typeOfEvent, this)
+            gameViewModel.stopGame()
         }
 
         binding.btnAddTurn.setOnClickListener {
@@ -87,10 +90,13 @@ class ShakingGameActivity : AppCompatActivity() {
 
         binding.btnDirection.text = "Send Item"
         binding.btnDirection.setOnClickListener {
-                dialogBuilder.dismiss()
-                val mainActivity = binding.root.context as HomePageActivity
-                mainActivity.replaceFragment(SendItem())
+            dialogBuilder.dismiss()
+            val intent = Intent(this@ShakingGameActivity, HomePageActivity::class.java).apply {
+                putExtra("sendItem", true)
+                putExtra("fromShakingGame", true)
             }
+            startActivity(intent)
+        }
         binding.btnBack.setOnClickListener {
             dialogBuilder.dismiss()
         }

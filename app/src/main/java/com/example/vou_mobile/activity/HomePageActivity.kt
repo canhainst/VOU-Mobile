@@ -1,6 +1,7 @@
 package com.example.vou_mobile.activity
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
@@ -12,6 +13,7 @@ import com.example.vou_mobile.databinding.ActivityHomePageBinding
 import com.example.vou_mobile.fragment.Account
 import com.example.vou_mobile.fragment.FavoriteEvent
 import com.example.vou_mobile.fragment.HomePage
+import com.example.vou_mobile.fragment.SendItem
 import com.google.firebase.auth.FirebaseAuth
 
 class HomePageActivity : AppCompatActivity() {
@@ -43,6 +45,11 @@ class HomePageActivity : AppCompatActivity() {
             true
         }
 
+        if (intent.getBooleanExtra("sendItem", false)) {
+            replaceFragment(SendItem())
+        }
+
+
         // Add OnBackStackChangedListener
         supportFragmentManager.addOnBackStackChangedListener {
             updateBottomNavigationView()
@@ -70,4 +77,21 @@ class HomePageActivity : AppCompatActivity() {
         fragmentTransaction.addToBackStack(null)
         fragmentTransaction.commit()
     }
+
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        val currentFragment = supportFragmentManager.findFragmentById(R.id.frameLayout)
+        if (currentFragment is SendItem) {
+            if (intent.getBooleanExtra("fromShakingGame", false)) {
+                val intent = Intent(this, ShakingGameActivity::class.java)
+                startActivity(intent)
+                finish()
+            } else {
+                super.onBackPressed()
+            }
+        } else {
+            super.onBackPressed()
+        }
+    }
+
 }

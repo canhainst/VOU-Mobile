@@ -27,4 +27,6 @@
     <string name="floating_button">Floating button</string>
     <string name="get_vouchers">Get Vouchers</string>
     <string name="get">GET</string>
+    <string name="logogame">logoGame</string>
+    <string name="mc">MC</string>
 </resources>
