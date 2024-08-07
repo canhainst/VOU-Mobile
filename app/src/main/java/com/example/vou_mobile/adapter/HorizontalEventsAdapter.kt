@@ -15,8 +15,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.vou_mobile.R
 import com.example.vou_mobile.helper.Helper
 import com.example.vou_mobile.model.Event
+import com.example.vou_mobile.viewModel.EventViewModelProviderSingleton
 import com.example.vou_mobile.viewModel.GameViewModel
-import com.example.vou_mobile.viewModel.MainViewModel
 import com.squareup.picasso.Picasso
 import java.util.Calendar
 import java.util.Date
@@ -83,15 +83,16 @@ class HorizontalEventsAdapter(private val itemList: List<Event>, private val gam
         if (itemList[position].typeOfEvent == 0 && Helper.isTimeAfter(curTime, itemList[position].endTime)) {
             dialogView.findViewById<Button>(R.id.btnDirection).visibility = View.GONE
             Toast.makeText(context, "The event has ended!", Toast.LENGTH_SHORT).show()
-        } else if (itemList[position].typeOfEvent == 1 && !Helper.isTimeInRange(curTime, itemList[position].startTime, time2)){
+        } else if (itemList[position].typeOfEvent == 1 && Helper.isTimeAfter(curTime, time2)){
             dialogView.findViewById<Button>(R.id.btnDirection).visibility = View.GONE
             Toast.makeText(context, "The event has started!", Toast.LENGTH_SHORT).show()
         }
 
         dialogView.findViewById<Button>(R.id.btnDirection).setOnClickListener {
-            if (Helper.isTimeBefore(curTime, itemList[position].startTime)){
+            if (itemList[position].typeOfEvent == 0  && Helper.isTimeBefore(curTime, itemList[position].startTime)){
                 Toast.makeText(context, "The event has not started yet!", Toast.LENGTH_SHORT).show()
             }  else{
+                EventViewModelProviderSingleton.getEventViewModel().chooseEvent(itemList[position])
                 gameViewModel.setGame(itemList[position].typeOfEvent, context)
                 gameViewModel.startGame()
             }

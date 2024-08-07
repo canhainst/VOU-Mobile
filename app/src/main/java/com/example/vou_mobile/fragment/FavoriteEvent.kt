@@ -1,19 +1,18 @@
 package com.example.vou_mobile.fragment
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.vou_mobile.adapter.FavoriteEventAdapter
 import com.example.vou_mobile.databinding.FragmentFavoriteEventBinding
-import com.example.vou_mobile.model.Event
 import com.example.vou_mobile.viewModel.GameViewModel
-import com.example.vou_mobile.viewModel.MainViewModel
+import com.example.vou_mobile.viewModel.EventViewModel
+import com.example.vou_mobile.viewModel.EventViewModelProviderSingleton
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -30,7 +29,7 @@ class FavoriteEvent : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
-    private var viewModel = MainViewModel()
+    private val viewModel = EventViewModelProviderSingleton.getEventViewModel()
     private val gameViewModel = GameViewModel()
     private lateinit var binding: FragmentFavoriteEventBinding
 
@@ -53,11 +52,12 @@ class FavoriteEvent : Fragment() {
     }
 
     private fun initFavoriteEvents() {
+        viewModel.loadFavoriteEvents()
         viewModel.favoriteEvents.observe(viewLifecycleOwner, Observer { items ->
             binding.rcvEvents.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-            binding.rcvEvents.adapter = FavoriteEventAdapter(items, viewModel, gameViewModel)
+            binding.rcvEvents.adapter = FavoriteEventAdapter(items, gameViewModel)
         })
-        viewModel.loadFavoriteEvents()
+
     }
 
     companion object {

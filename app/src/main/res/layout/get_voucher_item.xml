@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/background_sign_in"
+    android:padding="10dp"
+    android:layout_margin="5dp"
+    android:elevation="4dp">
+
+    <ImageView
+        android:id="@+id/voucherImg"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="10dp"
+        android:background="@drawable/circle_background_imageview"
+        android:clipToOutline="true"
+        android:importantForAccessibility="no"
+        android:src="@drawable/placeholder_image"
+        app:layout_constraintBottom_toBottomOf="@+id/itemList"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/brandName"
+        tools:ignore="UnusedAttribute" />
+
+    <TextView
+        android:id="@+id/brandName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="8dp"
+        android:text="Xanh SM"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/btnGet"
+        app:layout_constraintStart_toEndOf="@+id/voucherImg"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/script"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="8dp"
+        android:text="Giảm 20% cuốc xe"
+        android:textColor="@color/black"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toStartOf="@+id/btnGet"
+        app:layout_constraintStart_toStartOf="@+id/brandName"
+        app:layout_constraintTop_toBottomOf="@+id/brandName"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/itemList"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="2 ngọc xanh, 1 ngọc đỏ"
+        android:textColor="@color/black"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/script"
+        app:layout_constraintStart_toStartOf="@+id/brandName"
+        app:layout_constraintTop_toBottomOf="@+id/script"
+        tools:ignore="HardcodedText" />
+
+    <Button
+        android:id="@+id/btnGet"
+        android:layout_width="80dp"
+        android:layout_height="35dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/rounded_bg"
+        android:backgroundTint="@color/light_purple"
+        android:text="Get"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="HardcodedText" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

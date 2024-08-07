@@ -1,23 +1,25 @@
 package com.example.vou_mobile.activity
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import com.example.vou_mobile.R
 import com.example.vou_mobile.databinding.ActivityHomePageBinding
 import com.example.vou_mobile.fragment.Account
 import com.example.vou_mobile.fragment.FavoriteEvent
 import com.example.vou_mobile.fragment.HomePage
+import com.example.vou_mobile.fragment.SendItem
 import com.google.firebase.auth.FirebaseAuth
 
 class HomePageActivity : AppCompatActivity() {
     private lateinit var currentUserID: String
     private lateinit var binding: ActivityHomePageBinding
 
-    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -42,6 +44,24 @@ class HomePageActivity : AppCompatActivity() {
             }
             true
         }
+
+        if (intent.getBooleanExtra("sendItem", false)) {
+            replaceFragment(SendItem())
+        }
+
+
+        // Add OnBackStackChangedListener
+        supportFragmentManager.addOnBackStackChangedListener {
+            updateBottomNavigationView()
+        }
+    }
+
+    private fun updateBottomNavigationView() {
+        when (supportFragmentManager.findFragmentById(R.id.frameLayout)) {
+            is HomePage -> binding.bottomNavigationView.menu.findItem(R.id.home).isChecked = true
+            is FavoriteEvent -> binding.bottomNavigationView.menu.findItem(R.id.event).isChecked = true
+            is Account -> binding.bottomNavigationView.menu.findItem(R.id.account).isChecked = true
+        }
     }
 
     fun replaceFragment(fragment: Fragment) {
@@ -57,4 +77,21 @@ class HomePageActivity : AppCompatActivity() {
         fragmentTransaction.addToBackStack(null)
         fragmentTransaction.commit()
     }
+
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        val currentFragment = supportFragmentManager.findFragmentById(R.id.frameLayout)
+        if (currentFragment is SendItem) {
+            if (intent.getBooleanExtra("fromShakingGame", false)) {
+                val intent = Intent(this, ShakingGameActivity::class.java)
+                startActivity(intent)
+                finish()
+            } else {
+                super.onBackPressed()
+            }
+        } else {
+            super.onBackPressed()
+        }
+    }
+
 }

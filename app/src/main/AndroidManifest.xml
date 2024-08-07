@@ -7,6 +7,7 @@
     <uses-feature android:name="android.hardware.camera" />
 
     <application
+        android:icon="@mipmap/ic_launcher"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -20,6 +21,18 @@
             android:exported="false" />
         <activity
             android:name=".activity.ScanningActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.PlayQuizGameActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.QuizGameActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.GetVoucherActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.RequestTurnAtivity"
             android:exported="false" />
         <activity
             android:name=".activity.ShakingGameActivity"

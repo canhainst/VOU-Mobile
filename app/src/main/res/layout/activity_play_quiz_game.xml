@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_blue"
+    tools:context=".activity.PlayQuizGameActivity">
+
+    <ImageView
+        android:id="@+id/btn_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:contentDescription="@string/mc"
+        android:src="@drawable/baseline_close_24"
+        android:translationZ="4dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/white" />
+
+    <ImageView
+        android:id="@+id/imgLogo"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:contentDescription="@string/logogame"
+        android:scaleType="centerCrop"
+        android:src="@drawable/quiz_game_bg"
+        app:layout_constraintBottom_toTopOf="@+id/guideline3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline4"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <TextView
+        android:id="@+id/tvPlayerName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="CheeseLe"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/tvQuestionNum"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Question 1/10"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/tvPlayerName"
+        app:layout_constraintTop_toBottomOf="@+id/tvPlayerName"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/tvCorrectNum"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Correct: 0"
+        android:textColor="@color/green_correct"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/tvQuestionNum"
+        app:layout_constraintTop_toBottomOf="@+id/tvQuestionNum"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/tvWrongNum"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Wrong: 0"
+        android:textColor="@color/pink_wrong"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/tvQuestionNum"
+        app:layout_constraintTop_toBottomOf="@+id/tvCorrectNum"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/tvTimer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:text="00:20"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/tvQuestion"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/imgMc"
+        tools:ignore="HardcodedText" />
+
+    <ImageView
+        android:id="@+id/imgMc"
+        android:layout_width="81dp"
+        android:layout_height="84dp"
+        android:layout_marginBottom="-16dp"
+        android:background="@drawable/circle_background_imageview"
+        android:clipToOutline="true"
+        android:translationZ="4dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/mc"
+        app:layout_constraintBottom_toTopOf="@+id/tvQuestion"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tvQuestion"
+        android:layout_width="0dp"
+        android:layout_height="117dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="-60dp"
+        android:background="@drawable/rounded_bg"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="Quốc gia nào có diện tích nhỏ nhất thế giới?"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="@+id/imgLogo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/tvAnswer1"
+        android:layout_width="0dp"
+        android:layout_height="74dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/rounded_bg"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="Việt Nam"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@+id/guideline4"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/tvQuestion"
+        app:layout_constraintTop_toBottomOf="@+id/tvQuestion"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/tvAnswer2"
+        android:layout_width="0dp"
+        android:layout_height="74dp"
+        android:layout_marginStart="8dp"
+        android:background="@drawable/rounded_bg"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="Cuba"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/tvQuestion"
+        app:layout_constraintStart_toStartOf="@+id/guideline4"
+        app:layout_constraintTop_toTopOf="@+id/tvAnswer1"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/tvAnswer3"
+        android:layout_width="0dp"
+        android:layout_height="74dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/rounded_bg"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="Vatican"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/tvAnswer1"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/tvAnswer1"
+        app:layout_constraintTop_toBottomOf="@+id/tvAnswer1"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/tvAnswer4"
+        android:layout_width="0dp"
+        android:layout_height="74dp"
+        android:background="@drawable/rounded_bg"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="Monaco"
+        android:textColor="@color/black"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/tvAnswer2"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/tvAnswer2"
+        app:layout_constraintTop_toTopOf="@+id/tvAnswer3"
+        tools:ignore="HardcodedText" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
