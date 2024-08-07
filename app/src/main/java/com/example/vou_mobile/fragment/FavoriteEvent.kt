@@ -5,13 +5,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.vou_mobile.adapter.FavoriteEventAdapter
 import com.example.vou_mobile.databinding.FragmentFavoriteEventBinding
 import com.example.vou_mobile.viewModel.GameViewModel
-import com.example.vou_mobile.viewModel.EventViewModel
 import com.example.vou_mobile.viewModel.EventViewModelProviderSingleton
 
 // TODO: Rename parameter arguments, choose names that match
