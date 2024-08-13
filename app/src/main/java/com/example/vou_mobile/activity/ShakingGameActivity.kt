@@ -1,10 +1,14 @@
 package com.example.vou_mobile.activity
 
+import com.example.vou_mobile.utilities.TextToSpeechUtils
 import android.animation.AnimatorListenerAdapter
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.Typeface
+import android.hardware.Sensor
+import android.hardware.SensorManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Spannable
@@ -13,30 +17,35 @@ import android.text.style.StyleSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
-import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.FragmentActivity
+import com.airbnb.lottie.LottieAnimationView
 import com.example.vou_mobile.R
-import com.example.vou_mobile.databinding.ActivityHomePageBinding
 import com.example.vou_mobile.databinding.ActivityShakingGameBinding
 import com.example.vou_mobile.databinding.DetailDialogBinding
-import com.example.vou_mobile.fragment.SendItem
 import com.example.vou_mobile.helper.Helper
 import com.example.vou_mobile.model.Event
+import com.example.vou_mobile.model.games.ShakeDetector
 import com.example.vou_mobile.viewModel.GameViewModel
 import com.squareup.picasso.Picasso
-import java.util.Calendar
-import java.util.Date
 
-class ShakingGameActivity : AppCompatActivity() {
+class ShakingGameActivity : AppCompatActivity(), ShakeDetector.OnShakeListener {
     private lateinit var binding: ActivityShakingGameBinding
     private val gameViewModel = GameViewModel()
     private var rotate = false
     private val typeOfEvent = 0
+
+    private lateinit var sensorManager: SensorManager
+    private lateinit var accelerometer: Sensor
+    private lateinit var shakeDetector: ShakeDetector
+
+    private lateinit var ttsUtil: TextToSpeechUtils
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityShakingGameBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        binding.animationGift.playAnimation()
 
         initShowout(binding.getVoucherLL)
         initShowout(binding.itemsLL)
@@ -64,6 +73,15 @@ class ShakingGameActivity : AppCompatActivity() {
             showItemsDialog(event)
         }
 
+        //Cảm biến gia tốc
+        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)!!
+        shakeDetector = ShakeDetector(this)
+
+        ttsUtil = TextToSpeechUtils(this) {
+            // Callback được gọi khi TTS đã sẵn sàng
+            ttsUtil.speak(binding.tvGuidance.text.toString())
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -172,5 +190,44 @@ class ShakingGameActivity : AppCompatActivity() {
         }
     }
 
+    private fun showRewardDialog() {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_open_gift, null)
+        val dialog = AlertDialog.Builder(this)
+            .setView(dialogView)
+            .setCancelable(false)
+            .create()
+
+        sensorManager.unregisterListener(shakeDetector)
+        dialogView.findViewById<LottieAnimationView>(R.id.animation_gift).playAnimation()
+        val btnClaim = dialogView.findViewById<Button>(R.id.btn_Claim)
+        btnClaim.setOnClickListener {
+            // Handle the reward claiming logic here
+            sensorManager.registerListener(shakeDetector, accelerometer, SensorManager.SENSOR_DELAY_UI)
+            dialog.dismiss()
+        }
+
+        dialog.show()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        sensorManager.registerListener(shakeDetector, accelerometer, SensorManager.SENSOR_DELAY_UI)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        sensorManager.unregisterListener(shakeDetector)
+    }
+
+    override fun onShake() {
+        // Xử lý khi phát hiện người dùng lắc điện thoại
+        showRewardDialog()
+    }
+
+    override fun onDestroy() {
+        // Hủy Text-to-Speech khi Activity bị hủy
+        ttsUtil.shutdown()
+        super.onDestroy()
+    }
 
 }

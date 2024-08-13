@@ -20,5 +20,9 @@ class GetVoucherActivity : AppCompatActivity() {
         binding.rcvVoucherList.layoutManager = LinearLayoutManager(binding.root.context, LinearLayoutManager.VERTICAL, false)
         binding.rcvVoucherList.adapter = GetVoucherAdapter(listVoucher)
 
+        binding.btnBack.setOnClickListener {
+            finish()
+        }
+
     }
 }

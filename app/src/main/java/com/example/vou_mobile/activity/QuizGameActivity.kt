@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat
 import com.example.vou_mobile.R
 import com.example.vou_mobile.databinding.ActivityQuizGameBinding
 import com.example.vou_mobile.helper.Helper
+import com.example.vou_mobile.utilities.TextToSpeechUtils
 import com.example.vou_mobile.viewModel.EventViewModelProviderSingleton
 import com.example.vou_mobile.viewModel.GameViewModel
 import java.util.Calendar
@@ -19,6 +20,8 @@ class QuizGameActivity : AppCompatActivity() {
     private val eventViewModel = EventViewModelProviderSingleton.getEventViewModel()
     private val typeOfEvent = 1
     private var time2: String? = null
+
+    private lateinit var ttsUtil: TextToSpeechUtils
 
     private val handler = android.os.Handler()
     private val runnable = object : Runnable {
@@ -46,6 +49,12 @@ class QuizGameActivity : AppCompatActivity() {
         calendar.time = Helper.stringToDate(eventViewModel.curEvent.value?.startTime!!)!!
         calendar.add(Calendar.MINUTE, 10)
         time2 = Helper.dateToString(calendar.time)
+
+        //text to speech
+        ttsUtil = TextToSpeechUtils(this) {
+            // Callback được gọi khi TTS đã sẵn sàng
+            ttsUtil.speak(binding.tvWelcome.text.toString())
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -76,5 +85,6 @@ class QuizGameActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         handler.removeCallbacks(runnable) // Dừng cập nhật khi Activity bị hủy
+        ttsUtil.shutdown()
     }
 }

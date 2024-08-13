@@ -1,4 +1,4 @@
-package com.example.vou_mobile.Utilities
+package com.example.vou_mobile.utilities
 
 import com.example.vou_mobile.model.User
 import com.google.firebase.Firebase

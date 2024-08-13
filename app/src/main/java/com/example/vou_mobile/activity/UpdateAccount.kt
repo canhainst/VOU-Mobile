@@ -11,7 +11,7 @@ import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import com.example.vou_mobile.R
-import com.example.vou_mobile.Utilities.UserUtils
+import com.example.vou_mobile.utilities.UserUtils
 import com.example.vou_mobile.model.User
 import com.google.android.material.textfield.TextInputEditText
 
