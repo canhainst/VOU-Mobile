@@ -74,9 +74,9 @@ object Helper {
     }
 
     fun getTimeRangeString(event: Event): String?{
-        return when (event.typeOfEvent){
-            0 -> "${event.startTime} - ${event.endTime}"
-            1 -> event.startTime
+        return when (event.type){
+            "Lắc xì" -> "${event.start_time} - ${event.end_time}"
+            "Quiz" -> event.start_time
             else -> ""
         }
     }

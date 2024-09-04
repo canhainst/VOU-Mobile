@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.vou_mobile.R
@@ -16,12 +17,12 @@ import com.example.vou_mobile.adapter.HorizontalBrandsAdapter
 import com.example.vou_mobile.adapter.HorizontalEventsAdapter
 import com.example.vou_mobile.adapter.HorizontalVouchersAdapter
 import com.example.vou_mobile.model.Brand
-import com.example.vou_mobile.model.Event
 import com.example.vou_mobile.model.User
 import com.example.vou_mobile.model.Voucher
 import com.example.vou_mobile.services.BrandService
 import com.example.vou_mobile.services.RetrofitClient
 import com.example.vou_mobile.services.VoucherService
+import com.example.vou_mobile.viewModel.EventViewModelProviderSingleton
 import com.example.vou_mobile.viewModel.GameViewModel
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -51,7 +52,7 @@ class HomePage : Fragment() {
     private val gson = Gson()
     private lateinit var currentUser: User
     private var uuid: String? = null
-
+    private val viewModel = EventViewModelProviderSingleton.getEventViewModel()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -106,16 +107,12 @@ class HomePage : Fragment() {
         })
 
         val allEventRecyclerView = view.findViewById<RecyclerView>(R.id.event)
-        allEventRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        viewModel.loadAllEvents()
+        viewModel.events.observe(viewLifecycleOwner, Observer { items ->
+            allEventRecyclerView?.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+            allEventRecyclerView?.adapter = HorizontalEventsAdapter(items, gameViewModel)
+        })
 
-        val eventTest = listOf(
-            Event(null, "3","Lắc xì may mắn", "Shopee", "https://thanhnien.mediacdn.vn/Uploaded/nthanhluan/2022_03_01/shopee-15-3-sieu-hoi-tieu-dung-4607.jpg", 100, "01/01/2024", "01/12/2024", 0, "Thu thập đủ 5 loại ngọc bằng cách lắc xì để đổi lấy phần thưởng. Tham gia ngay!"),
-            Event(null, "3","Lắc xì may mắn", "Shopee", "https://down-vn.img.susercontent.com/file/40d21efdf195faccb7710ae93fb5d0ea", 100, "01/01/2000", "01/02/2000", 0, "Thu thập đủ 5 loại ngọc bằng cách lắc xì để đổi lấy phần thưởng. Tham gia ngay!"),
-            Event(null, "3","Lắc xì may mắn", "Shopee", "https://images.bloggiamgia.vn/full/07-02-2023/Shopee-sale-99-1-1675759490515.png", 100, "01/01/2000", "01/02/2000", 0, "Thu thập đủ 5 loại ngọc bằng cách lắc xì để đổi lấy phần thưởng. Tham gia ngay!"),
-            Event(null, "4", "HQ Trivia", "Xanh SM","https://cdn.xanhsm.com/2024/07/258f4321-xanh-creator-1024x576.jpg", 100, "12:00 01/01/2000","12:10 01/01/2000", 1, "Trả lời đúng càng nhiều câu hỏi để nhận được các voucher giá trị\n" + "Sự kiện sẽ đóng tham gia sau 10p bắt đầu. Hãy nhanh tay")
-        )
-
-        allEventRecyclerView.adapter = HorizontalEventsAdapter(eventTest, gameViewModel)
 
         val allVouchersRecyclerView = view.findViewById<RecyclerView>(R.id.voucher)
         allVouchersRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
@@ -141,6 +138,7 @@ class HomePage : Fragment() {
 
         return view
     }
+
 
     companion object {
         /**

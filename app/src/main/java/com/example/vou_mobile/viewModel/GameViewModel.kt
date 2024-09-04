@@ -12,7 +12,7 @@ class GameViewModel() : ViewModel() {
     private val _currentGame = MutableLiveData<Game>()
     val currentGame: LiveData<Game> get() = _currentGame
 
-    fun setGame(gameType: Int, context: Context) {
+    fun setGame(gameType: String, context: Context) {
         val game = GameFactory.createGame(gameType, context)
         _currentGame.value = game
     }

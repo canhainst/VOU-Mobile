@@ -7,7 +7,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.vou_mobile.R
-import com.example.vou_mobile.Utilities.UserUtils
 import com.example.vou_mobile.databinding.ActivityHomePageBinding
 import com.example.vou_mobile.fragment.Account
 import com.example.vou_mobile.fragment.FavoriteEvent
@@ -16,6 +15,7 @@ import com.example.vou_mobile.fragment.SendItem
 import com.example.vou_mobile.model.User
 import com.example.vou_mobile.services.RetrofitClient
 import com.example.vou_mobile.services.UserService
+import com.example.vou_mobile.utilities.UserUtils
 import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback

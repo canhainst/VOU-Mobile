@@ -24,9 +24,9 @@ class VerticalItemWarehouseAdapter(private val itemList: List<ItemsOfEvent>) : R
     private var listener: OnItemClickListener? = null
 
     val eventTest = listOf(
-        Event("0", "1", "Lắc xì may mắn", "Shopee Food", "https://thanhnien.mediacdn.vn/Uploaded/nthanhluan/2022_03_01/shopee-15-3-sieu-hoi-tieu-dung-4607.jpg", 100, "01/01/2000", "01/02/2000", 0, "Thu thập đủ 5 loại ngọc bằng cách lắc xì để đổi lấy phần thưởng. Tham gia ngay!"),
-        Event("1", "2", "Lắc xì may mắn", "KFC", "https://down-vn.img.susercontent.com/file/40d21efdf195faccb7710ae93fb5d0ea", 100, "01/01/2000", "01/02/2000", 0, "Thu thập đủ 5 loại ngọc bằng cách lắc xì để đổi lấy phần thưởng. Tham gia ngay!"),
-        Event("2", "3", "Lắc xì may mắn", "Shopee", "https://images.bloggiamgia.vn/full/07-02-2023/Shopee-sale-99-1-1675759490515.png", 100, "01/01/2000", "01/02/2000", 0, "Thu thập đủ 5 loại ngọc bằng cách lắc xì để đổi lấy phần thưởng. Tham gia ngay!"),
+        Event("0", "1", "Lắc xì may mắn", "https://thanhnien.mediacdn.vn/Uploaded/nthanhluan/2022_03_01/shopee-15-3-sieu-hoi-tieu-dung-4607.jpg", "01/01/2000", "01/02/2000", null, "Lắc xì", null),
+        Event("0", "1", "Lắc xì may mắn", "https://thanhnien.mediacdn.vn/Uploaded/nthanhluan/2022_03_01/shopee-15-3-sieu-hoi-tieu-dung-4607.jpg", "01/01/2000", "01/02/2000", null, "Lắc xì", null),
+        Event("0", "1", "Lắc xì may mắn", "https://thanhnien.mediacdn.vn/Uploaded/nthanhluan/2022_03_01/shopee-15-3-sieu-hoi-tieu-dung-4607.jpg", "01/01/2000", "01/02/2000", null, "Lắc xì", null),
     )
 
     val itemTest = listOf(
@@ -85,8 +85,8 @@ class VerticalItemWarehouseAdapter(private val itemList: List<ItemsOfEvent>) : R
         val brand = getBrandByEventID(eventID)
 
         holder.brandName.text = brand!!.brand_name
-        holder.eventTime.text = event!!.startTime + " - " + event.endTime
-        holder.eventName.text = event.eventName
+        holder.eventTime.text = event!!.start_time + " - " + event.end_time
+        holder.eventName.text = event.name
         Picasso.get()
             .load(brand.avatar)
             .into(holder.brandImg)
@@ -109,15 +109,15 @@ class VerticalItemWarehouseAdapter(private val itemList: List<ItemsOfEvent>) : R
         val brand = getBrandByEventID(eventID)
 
         dialogView.findViewById<TextView>(R.id.brand_name).text = brand!!.brand_name
-        dialogView.findViewById<TextView>(R.id.script).text = event!!.eventName
+        dialogView.findViewById<TextView>(R.id.script).text = event!!.name
         Picasso.get()
             .load(brand.avatar)
             .into(dialogView.findViewById<ImageView>(R.id.brandAvt))
         Picasso.get()
-            .load(event.eventPictureUrl)
+            .load(event.image)
             .into(dialogView.findViewById<ImageView>(R.id.picture))
-        dialogView.findViewById<TextView>(R.id.Time).text = "Expiration: ${event.startTime} - ${event.endTime}"
-        dialogView.findViewById<TextView>(R.id.script2).text = event.eventName
+        dialogView.findViewById<TextView>(R.id.Time).text = "Expiration: ${event.start_time} - ${event.end_time}"
+        dialogView.findViewById<TextView>(R.id.script2).text = event.name
         dialogView.findViewById<TextView>(R.id.detail).text = getItemsListByEventID(event.id!!)
 
         dialogView.findViewById<Button>(R.id.btnDirection).text = "Send Item"
@@ -149,7 +149,7 @@ class VerticalItemWarehouseAdapter(private val itemList: List<ItemsOfEvent>) : R
 
     private fun getBrandByEventID(id: String): Brand? {
         val event = eventTest.find { it.id == id }
-        return brandTest.find { it.id == event!!.brandID }
+        return brandTest.find { it.id == event!!.id_brand }
     }
 
     private fun getEventByID(id: String): Event? {

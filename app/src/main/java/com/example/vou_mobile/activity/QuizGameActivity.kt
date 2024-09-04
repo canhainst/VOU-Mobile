@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat
 import com.example.vou_mobile.R
 import com.example.vou_mobile.databinding.ActivityQuizGameBinding
 import com.example.vou_mobile.helper.Helper
+import com.example.vou_mobile.utilities.TextToSpeechUtils
 import com.example.vou_mobile.viewModel.EventViewModelProviderSingleton
 import com.example.vou_mobile.viewModel.GameViewModel
 import java.util.Calendar
@@ -17,8 +18,10 @@ class QuizGameActivity : AppCompatActivity() {
     private lateinit var binding: ActivityQuizGameBinding
     private val gameViewModel = GameViewModel()
     private val eventViewModel = EventViewModelProviderSingleton.getEventViewModel()
-    private val typeOfEvent = 1
+    private val typeOfEvent = "Quiz"
     private var time2: String? = null
+
+    private lateinit var ttsUtil: TextToSpeechUtils
 
     private val handler = android.os.Handler()
     private val runnable = object : Runnable {
@@ -41,18 +44,24 @@ class QuizGameActivity : AppCompatActivity() {
 
         // Bắt đầu cập nhật giao diện người dùng
         handler.post(runnable)
-        binding.tvTime.text = "The game will start at\n${eventViewModel.curEvent.value?.startTime}"
+        binding.tvTime.text = "The game will start at\n${eventViewModel.curEvent.value?.start_time}"
         val calendar = Calendar.getInstance()
-        calendar.time = Helper.stringToDate(eventViewModel.curEvent.value?.startTime!!)!!
+        calendar.time = Helper.stringToDate(eventViewModel.curEvent.value?.start_time!!)!!
         calendar.add(Calendar.MINUTE, 10)
         time2 = Helper.dateToString(calendar.time)
+
+        //text to speech
+        ttsUtil = TextToSpeechUtils(this) {
+            // Callback được gọi khi TTS đã sẵn sàng
+            ttsUtil.speak(binding.tvWelcome.text.toString())
+        }
     }
 
     @SuppressLint("SetTextI18n")
     private fun updateUI() {
         val curTime = Helper.dateToString(Date())
         eventViewModel.curEvent.value?.let { event ->
-            if (Helper.isTimeBefore(curTime, event.startTime)) {
+            if (Helper.isTimeBefore(curTime, event.start_time)) {
                 binding.btnPlay.isClickable = false
                 binding.btnPlay.backgroundTintList = ContextCompat.getColorStateList(this, R.color.light_grey)
                 binding.btnPlay.text = "It's not time to play yet"
@@ -76,5 +85,6 @@ class QuizGameActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         handler.removeCallbacks(runnable) // Dừng cập nhật khi Activity bị hủy
+        ttsUtil.shutdown()
     }
 }
