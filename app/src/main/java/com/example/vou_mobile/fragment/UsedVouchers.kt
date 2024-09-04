@@ -42,9 +42,9 @@ class UsedVouchers : Fragment(), VerticalUsedVoucherAdapter.OnItemClickListener 
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_used_vouchers, container, false)
         voucherList = listOf(
-            Voucher("0", "3","https://image.tienphong.vn/600x315/Uploaded/2024/pcgycivo/2023_09_22/thumb-anh-bia-3156.png", "Shopee Food", "Voucher Giảm Giá", "Giảm 10k trên giá món khao bạn đến 70k tổng đơn hàng", "01/01/2000", "ONLINE"),
-            Voucher("1", "2","https://quanlydoitac.viettel.vn/files/qldt/public/voucher/image/2024/1/25/ed8daadf-0504-446d-b7c8-8074f3df13a4.jpg", "KFC", "Voucher Khuyến Mại","Combo Mùa hè sôi động chỉ 80k", "01/01/2000", "ONLINE"),
-            Voucher("2", "6","https://magiamgiadienmayxanh.com/wp-content/uploads/2022/01/Phieu-mua-hang-Dien-May-Xanh-voucher-magiamgiadienmayxanh.jpg", "Điện máy xanh", "Voucher Khuyến Mại","Phiếu mua hàng trị giá 500k", "01/01/2000", "ONLINE")
+            Voucher("0", "3","https://image.tienphong.vn/600x315/Uploaded/2024/pcgycivo/2023_09_22/thumb-anh-bia-3156.png", 90, 11000, "Giảm 10k trên giá món khao bạn đến 70k tổng đơn hàng", "01/01/2000", "ONLINE", ""),
+            Voucher("1", "2","https://quanlydoitac.viettel.vn/files/qldt/public/voucher/image/2024/1/25/ed8daadf-0504-446d-b7c8-8074f3df13a4.jpg", 22, 1231,"Combo Mùa hè sôi động chỉ 80k", "01/01/2000", "ONLINE", ""),
+            Voucher("2", "6","https://magiamgiadienmayxanh.com/wp-content/uploads/2022/01/Phieu-mua-hang-Dien-May-Xanh-voucher-magiamgiadienmayxanh.jpg", 22, 22,"Phiếu mua hàng trị giá 500k", "01/01/2000", "ONLINE", "")
         )
 
         val allUsedVouchers = view.findViewById<RecyclerView>(R.id.usedVoucherRecyclerView)
@@ -59,11 +59,11 @@ class UsedVouchers : Fragment(), VerticalUsedVoucherAdapter.OnItemClickListener 
     override fun onItemClick(position: Int) {
         val data = Bundle().apply {
             putBoolean("isUsed", true)
-            putString("voucherImgUrl", voucherList[position].voucherPictureUrl)
-            putString("brandName", voucherList[position].brandName)
-            putString("script", voucherList[position].script)
-            putString("exp", voucherList[position].expiration)
-            putString("detail", voucherList[position].voucherDetail)
+            putString("voucherImgUrl", voucherList[position].image)
+            putString("brandName", "Brand Name")
+            putString("script", "Voucher")
+            putString("exp", "exp")
+            putString("detail", voucherList[position].description)
         }
         replaceFragment(VoucherDetail(), data)
     }

@@ -1,46 +1,82 @@
 package com.example.vou_mobile.activity
 
-import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
-import android.view.MotionEvent
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import com.example.vou_mobile.R
+import com.example.vou_mobile.Utilities.UserUtils
 import com.example.vou_mobile.databinding.ActivityHomePageBinding
 import com.example.vou_mobile.fragment.Account
 import com.example.vou_mobile.fragment.FavoriteEvent
 import com.example.vou_mobile.fragment.HomePage
 import com.example.vou_mobile.fragment.SendItem
-import com.google.firebase.auth.FirebaseAuth
+import com.example.vou_mobile.model.User
+import com.example.vou_mobile.services.RetrofitClient
+import com.example.vou_mobile.services.UserService
+import com.google.gson.Gson
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class HomePageActivity : AppCompatActivity() {
-    private lateinit var currentUserID: String
     private lateinit var binding: ActivityHomePageBinding
+    private lateinit var sharedPreferences: SharedPreferences
+    private val gson = Gson()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val currentUser = FirebaseAuth.getInstance().currentUser
+        // Khởi tạo sharedPreferences bên trong onCreate
+        sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
 
-        if (currentUser != null){
-            currentUserID = currentUser.uid
-            println(currentUserID)
+        // Lấy UUID từ UserUtils và lưu vào SharedPreferences
+        UserUtils.getUuidById { uuid ->
+            with(sharedPreferences.edit()) {
+                putString("uuid", uuid)
+                apply()
+            }
         }
+
+        // Lấy UUID từ SharedPreferences và in ra
+        val uuid = sharedPreferences.getString("uuid", null)
+
+        val userService = RetrofitClient.instance.create(UserService::class.java)
+        val call = userService.getUserByUUID(uuid!!)
+        call.enqueue(object : Callback<User> {
+            override fun onResponse(call: Call<User>, response: Response<User>) {
+                if (response.isSuccessful) {
+                    val user = response.body()
+                    if (user != null) {
+                        // Chuyển đổi đối tượng User thành JSON và lưu vào SharedPreferences
+                        val userJson = gson.toJson(user)
+                        with(sharedPreferences.edit()) {
+                            putString("currentUser", userJson)
+                            apply()
+                        }
+                    }
+                } else {
+                    println("Error: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<User>, t: Throwable) {
+                println("Failed: ${t.message}")
+            }
+        })
 
         binding = ActivityHomePageBinding.inflate(layoutInflater)
         setContentView(binding.root)
         replaceFragment(HomePage())
 
         binding.bottomNavigationView.setOnItemSelectedListener {
-            when(it.itemId){
+            when (it.itemId) {
                 R.id.home -> replaceFragment(HomePage())
                 R.id.event -> replaceFragment(FavoriteEvent())
                 R.id.account -> replaceFragment(Account())
-                else -> {
-                }
+                else -> {}
             }
             true
         }
@@ -48,7 +84,6 @@ class HomePageActivity : AppCompatActivity() {
         if (intent.getBooleanExtra("sendItem", false)) {
             replaceFragment(SendItem())
         }
-
 
         // Add OnBackStackChangedListener
         supportFragmentManager.addOnBackStackChangedListener {
@@ -93,5 +128,4 @@ class HomePageActivity : AppCompatActivity() {
             super.onBackPressed()
         }
     }
-
 }

@@ -34,9 +34,9 @@ class VerticalUnusedVoucherAdapter(private val itemList: List<Voucher>) : Recycl
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        holder.brandName.text = itemList[position].brandName
-        holder.voucherScript.text = itemList[position].script
-        holder.expiryDate.text = "Expiry Date: ${itemList[position].expiration}"
+        holder.brandName.text = "Brand Name"
+        holder.voucherScript.text = itemList[position].description
+        holder.expiryDate.text = "Expiry Date: ${"itemList[position].expiration"}"
 
         holder.itemView.setOnClickListener{
             listener?.onItemClick(position)

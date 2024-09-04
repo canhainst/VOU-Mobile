@@ -34,8 +34,8 @@ class UpdateAccount : AppCompatActivity() {
         findViewById<TextView>(R.id.updateLater).setOnClickListener {
             // save information without email, dob, gender, avtUrl to Firebase Realtime
             if (username != null && password != null) {
-                val user = User(null, username, password, null, null, null, null)
-                UserUtils.addNewUser(user)
+//                val user = User(null, username, password, null, null, null, null)
+//                UserUtils.addNewUser(user)
                 showToast("Account successfully created")
             }
             // move to homepage
@@ -49,8 +49,8 @@ class UpdateAccount : AppCompatActivity() {
 
             // save all information to Firebase Realtime
             if (username != null && password != null) {
-                val user = User(null, username, password, email, dob, gender, avtUrl)
-                UserUtils.addNewUser(user)
+//                val user = User(null, username, password, email, dob, gender, avtUrl)
+//                UserUtils.addNewUser(user)
                 showToast("Account successfully created")
             }
             // move to homepage

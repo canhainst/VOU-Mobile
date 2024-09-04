@@ -1,5 +1,7 @@
 package com.example.vou_mobile.fragment
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -15,9 +17,19 @@ import com.example.vou_mobile.adapter.HorizontalEventsAdapter
 import com.example.vou_mobile.adapter.HorizontalVouchersAdapter
 import com.example.vou_mobile.model.Brand
 import com.example.vou_mobile.model.Event
+import com.example.vou_mobile.model.User
 import com.example.vou_mobile.model.Voucher
+import com.example.vou_mobile.services.BrandService
+import com.example.vou_mobile.services.RetrofitClient
+import com.example.vou_mobile.services.VoucherService
 import com.example.vou_mobile.viewModel.GameViewModel
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.squareup.picasso.Picasso
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.create
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -35,6 +47,10 @@ class HomePage : Fragment() {
     private var param2: String? = null
 
     private val gameViewModel = GameViewModel()
+    private lateinit var sharedPreferences: SharedPreferences
+    private val gson = Gson()
+    private lateinit var currentUser: User
+    private var uuid: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,28 +67,43 @@ class HomePage : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_home_page, container, false)
 
-        val userPictureUrl = "https://scontent.fsgn2-8.fna.fbcdn.net/v/t39.30808-6/446651424_1681220119288938_4828402852445544478_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=MHCPT2zDHoEQ7kNvgG2yjD-&_nc_ht=scontent.fsgn2-8.fna&oh=00_AYCz7QsbOTWFy-oLUAowm7ba85crAps7UHZfvK4xn-ewPA&oe=66A4CB11"
-        val username = "Nguyen Thanh"
+        val brandService = RetrofitClient.instance.create(BrandService::class.java)
+        val voucherService = RetrofitClient.instance.create(VoucherService::class.java)
+
+        sharedPreferences = requireActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        uuid = sharedPreferences.getString("uuid", null)
+
+        val userJson = sharedPreferences.getString("currentUser", null)
+        if (userJson != null) {
+            val userType = object : TypeToken<User>() {}.type
+            currentUser = gson.fromJson(userJson, userType)
+        }
 
         Picasso.get()
-            .load(userPictureUrl)
+            .load(currentUser.avatar)
             .into(view.findViewById<ImageView>(R.id.imageView))
-        view.findViewById<TextView>(R.id.username).text = username
+        view.findViewById<TextView>(R.id.username).text = currentUser.full_name
 
         val allBrandRecyclerView = view.findViewById<RecyclerView>(R.id.brand)
         allBrandRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
-        val brandTest = listOf(
-            Brand("0", "https://downloadlogomienphi.com/sites/default/files/logos/download-logo-phuclong-mien-phi.jpg", "Phúc Long"),
-            Brand("1","https://play-lh.googleusercontent.com/KBMEAtNbnht-M9jqeJqiFCDqazutWY_OQk7UyfJfcO6QO1PI6EWWm0G6j1D60dgNN12-", "Shopee Food"),
-            Brand("2","https://seeklogo.com/images/K/kfc-logo-A232F2E6D1-seeklogo.com.png", "KFC"),
-            Brand("3","https://logodix.com/logo/2015053.png", "Shopee"),
-            Brand("4","https://upload.wikimedia.org/wikipedia/vi/b/b1/Logo_GSM_xanh_SM.png", "Xanh SM"),
-            Brand("5","https://downloadlogomienphi.com/sites/default/files/logos/download-logo-phuclong-mien-phi.jpg", "Phúc Long"),
-            Brand("6","https://upload.wikimedia.org/wikipedia/vi/b/b1/Logo_GSM_xanh_SM.png", "Xanh SM")
-            )
+        // Get all brand active
+        val callBrand = brandService.getAllBrand()
+        callBrand.enqueue(object : Callback<List<Brand>> {
+            override fun onResponse(call: Call<List<Brand>>, response: Response<List<Brand>>) {
+                if (response.isSuccessful) {
+                    val brands = response.body()
+                    if (brands != null) {
+                        allBrandRecyclerView.adapter = HorizontalBrandsAdapter(brands)                    }
+                } else {
+                    println("Error: ${response.code()}")
+                }
+            }
 
-        allBrandRecyclerView.adapter = HorizontalBrandsAdapter(brandTest)
+            override fun onFailure(call: Call<List<Brand>>, t: Throwable) {
+                println("Failed: ${t.message}")
+            }
+        })
 
         val allEventRecyclerView = view.findViewById<RecyclerView>(R.id.event)
         allEventRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
@@ -89,13 +120,24 @@ class HomePage : Fragment() {
         val allVouchersRecyclerView = view.findViewById<RecyclerView>(R.id.voucher)
         allVouchersRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
 
-        val voucherTest = listOf(
-            Voucher("0", "3","https://image.tienphong.vn/600x315/Uploaded/2024/pcgycivo/2023_09_22/thumb-anh-bia-3156.png", "Shopee Food", "Voucher Giảm Giá", "Giảm 10k trên giá món khao bạn đến 70k tổng đơn hàng", "01/01/2000", "ONLINE"),
-            Voucher("1", "2","https://quanlydoitac.viettel.vn/files/qldt/public/voucher/image/2024/1/25/ed8daadf-0504-446d-b7c8-8074f3df13a4.jpg", "KFC", "Voucher Khuyến Mại","Combo Mùa hè sôi động chỉ 80k", "01/01/2000", "ONLINE"),
-            Voucher("2", "6","https://magiamgiadienmayxanh.com/wp-content/uploads/2022/01/Phieu-mua-hang-Dien-May-Xanh-voucher-magiamgiadienmayxanh.jpg", "Điện máy xanh", "Voucher Khuyến Mại","Phiếu mua hàng trị giá 500k", "01/01/2000", "ONLINE")
-        )
+        // Get all voucher active
+        val callVoucher = voucherService.getAllVoucherByUserUuid(uuid!!)
+        callVoucher.enqueue(object : Callback<List<Voucher>> {
+            override fun onResponse(call: Call<List<Voucher>>, response: Response<List<Voucher>>) {
+                if (response.isSuccessful) {
+                    val vouchers = response.body()
+                    if (vouchers != null) {
+                        allVouchersRecyclerView.adapter = HorizontalVouchersAdapter(vouchers)
+                    }
+                } else {
+                    println("Error: ${response.code()}")
+                }
+            }
 
-        allVouchersRecyclerView.adapter = HorizontalVouchersAdapter(voucherTest)
+            override fun onFailure(call: Call<List<Voucher>>, t: Throwable) {
+                println("Failed: ${t.message}")
+            }
+        })
 
         return view
     }

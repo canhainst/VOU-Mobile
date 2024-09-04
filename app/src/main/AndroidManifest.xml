@@ -13,12 +13,10 @@
         android:fullBackupContent="@xml/backup_rules"
         android:label="@string/app_name"
         android:supportsRtl="true"
+        android:usesCleartextTraffic="true"
         android:theme="@style/Theme.VOUMobile"
         tools:ignore="MissingApplicationIcon"
         tools:targetApi="31" >
-        <activity
-            android:name=".activity.QRCodeActivity"
-            android:exported="false" />
         <activity
             android:name=".activity.ScanningActivity"
             android:exported="false" />

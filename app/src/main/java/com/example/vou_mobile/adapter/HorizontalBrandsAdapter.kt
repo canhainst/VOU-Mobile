@@ -24,9 +24,9 @@ class HorizontalBrandsAdapter(private val itemList: List<Brand>): RecyclerView.A
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val item = itemList[position]
         Picasso.get()
-            .load(item.brandAvtUrl)
+            .load(item.avatar)
             .into(holder.brandAvtUrl)
-        holder.brandName.text = item.brandName
+        holder.brandName.text = item.brand_name
     }
 
     override fun getItemCount() = itemList.size

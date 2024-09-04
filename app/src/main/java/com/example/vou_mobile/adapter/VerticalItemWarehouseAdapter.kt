@@ -47,13 +47,13 @@ class VerticalItemWarehouseAdapter(private val itemList: List<ItemsOfEvent>) : R
     )
 
     val brandTest = listOf(
-        Brand("0", "https://downloadlogomienphi.com/sites/default/files/logos/download-logo-phuclong-mien-phi.jpg", "Phúc Long"),
-        Brand("1", "https://play-lh.googleusercontent.com/KBMEAtNbnht-M9jqeJqiFCDqazutWY_OQk7UyfJfcO6QO1PI6EWWm0G6j1D60dgNN12-", "Shopee Food"),
-        Brand("2", "https://seeklogo.com/images/K/kfc-logo-A232F2E6D1-seeklogo.com.png", "KFC"),
-        Brand("3", "https://logodix.com/logo/2015053.png", "Shopee"),
-        Brand("4", "https://upload.wikimedia.org/wikipedia/vi/b/b1/Logo_GSM_xanh_SM.png", "Xanh SM"),
-        Brand("5", "https://downloadlogomienphi.com/sites/default/files/logos/download-logo-phuclong-mien-phi.jpg", "Phúc Long"),
-        Brand("6", "https://upload.wikimedia.org/wikipedia/vi/b/b1/Logo_GSM_xanh_SM.png", "Xanh SM")
+        Brand("0", "https://downloadlogomienphi.com/sites/default/files/logos/download-logo-phuclong-mien-phi.jpg", "Phúc Long", "", "e", "0", "a", "", "Active", ""),
+        Brand("1", "https://play-lh.googleusercontent.com/KBMEAtNbnht-M9jqeJqiFCDqazutWY_OQk7UyfJfcO6QO1PI6EWWm0G6j1D60dgNN12-", "Shopee Food","", "e", "0", "a", "", "Active", ""),
+        Brand("2", "https://seeklogo.com/images/K/kfc-logo-A232F2E6D1-seeklogo.com.png", "KFC", "", "e", "0", "a", "", "Active", ""),
+        Brand("3", "https://logodix.com/logo/2015053.png", "Shopee", "", "e", "0", "a", "", "Active", ""),
+        Brand("4", "https://upload.wikimedia.org/wikipedia/vi/b/b1/Logo_GSM_xanh_SM.png", "Xanh SM", "", "e", "0", "a", "", "Active", ""),
+        Brand("5", "https://downloadlogomienphi.com/sites/default/files/logos/download-logo-phuclong-mien-phi.jpg", "Phúc Long", "", "e", "0", "a", "", "Active", ""),
+        Brand("6", "https://upload.wikimedia.org/wikipedia/vi/b/b1/Logo_GSM_xanh_SM.png", "Xanh SM", "", "e", "0", "a", "", "Active", "")
     )
 
     interface OnItemClickListener {
@@ -84,11 +84,11 @@ class VerticalItemWarehouseAdapter(private val itemList: List<ItemsOfEvent>) : R
         val event = getEventByID(eventID)
         val brand = getBrandByEventID(eventID)
 
-        holder.brandName.text = brand!!.brandName
+        holder.brandName.text = brand!!.brand_name
         holder.eventTime.text = event!!.startTime + " - " + event.endTime
         holder.eventName.text = event.eventName
         Picasso.get()
-            .load(brand.brandAvtUrl)
+            .load(brand.avatar)
             .into(holder.brandImg)
 
         holder.itemView.setOnClickListener{
@@ -108,10 +108,10 @@ class VerticalItemWarehouseAdapter(private val itemList: List<ItemsOfEvent>) : R
         val event = getEventByID(eventID)
         val brand = getBrandByEventID(eventID)
 
-        dialogView.findViewById<TextView>(R.id.brand_name).text = brand!!.brandName
+        dialogView.findViewById<TextView>(R.id.brand_name).text = brand!!.brand_name
         dialogView.findViewById<TextView>(R.id.script).text = event!!.eventName
         Picasso.get()
-            .load(brand.brandAvtUrl)
+            .load(brand.avatar)
             .into(dialogView.findViewById<ImageView>(R.id.brandAvt))
         Picasso.get()
             .load(event.eventPictureUrl)

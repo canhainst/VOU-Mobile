@@ -41,11 +41,11 @@ class GetVoucherAdapter (private var vouchers: List<Voucher>) : RecyclerView.Ada
         val voucher = vouchers[position]
         //brand = getBrandFromID(voucher.brandId)
         Picasso.get()
-            .load(voucher.voucherPictureUrl)
+            .load(voucher.image)
             .into(holder.voucherImg)
 
-        holder.brandName.text = voucher.brandName
-        holder.script.text = voucher.script
+        holder.brandName.text = "Brand Name"
+        holder.script.text = voucher.description
         holder.itemList.text = "1 Ngọc xanh, 2 Ngọc đỏ"
         holder.btnGet.setOnClickListener {
             if (holder.btnGet.text == "Get"){
@@ -66,8 +66,8 @@ class GetVoucherAdapter (private var vouchers: List<Voucher>) : RecyclerView.Ada
             .setView(binding.root)
             .create()
 
-        binding.textWithBrandName.text = "You have received 1 voucher from ${voucher.brandName}"
-        binding.script.text = voucher.script
+        binding.textWithBrandName.text = "You have received 1 voucher from ${"Brand name"}"
+        binding.script.text = voucher.description
         binding.animationVoucher.playAnimation()
         dialogBuilder.show()
     }

@@ -33,8 +33,8 @@ class VerticalUsedVoucherAdapter (private val itemList: List<Voucher>) : Recycle
     override fun getItemCount() = itemList.size
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        holder.brandName.text = itemList[position].brandName
-        holder.voucherScript.text = itemList[position].script
+        holder.brandName.text = "Brand Name"
+        holder.voucherScript.text = itemList[position].description
         holder.expiryDate.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.red))
         holder.expiryDate.text = "Used"
 

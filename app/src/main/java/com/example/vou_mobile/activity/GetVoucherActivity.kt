@@ -15,8 +15,8 @@ class GetVoucherActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val listVoucher = listOf(
-            Voucher("1", "1", "https://upload.wikimedia.org/wikipedia/vi/b/b1/Logo_GSM_xanh_SM.png", "Xanh SM", "Giảm 20% cuốc xe", null, null, null),
-            Voucher("2", "2", "https://upload.wikimedia.org/wikipedia/vi/b/b1/Logo_GSM_xanh_SM.png", "Xanh SM", "Giảm 20% cuốc xe", null, null, null))
+            Voucher("1", "1", "https://upload.wikimedia.org/wikipedia/vi/b/b1/Logo_GSM_xanh_SM.png", 90, 100000, null, "Activate", "ONLINE", ""),
+            Voucher("2", "2", "https://upload.wikimedia.org/wikipedia/vi/b/b1/Logo_GSM_xanh_SM.png", 88, 50000, null, "Activate", "OFFLINE", ""))
         binding.rcvVoucherList.layoutManager = LinearLayoutManager(binding.root.context, LinearLayoutManager.VERTICAL, false)
         binding.rcvVoucherList.adapter = GetVoucherAdapter(listVoucher)
 
