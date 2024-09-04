@@ -47,10 +47,12 @@ class FavoriteEventAdapter(private var events: List<Event>, private val gameView
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val event = events[position]
-        holder.brand.text = event.brandName
+        holder.brand.text = event.id_brand
         Picasso.get()
-            .load(event.eventPictureUrl)
+            .load(event.image)
             .into(holder.imageView)
+
+        holder.notifButton.setImageResource(R.drawable.baseline_notifications_active_24)
 
         holder.time.text = Helper.getTimeRangeString(event)
         holder.notifButton.setOnClickListener {
@@ -66,8 +68,10 @@ class FavoriteEventAdapter(private var events: List<Event>, private val gameView
             .setTitle("Confirm")
             .setMessage("Are you sure you want to remove this event from your favorites?")
             .setPositiveButton("Remove") { dialog, _ ->
-                viewModel.removeFavoriteEvent(event)
-                dialog.dismiss()
+                viewModel.removeFavoriteEvent(event, "01724dc6-775a-4f52-95fd-245c615f2e77"){
+                    dialog.dismiss()
+                    Toast.makeText(context, "Event marking has been removed", Toast.LENGTH_SHORT).show()
+                }
             }
             .setNegativeButton("Back") { dialog, _ ->
                 dialog.dismiss()
@@ -87,12 +91,11 @@ class FavoriteEventAdapter(private var events: List<Event>, private val gameView
             .setView(binding.root)
             .create()
 
-        binding.brandName.text = event.brandName
-        binding.script.text = event.eventName
-        binding.script2.text = event.eventName
-        binding.detail.text = event.eventDetail
+        binding.brandName.text = event.id_brand
+        binding.script.text = event.name
+        binding.script2.text = event.name
         Picasso.get()
-            .load(event.eventPictureUrl)
+            .load(event.image)
             .into(binding.picture)
         binding.Time.text = Helper.getTimeRangeString(event)
 
@@ -103,25 +106,25 @@ class FavoriteEventAdapter(private var events: List<Event>, private val gameView
         //lay ngay hien tai
         val curTime = Helper.dateToString(Date())
         val calendar = Calendar.getInstance()
-        calendar.time = Helper.stringToDate(event.startTime!!)!!
+        calendar.time = Helper.stringToDate(event.start_time!!)!!
         calendar.add(Calendar.MINUTE, 10)
         val time2 = Helper.dateToString(calendar.time) //thoi gian sau 10p ke tu khi bat dau
 
-        if (event.typeOfEvent == 0 && Helper.isTimeAfter(curTime, event.endTime)) {
+        if (event.type == "Lắc xì" && Helper.isTimeAfter(curTime, event.end_time)) {
             binding.btnDirection.visibility = View.GONE
             Toast.makeText(context, "The event has ended!", Toast.LENGTH_SHORT).show()
-        } else if (event.typeOfEvent == 1 && Helper.isTimeAfter(curTime, time2)){
+        } else if (event.type == "Quiz" && Helper.isTimeAfter(curTime, time2)){
             binding.btnDirection.visibility = View.GONE
             Toast.makeText(context, "The event has started!", Toast.LENGTH_SHORT).show()
         }
 
         binding.btnDirection.setOnClickListener {
-            if (event.typeOfEvent == 0 && Helper.isTimeBefore(curTime, event.startTime)){
+            if (event.type == "Lắc xì" && Helper.isTimeBefore(curTime, event.start_time)){
                 Toast.makeText(context, "The event has not started yet!", Toast.LENGTH_SHORT).show()
             }  else{
                 // Trong Activity đầu tiên
                 viewModel.chooseEvent(event)
-                gameViewModel.setGame(event.typeOfEvent, context)
+                gameViewModel.setGame(event.type!!, context)
                 gameViewModel.startGame()
             }
         }

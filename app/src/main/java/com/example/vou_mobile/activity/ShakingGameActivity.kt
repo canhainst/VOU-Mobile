@@ -32,7 +32,7 @@ class ShakingGameActivity : AppCompatActivity(), ShakeDetector.OnShakeListener {
     private lateinit var binding: ActivityShakingGameBinding
     private val gameViewModel = GameViewModel()
     private var rotate = false
-    private val typeOfEvent = 0
+    private val typeOfEvent = "Lắc xì"
 
     private lateinit var sensorManager: SensorManager
     private lateinit var accelerometer: Sensor
@@ -69,7 +69,7 @@ class ShakingGameActivity : AppCompatActivity(), ShakeDetector.OnShakeListener {
         }
 
         binding.itemsFab.setOnClickListener {
-            val event = Event(null, "0", "Shaking Game", "Phúc Long", "https://phuclong.com.vn/upload/files/a4%20htk-02.jpg", 100, "18:00 26/07/2024", "18:00 30/08/2024", 0, "")
+            val event = Event("", "0", "Shaking Game", "https://phuclong.com.vn/upload/files/a4%20htk-02.jpg", "18:00 26/07/2024", "18:00 30/08/2024", "", "Lắc xì", null)
             showItemsDialog(event)
         }
 
@@ -91,12 +91,11 @@ class ShakingGameActivity : AppCompatActivity(), ShakeDetector.OnShakeListener {
             .setView(binding.root)
             .create()
 
-        binding.brandName.text = event.brandName
-        binding.script.text = event.eventName
-        binding.script2.text = event.eventName
-        binding.detail.text = event.eventDetail
+        binding.brandName.text = event.id_brand
+        binding.script.text = event.name
+        binding.script2.text = event.name
         Picasso.get()
-            .load(event.eventPictureUrl)
+            .load(event.image)
             .into(binding.picture)
         binding.Time.text = Helper.getTimeRangeString(event)
 

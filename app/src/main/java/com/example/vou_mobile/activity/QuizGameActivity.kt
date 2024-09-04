@@ -18,7 +18,7 @@ class QuizGameActivity : AppCompatActivity() {
     private lateinit var binding: ActivityQuizGameBinding
     private val gameViewModel = GameViewModel()
     private val eventViewModel = EventViewModelProviderSingleton.getEventViewModel()
-    private val typeOfEvent = 1
+    private val typeOfEvent = "Quiz"
     private var time2: String? = null
 
     private lateinit var ttsUtil: TextToSpeechUtils
@@ -44,9 +44,9 @@ class QuizGameActivity : AppCompatActivity() {
 
         // Bắt đầu cập nhật giao diện người dùng
         handler.post(runnable)
-        binding.tvTime.text = "The game will start at\n${eventViewModel.curEvent.value?.startTime}"
+        binding.tvTime.text = "The game will start at\n${eventViewModel.curEvent.value?.start_time}"
         val calendar = Calendar.getInstance()
-        calendar.time = Helper.stringToDate(eventViewModel.curEvent.value?.startTime!!)!!
+        calendar.time = Helper.stringToDate(eventViewModel.curEvent.value?.start_time!!)!!
         calendar.add(Calendar.MINUTE, 10)
         time2 = Helper.dateToString(calendar.time)
 
@@ -61,7 +61,7 @@ class QuizGameActivity : AppCompatActivity() {
     private fun updateUI() {
         val curTime = Helper.dateToString(Date())
         eventViewModel.curEvent.value?.let { event ->
-            if (Helper.isTimeBefore(curTime, event.startTime)) {
+            if (Helper.isTimeBefore(curTime, event.start_time)) {
                 binding.btnPlay.isClickable = false
                 binding.btnPlay.backgroundTintList = ContextCompat.getColorStateList(this, R.color.light_grey)
                 binding.btnPlay.text = "It's not time to play yet"

@@ -9,6 +9,7 @@
     <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true" />
 
     <application
+        android:usesCleartextTraffic="true"
         android:icon="@mipmap/ic_launcher"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -18,9 +19,6 @@
         android:theme="@style/Theme.VOUMobile"
         tools:ignore="MissingApplicationIcon"
         tools:targetApi="31" >
-        <activity
-            android:name=".activity.QRCodeActivity"
-            android:exported="false" />
         <activity
             android:name=".activity.ScanningActivity"
             android:exported="false" />

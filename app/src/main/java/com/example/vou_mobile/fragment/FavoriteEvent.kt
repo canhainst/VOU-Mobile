@@ -50,7 +50,7 @@ class FavoriteEvent : Fragment() {
     }
 
     private fun initFavoriteEvents() {
-        viewModel.loadFavoriteEvents()
+        viewModel.loadFavoriteEvents("01724dc6-775a-4f52-95fd-245c615f2e77")
         viewModel.favoriteEvents.observe(viewLifecycleOwner, Observer { items ->
             binding.rcvEvents.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             binding.rcvEvents.adapter = FavoriteEventAdapter(items, gameViewModel)

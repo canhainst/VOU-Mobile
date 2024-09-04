@@ -11,7 +11,7 @@ class PlayQuizGameActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPlayQuizGameBinding
     private val gameViewModel = GameViewModel()
     private val eventViewModel = EventViewModel()
-    private val typeOfEvent = 1
+    private val typeOfEvent = "Quiz"
 
     private lateinit var ttsUtil: TextToSpeechUtils
 
