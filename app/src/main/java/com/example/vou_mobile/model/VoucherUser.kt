@@ -5,6 +5,5 @@ data class VoucherUser (
     var id_user: String,
     var quantity: Int,
     var used: Int?,
-    var quantityUsed: Int?,
     var time_update: String
 )

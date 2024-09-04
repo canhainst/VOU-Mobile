@@ -3,6 +3,8 @@ package com.example.vou_mobile.adapter
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
+import android.content.SharedPreferences
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,16 +12,23 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.vou_mobile.R
 import com.example.vou_mobile.databinding.DetailDialogBinding
 import com.example.vou_mobile.helper.Helper
+import com.example.vou_mobile.model.Brand
 import com.example.vou_mobile.model.Event
+import com.example.vou_mobile.services.BrandService
+import com.example.vou_mobile.services.RetrofitClient
 import com.example.vou_mobile.viewModel.GameViewModel
 import com.example.vou_mobile.viewModel.EventViewModel
 import com.example.vou_mobile.viewModel.EventViewModelProviderSingleton
 import com.squareup.picasso.Picasso
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.util.Calendar
 import java.util.Date
 
@@ -47,19 +56,37 @@ class FavoriteEventAdapter(private var events: List<Event>, private val gameView
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val event = events[position]
-        holder.brand.text = event.id_brand
+        val eventUpdate = Helper.fixEventTime(event)
+        val brandService = RetrofitClient.instance.create(BrandService::class.java)
+        val callBrand = brandService.getBrandByUuid(eventUpdate.id_brand)
+        callBrand.enqueue(object : Callback<Brand> {
+            override fun onResponse(call: Call<Brand>, response: Response<Brand>) {
+                if (response.isSuccessful) {
+                    val brand = response.body()
+                    if (brand != null) {
+                        holder.brand.text = brand.brand_name
+                    }
+                } else {
+                    println("Error: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<Brand>, t: Throwable) {
+                println("Failed: ${t.message}")
+            }
+        })
         Picasso.get()
-            .load(event.image)
+            .load(eventUpdate.image)
             .into(holder.imageView)
 
         holder.notifButton.setImageResource(R.drawable.baseline_notifications_active_24)
 
-        holder.time.text = Helper.getTimeRangeString(event)
+        holder.time.text = Helper.getTimeRangeString(eventUpdate)
         holder.notifButton.setOnClickListener {
-            showConfirmDialog(event)
+            showConfirmDialog(eventUpdate)
         }
         holder.itemView.setOnClickListener {
-            showEventDialog(event)
+            showEventDialog(eventUpdate)
         }
     }
 
@@ -85,18 +112,36 @@ class FavoriteEventAdapter(private var events: List<Event>, private val gameView
         alertDialog.show()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun showEventDialog(event: Event) {
         val binding = DetailDialogBinding.inflate(LayoutInflater.from(context))
         val dialogBuilder = AlertDialog.Builder(context)
             .setView(binding.root)
             .create()
+        val brandService = RetrofitClient.instance.create(BrandService::class.java)
+        val callBrand = brandService.getBrandByUuid(event.id_brand)
+        callBrand.enqueue(object : Callback<Brand> {
+            override fun onResponse(call: Call<Brand>, response: Response<Brand>) {
+                if (response.isSuccessful) {
+                    val brand = response.body()
+                    if (brand != null) {
+                        binding.brandName.text = brand.brand_name
+                    }
+                } else {
+                    println("Error: ${response.code()}")
+                }
+            }
 
-        binding.brandName.text = event.id_brand
+            override fun onFailure(call: Call<Brand>, t: Throwable) {
+                println("Failed: ${t.message}")
+            }
+        })
         binding.script.text = event.name
         binding.script2.text = event.name
         Picasso.get()
             .load(event.image)
             .into(binding.picture)
+
         binding.Time.text = Helper.getTimeRangeString(event)
 
         binding.btnBack.setOnClickListener {

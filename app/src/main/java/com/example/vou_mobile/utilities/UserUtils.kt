@@ -12,6 +12,7 @@ object UserUtils {
     private var auth: FirebaseAuth = Firebase.auth
     val userID = auth.currentUser!!.uid
 
+
     fun getUuidById(callback: (String?) -> Unit) {
         val database = FirebaseDatabase.getInstance().reference
 

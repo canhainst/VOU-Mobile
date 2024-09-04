@@ -1,12 +1,16 @@
 package com.example.vou_mobile.helper
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import com.example.vou_mobile.model.Event
+import java.text.ParseException
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 
 object Helper {
-
     fun convertDateString(dateString: String): String {
         val fullFormat = SimpleDateFormat("HH:mm dd/MM/yyyy", Locale.getDefault())
         val shortFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
@@ -24,6 +28,29 @@ object Helper {
         }
     }
 
+    fun fixEventTime(event: Event): Event {
+        // Định dạng ngày giờ đầu vào và đầu ra
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("15:00 dd/MM/yyyy", Locale.getDefault())
+
+        // Hàm giúp chuyển đổi chuỗi ngày giờ
+        fun formatDate(dateStr: String): String {
+            return try {
+                val date = inputFormat.parse(dateStr) ?: return ""
+                outputFormat.format(date)
+            } catch (e: ParseException) {
+                ""
+            }
+        }
+
+        val newStartTime = formatDate(event.start_time!!)
+        val newEndTime = event.end_time?.let { formatDate(it) }
+
+        return event.copy(
+            start_time = newStartTime,
+            end_time = newEndTime
+        )
+    }
 
     //kiem tra time1 có sau time2 khong
     fun isTimeAfter(time: String?, time2:String?): Boolean {

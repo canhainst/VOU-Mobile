@@ -20,7 +20,6 @@ class VerticalUsedVoucherAdapter (private val itemList: List<Voucher>) : Recycle
         this.listener = listener
     }
     class MyViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
-        val imgVoucherType: ImageView = itemView.findViewById(R.id.imgVoucherType)
         val brandName: TextView = itemView.findViewById(R.id.brand_name)
         val voucherScript: TextView = itemView.findViewById(R.id.voucherScript)
         val expiryDate: TextView = itemView.findViewById(R.id.expiryDate)
