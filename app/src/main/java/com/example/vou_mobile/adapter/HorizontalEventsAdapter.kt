@@ -3,6 +3,7 @@ package com.example.vou_mobile.adapter
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
+import android.content.SharedPreferences
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -29,10 +30,12 @@ import retrofit2.Response
 import java.util.Calendar
 import java.util.Date
 
-class HorizontalEventsAdapter(private var itemList: List<Event>, private val gameViewModel: GameViewModel): RecyclerView.Adapter<HorizontalEventsAdapter.MyViewHolder>(){
+class HorizontalEventsAdapter(private var events: List<Event>, private var favEvents: List<Event>, private val gameViewModel: GameViewModel): RecyclerView.Adapter<HorizontalEventsAdapter.MyViewHolder>(){
     private lateinit var context: Context
     private var listener: OnItemClickListener? = null
     private val viewModel =  EventViewModelProviderSingleton.getEventViewModel()
+    private lateinit var sharedPreferences: SharedPreferences
+    private var uuid: String? = null
 
     interface OnItemClickListener {
         fun onItemClick(position: Int)
@@ -49,29 +52,32 @@ class HorizontalEventsAdapter(private var itemList: List<Event>, private val gam
         val markEvent: ImageButton = itemView.findViewById(R.id.markEvent)
     }
 
-    override fun getItemCount() = itemList.size
+    override fun getItemCount() = events.size
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        Log.d("EventViewModelAdapter", itemList.toString())
-        val item = itemList[position]
+        sharedPreferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        uuid = sharedPreferences.getString("uuid", "")
+        val item = events[position]
         Picasso.get()
             .load(item.image)
             .into(holder.eventPicture)
 
+        val eventUpdate = Helper.fixEventTime(events[position])
+
         holder.itemView.setOnClickListener{
             listener?.onItemClick(position)
-            showCustomDialog(holder.itemView.context, position)
+            showCustomDialog(holder.itemView.context, eventUpdate)
         }
 
         var isFavorite = false
-        if (viewModel.favoriteEvents.value != null && viewModel.favoriteEvents.value!!.isNotEmpty()){
-            isFavorite = viewModel.favoriteEvents.value!!.any { it.id == itemList[position].id}
+        if (favEvents.isNotEmpty()){
+            isFavorite = favEvents.any { it.id == events[position].id}
         }
         when {
             isFavorite -> {
                 holder.markEvent.setImageResource(R.drawable.baseline_notifications_active_24)
                 holder.markEvent.setOnClickListener {
-                    viewModel.removeFavoriteEvent(itemList[position], "01724dc6-775a-4f52-95fd-245c615f2e77"){
+                    viewModel.removeFavoriteEvent(context, events[position], uuid!!){
                         if (it){
                             holder.markEvent.setImageResource(R.drawable.baseline_notifications_none_24)
                             Toast.makeText(context, "Event marking has been removed", Toast.LENGTH_SHORT).show()
@@ -82,8 +88,8 @@ class HorizontalEventsAdapter(private var itemList: List<Event>, private val gam
             else -> {
                 holder.markEvent.setImageResource(R.drawable.baseline_notifications_none_24)
                 holder.markEvent.setOnClickListener {
-                    val favEvent = FavEvents(null, itemList[position].id, "01724dc6-775a-4f52-95fd-245c615f2e77", null)
-                    viewModel.addFavoriteEvent(favEvent){
+                    val favEvent = FavEvents(null, events[position].id, uuid!!, null)
+                    viewModel.addFavoriteEvent(context, favEvent){
                         if (it){
                             holder.markEvent.setImageResource(R.drawable.baseline_notifications_active_24)
                             Toast.makeText(context, "Event will be notified when it's about to occur", Toast.LENGTH_LONG).show()
@@ -94,20 +100,20 @@ class HorizontalEventsAdapter(private var itemList: List<Event>, private val gam
         }
     }
 
-    @SuppressLint("InflateParams", "SetTextI18n")
-    private fun showCustomDialog(context: Context, position: Int) {
+    @SuppressLint("InflateParams", "SetTextI18n", "CutPasteId")
+    private fun showCustomDialog(context: Context, eventUpdate: Event) {
         val dialogView = LayoutInflater.from(context).inflate(R.layout.detail_dialog, null)
         val dialogBuilder = AlertDialog.Builder(context)
             .setView(dialogView)
             .create()
 
-        dialogView.findViewById<TextView>(R.id.brand_name).text = itemList[position].id_brand
-        dialogView.findViewById<TextView>(R.id.script).text = itemList[position].name
+        dialogView.findViewById<TextView>(R.id.brand_name).text = eventUpdate.id_brand
+        dialogView.findViewById<TextView>(R.id.script).text = eventUpdate.name
         Picasso.get()
-            .load(itemList[position].image)
+            .load(eventUpdate.image)
             .into(dialogView.findViewById<ImageView>(R.id.picture))
-        dialogView.findViewById<TextView>(R.id.Time).text = Helper.getTimeRangeString(itemList[position])
-        dialogView.findViewById<TextView>(R.id.script2).text = itemList[position].name
+        dialogView.findViewById<TextView>(R.id.Time).text = Helper.getTimeRangeString(eventUpdate)
+        dialogView.findViewById<TextView>(R.id.script2).text = eventUpdate.name
         dialogView.findViewById<Button>(R.id.btnDirection).text = "Play"
         dialogView.findViewById<Button>(R.id.btnBack).text = "Back"
         dialogView.findViewById<Button>(R.id.btnBack).setOnClickListener {
@@ -117,24 +123,24 @@ class HorizontalEventsAdapter(private var itemList: List<Event>, private val gam
         //lay ngay hien tai
         val curTime = Helper.dateToString(Date())
         val calendar = Calendar.getInstance()
-        calendar.time = Helper.stringToDate(itemList[position].start_time!!)!!
+        calendar.time = Helper.stringToDate(eventUpdate.start_time!!)!!
         calendar.add(Calendar.MINUTE, 10)
         val time2 = Helper.dateToString(calendar.time)
 
-        if (itemList[position].type == "Lắc xì" && Helper.isTimeAfter(curTime, itemList[position].end_time)) {
+        if (eventUpdate.type?.lowercase() == "lắc xì" && Helper.isTimeAfter(curTime, eventUpdate.end_time)) {
             dialogView.findViewById<Button>(R.id.btnDirection).visibility = View.GONE
             Toast.makeText(context, "The event has ended!", Toast.LENGTH_SHORT).show()
-        } else if (itemList[position].type == "Quiz" && Helper.isTimeAfter(curTime, time2)){
+        } else if (eventUpdate.type?.lowercase() == "quiz" && Helper.isTimeAfter(curTime, time2)){
             dialogView.findViewById<Button>(R.id.btnDirection).visibility = View.GONE
             Toast.makeText(context, "The event has started!", Toast.LENGTH_SHORT).show()
         }
 
         dialogView.findViewById<Button>(R.id.btnDirection).setOnClickListener {
-            if (itemList[position].type == "Lắc xì"  && Helper.isTimeBefore(curTime, itemList[position].start_time)){
+            if (eventUpdate.type?.lowercase() == "lắc xì"  && Helper.isTimeBefore(curTime, eventUpdate.start_time)){
                 Toast.makeText(context, "The event has not started yet!", Toast.LENGTH_SHORT).show()
             }  else{
-                EventViewModelProviderSingleton.getEventViewModel().chooseEvent(itemList[position])
-                gameViewModel.setGame(itemList[position].type!!, context)
+                EventViewModelProviderSingleton.getEventViewModel().chooseEvent(eventUpdate)
+                gameViewModel.setGame(eventUpdate.type!!, context)
                 gameViewModel.startGame()
             }
         }
@@ -147,8 +153,12 @@ class HorizontalEventsAdapter(private var itemList: List<Event>, private val gam
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    fun updateData(newEvents: List<Event>) {
-        itemList = newEvents
-        notifyDataSetChanged() // Thông báo cho adapter rằng dữ liệu đã thay đổi
+    fun updateData(type: String, newEvents: List<Event>) {
+        if (type == "events"){
+            events = newEvents
+        } else{
+            favEvents = newEvents
+        }
+        notifyDataSetChanged()
     }
 }

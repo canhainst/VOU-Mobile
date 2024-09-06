@@ -1,9 +1,20 @@
 package com.example.vou_mobile.viewModel
 
+import android.Manifest
+import android.app.Activity
+import android.app.Application
+import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.util.Log
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.vou_mobile.activity.RequestPermissionsActivity
+import com.example.vou_mobile.broadcastReceiver.cancelEventReminder
+import com.example.vou_mobile.broadcastReceiver.scheduleEventReminder
+import com.example.vou_mobile.helper.Helper
 import com.example.vou_mobile.model.Event
 import com.example.vou_mobile.model.FavEvents
 import com.example.vou_mobile.services.EventService
@@ -11,6 +22,8 @@ import com.example.vou_mobile.services.RetrofitClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 object EventViewModelProviderSingleton {
     private var eventViewModel: EventViewModel? = null
@@ -34,7 +47,7 @@ class EventViewModel() : ViewModel() {
     fun loadAllEvents(){
         _events.value = emptyList()
         val api = RetrofitClient.instance.create(EventService::class.java)
-        api.getAllEvent().enqueue(object : Callback<List<Event>> {
+        api.getOngoingEvents().enqueue(object : Callback<List<Event>> {
             override fun onResponse(call: Call<List<Event>>, response: Response<List<Event>>
             ) {
                 if (response.isSuccessful && response.body() != null) {
@@ -52,86 +65,72 @@ class EventViewModel() : ViewModel() {
             }
         })
     }
-    fun loadFavoriteEvents(userId: String) {
+    fun loadFavoriteEvents(userId: String, context: Context) {
+        _favoriteEvents.value = emptyList()
         // Tạo Retrofit instance và service
         val api = RetrofitClient.instance.create(EventService::class.java)
 
         // Gọi API để lấy danh sách sự kiện yêu thích
-        api.getAllFavorite(userId).enqueue(object : Callback<List<FavEvents>> {
-            override fun onResponse(call: Call<List<FavEvents>>, response: Response<List<FavEvents>>) {
+        api.getAllFavorite(userId).enqueue(object : Callback<List<Event>> {
+            override fun onResponse(call: Call<List<Event>>, response: Response<List<Event>>) {
                 if (response.isSuccessful && response.body() != null) {
-                    val favEvents = response.body()!!
 
-                    // Lấy danh sách các eventId từ favEvents
-                    val eventIds = favEvents.map { it.id_event }
+                    _favoriteEvents.value = response.body()!!
+                    Log.d("EventViewModel", response.body().toString())
 
-                    // Nếu danh sách eventIds rỗng, cập nhật UI ngay lập tức
-                    if (eventIds.isEmpty()) {
-                        _favoriteEvents.value = emptyList()
-                        return
-                    }
+                    // Kiểm tra quyền trước khi lên lịch thông báo
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                        ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+                    ) {
+                        // Nếu chưa có quyền, yêu cầu quyền từ Activity
+                        if (context is Activity) {
+                            ActivityCompat.requestPermissions(
+                                context,
+                                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                                RequestPermissionsActivity.REQUEST_CODE_POST_NOTIFICATIONS
+                            )
+                        } else {
+                            Log.e("EventViewModel", "Context is not an Activity, cannot request permissions.")
+                        }
+                    } else {
+                        // Nếu quyền đã được cấp, tiếp tục lên lịch thông báo cho các sự kiện
+                        response.body()!!.forEachIndexed { index, event ->
+                            val eventTimeMillis = parseEventTime(Helper.fixTime(event.start_time!!))
 
-                    // Tạo danh sách sự kiện rỗng để cập nhật sau
-                    val eventsList = mutableListOf<Event>()
-
-                    // Đếm số lượng sự kiện cần lấy để xử lý đồng bộ hóa
-                    val totalEvents = eventIds.size
-                    var eventsFetched = 0
-
-                    // Đối với mỗi eventId, gọi API để lấy chi tiết sự kiện
-                    for (eventId in eventIds) {
-                        api.getEventByID(eventId).enqueue(object : Callback<Event> {
-                            override fun onResponse(call: Call<Event>, response: Response<Event>) {
-                                if (response.isSuccessful && response.body() != null) {
-                                    val event = response.body()!!
-
-                                    // Thêm sự kiện vào danh sách
-                                    eventsList.add(event)
-                                } else {
-                                    Log.d("API", "Failed to fetch event details for ID: $eventId")
-                                }
-
-                                // Kiểm tra xem tất cả các sự kiện đã được lấy chưa
-                                eventsFetched++
-                                if (eventsFetched == totalEvents) {
-                                    // Cập nhật UI hoặc thực hiện các hành động khác sau khi có dữ liệu
-                                    Log.d("API", "All event details fetched.${eventsList}")
-                                    _favoriteEvents.value = eventsList
+                            // Check if the event time is in the future
+                            if (eventTimeMillis > System.currentTimeMillis()) {
+                                // Schedule notification only if not already shown
+                                if (!isEventNotified(context, event.id)) {
+                                    scheduleEventReminder(context, event.id, event.name!!, eventTimeMillis)
+                                    markEventAsNotified(context, event.id)
                                 }
                             }
-
-                            override fun onFailure(call: Call<Event>, t: Throwable) {
-                                Log.d("API", "Error fetching event details: ${t.message}")
-                                eventsFetched++
-                                if (eventsFetched == totalEvents) {
-                                    _favoriteEvents.value = eventsList
-                                }
-                            }
-                        })
+                        }
                     }
-                } else {
-                    Log.d("API", "No favorite events found or failed to fetch.")
+                } else{
                     _favoriteEvents.value = emptyList()
+                    Log.e("EventViewModel", "Empty or failed response.")
                 }
             }
 
-            override fun onFailure(call: Call<List<FavEvents>>, t: Throwable) {
+            override fun onFailure(call: Call<List<Event>>, t: Throwable) {
                 Log.d("API", "Error: ${t.message}")
                 _favoriteEvents.value = emptyList()
             }
         })
     }
 
-    fun removeFavoriteEvent(event: Event, userID: String,  callback: (Boolean) -> Unit) {
+    fun removeFavoriteEvent(context: Context, event: Event, userID: String,  callback: (Boolean) -> Unit) {
         val currentList = _favoriteEvents.value?.toMutableList() ?: mutableListOf()
         currentList.remove(event)
 
         //update postgre
         val api = RetrofitClient.instance.create(EventService::class.java)
-//        api.deleteFavorite(event.id!!, userID).enqueue(object : Callback<Void> {
-        api.deleteFavorite("c4fb5c4d-4ef7-4c43-b978-4bfab379dce1", userID).enqueue(object : Callback<Void> {
+        api.deleteFavorite(event.id, userID).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
+                    _favoriteEvents.value = currentList
+                    cancelEventReminder(context, event.id)
                     callback(true)
                 } else {
                     Log.d("API", "Failed to delete favorite event.")
@@ -144,15 +143,16 @@ class EventViewModel() : ViewModel() {
                 callback(false)
             }
         })
-        _favoriteEvents.value = currentList
+
     }
 
-    fun addFavoriteEvent(FavEvent: FavEvents, callback: (Boolean) -> Unit) {
+    fun addFavoriteEvent(context: Context, FavEvent: FavEvents, callback: (Boolean) -> Unit) {
         //update postgre
         val api = RetrofitClient.instance.create(EventService::class.java)
         api.addFavorite(FavEvent).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
+                    loadFavoriteEvents(FavEvent.id_user, context)
                     callback(true)
                 } else {
                     Log.d("Err addFavoriteEvent", "Error: ${response.errorBody()?.string()}")
@@ -165,10 +165,28 @@ class EventViewModel() : ViewModel() {
                 callback(false)
             }
         })
-        loadFavoriteEvents(FavEvent.id_user)
     }
 
     fun chooseEvent(event: Event){
         _curEvent.value = event
     }
+}
+
+fun parseEventTime(eventStartTime: String): Long {
+    // Định dạng ngày giờ của chuỗi đầu vào
+    val format = SimpleDateFormat("HH:mm dd/MM/yyyy", Locale.getDefault())
+    // Phân tích chuỗi ngày giờ thành đối tượng Date
+    val date = format.parse(eventStartTime)
+    // Trả về thời gian tính bằng milliseconds
+    return date?.time ?: 0
+}
+
+private fun isEventNotified(context: Context, eventId: String): Boolean {
+    val prefs = context.getSharedPreferences("event_notifications", Context.MODE_PRIVATE)
+    return prefs.getBoolean(eventId, false)
+}
+
+private fun markEventAsNotified(context: Context, eventId: String) {
+    val prefs = context.getSharedPreferences("event_notifications", Context.MODE_PRIVATE)
+    prefs.edit().putBoolean(eventId, true).apply()
 }

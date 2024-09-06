@@ -13,24 +13,18 @@ data class FavoriteResponse(
     val isFavorite: Boolean
 )
 
-
-
 interface EventService {
     //event
     @GET("event/getEvent/{id}")
     fun getEventByID(@Path("id") id: String): Call<Event>
-    @GET("event/getAll")
-    fun getAllEvent(): Call<List<Event>>
+    @GET("event/getOngoingEvents")
+    fun getOngoingEvents(): Call<List<Event>>
 
     //fav event
-    @GET("event/checkFavEvent") // The endpoint of your API
-    fun checkFavorite(@Query("eventId") eventId: String, @Query("userId") userId: String): Call<FavoriteResponse>
     @POST("event/addFavEvent")
     fun addFavorite(@Body event: FavEvents): Call<Void>
     @DELETE("event/deleteFavEvent")
     fun deleteFavorite(@Query("eventId") eventId: String, @Query("userId") userId: String): Call<Void>
     @GET("event/getAllFavEvent")
-    fun getAllFavorite(@Query("userId") userId: String): Call<List<FavEvents>>
-
-
+    fun getAllFavorite(@Query("userId") userId: String): Call<List<Event>>
 }

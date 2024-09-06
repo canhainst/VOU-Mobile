@@ -33,43 +33,27 @@ class HomePageActivity : AppCompatActivity() {
         sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
 
         // Lấy UUID từ UserUtils và lưu vào SharedPreferences
-        UserUtils.getUuidById { uuid ->
-            with(sharedPreferences.edit()) {
-                putString("uuid", uuid)
-                apply()
-            }
+//        UserUtils.getUuidById { uuid ->
+//            with(sharedPreferences.edit()) {
+//                putString("uuid", uuid)
+//                apply()
+//            }
+//        }
+
+        with(sharedPreferences.edit()) {
+            putString("uuid", "01724dc6-775a-4f52-95fd-245c615f2e77")
+            apply()
         }
 
         // Lấy UUID từ SharedPreferences và in ra
-        val uuid = sharedPreferences.getString("uuid", null)
-
-        val userService = RetrofitClient.instance.create(UserService::class.java)
-        val call = userService.getUserByUUID(uuid!!)
-        call.enqueue(object : Callback<User> {
-            override fun onResponse(call: Call<User>, response: Response<User>) {
-                if (response.isSuccessful) {
-                    val user = response.body()
-                    if (user != null) {
-                        // Chuyển đổi đối tượng User thành JSON và lưu vào SharedPreferences
-                        val userJson = gson.toJson(user)
-                        with(sharedPreferences.edit()) {
-                            putString("currentUser", userJson)
-                            apply()
-                        }
-                    }
-                } else {
-                    println("Error: ${response.code()}")
-                }
-            }
-
-            override fun onFailure(call: Call<User>, t: Throwable) {
-                println("Failed: ${t.message}")
-            }
-        })
+        val uuid = sharedPreferences.getString("uuid", "")
 
         binding = ActivityHomePageBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        replaceFragment(HomePage())
+
+        getUserByUUID(uuid!!){
+            replaceFragment(HomePage())
+        }
 
         binding.bottomNavigationView.setOnItemSelectedListener {
             when (it.itemId) {
@@ -89,6 +73,34 @@ class HomePageActivity : AppCompatActivity() {
         supportFragmentManager.addOnBackStackChangedListener {
             updateBottomNavigationView()
         }
+    }
+
+    private fun getUserByUUID(uuid: String, callback: () -> Unit){
+        val userService = RetrofitClient.instance.create(UserService::class.java)
+        val call = userService.getUserByUUID(uuid)
+        call.enqueue(object : Callback<User> {
+            override fun onResponse(call: Call<User>, response: Response<User>) {
+                if (response.isSuccessful) {
+                    val user = response.body()
+                    if (user != null) {
+                        // Chuyển đổi đối tượng User thành JSON và lưu vào SharedPreferences
+                        val userJson = gson.toJson(user)
+                        with(sharedPreferences.edit()) {
+                            putString("currentUser", userJson)
+                            apply()
+                        }
+                    }
+                } else {
+                    println("Error: ${response.code()}")
+                }
+                callback()
+            }
+
+            override fun onFailure(call: Call<User>, t: Throwable) {
+                println("Failed: ${t.message}")
+                callback()
+            }
+        })
     }
 
     private fun updateBottomNavigationView() {
@@ -128,4 +140,5 @@ class HomePageActivity : AppCompatActivity() {
             super.onBackPressed()
         }
     }
+
 }
