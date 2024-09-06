@@ -10,5 +10,6 @@ data class Voucher (
     var description: String?,
     var status: String,
     var type: String?,
-    var time_update: String?
+    var time_update: String?,
+    var quantity: Int?
 )

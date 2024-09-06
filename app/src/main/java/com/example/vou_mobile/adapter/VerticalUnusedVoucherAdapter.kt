@@ -65,6 +65,7 @@ class VerticalUnusedVoucherAdapter(private val itemList: List<Voucher>) : Recycl
         })
         holder.voucherScript.text = itemList[position].description
         holder.expiryDate.text = "Expiry Date: ${"itemList[position].expiration"}"
+        holder.quantity.text = "x ${itemList[position].quantity}"
 
         holder.itemView.setOnClickListener{
             listener?.onItemClick(position)

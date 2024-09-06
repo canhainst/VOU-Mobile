@@ -16,7 +16,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="24dp"
-            android:text="Brand Name"
+            android:text=""
             android:textSize="24sp"
             android:textColor="@color/black"
             android:textStyle="bold"
@@ -28,7 +28,7 @@
             android:id="@+id/event_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Event Name"
+            android:text=""
             android:textColor="@color/black"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="@+id/brand_name"
@@ -47,40 +47,26 @@
             app:layout_constraintTop_toBottomOf="@+id/event_name"
             tools:ignore="HardcodedText" />
 
-        <TextView
-            android:id="@+id/itemsList"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="itemsList"
-            android:textColor="@color/black"
-            android:textSize="14sp"
-            app:layout_constraintStart_toStartOf="@+id/brand_name"
-            app:layout_constraintTop_toBottomOf="@+id/textView11"
-            tools:ignore="HardcodedText" />
 
-        <TextView
-            android:id="@+id/textView13"
-            android:layout_width="wrap_content"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="150dp"
-            android:text="Send items"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            app:layout_constraintStart_toStartOf="@+id/brand_name"
-            app:layout_constraintTop_toBottomOf="@+id/textView11"
-            tools:ignore="HardcodedText" />
+            android:layout_marginTop="20dp"
+            app:layout_constraintTop_toBottomOf="@+id/textView11" />
 
         <TextView
             android:id="@+id/textView14"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="150dp"
+            android:layout_marginTop="30dp"
             android:text="Input ID"
             android:textColor="@color/black"
             android:textSize="16sp"
             app:layout_constraintStart_toStartOf="@+id/brand_name"
-            app:layout_constraintTop_toBottomOf="@+id/textView13"
+            app:layout_constraintTop_toBottomOf="@+id/recyclerView"
             tools:ignore="HardcodedText" />
 
         <EditText

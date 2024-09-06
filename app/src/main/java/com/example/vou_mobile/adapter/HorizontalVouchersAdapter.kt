@@ -3,7 +3,6 @@ package com.example.vou_mobile.adapter
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
-import android.content.SharedPreferences
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,11 +13,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.vou_mobile.R
 import com.example.vou_mobile.model.Brand
 import com.example.vou_mobile.model.Voucher
-import com.example.vou_mobile.model.VoucherUser
 import com.example.vou_mobile.services.BrandService
 import com.example.vou_mobile.services.RetrofitClient
-import com.example.vou_mobile.services.VoucherService
-import com.example.vou_mobile.services.addVoucherRequest
 import com.squareup.picasso.Picasso
 import retrofit2.Call
 import retrofit2.Callback
@@ -27,7 +23,6 @@ import retrofit2.Response
 class HorizontalVouchersAdapter(private val itemList: List<Voucher>) : RecyclerView.Adapter<HorizontalVouchersAdapter.MyViewHolder>(){
     private var listener: OnItemClickListener? = null
     private val brandService = RetrofitClient.instance.create(BrandService::class.java)
-    private lateinit var sharedPreferences: SharedPreferences
 
     interface OnItemClickListener {
         fun onItemClick(position: Int)
@@ -89,6 +84,10 @@ class HorizontalVouchersAdapter(private val itemList: List<Voucher>) : RecyclerV
                 if (response.isSuccessful) {
                     val brand = response.body()
                     dialogView.findViewById<TextView>(R.id.brand_name).text = brand!!.brand_name
+                    val brandImg = dialogView.findViewById<ImageView>(R.id.brandAvt)
+                    Picasso.get()
+                        .load(brand.avatar)
+                        .into(brandImg)
                 } else {
                     println("Error: ${response.code()}")
                 }
@@ -110,7 +109,6 @@ class HorizontalVouchersAdapter(private val itemList: List<Voucher>) : RecyclerV
 
             dialogBuilder.dismiss()
         }
-        dialogView.findViewById<Button>(R.id.btnBack).text = "Back"
         dialogView.findViewById<Button>(R.id.btnBack).setOnClickListener {
             dialogBuilder.dismiss()
         }

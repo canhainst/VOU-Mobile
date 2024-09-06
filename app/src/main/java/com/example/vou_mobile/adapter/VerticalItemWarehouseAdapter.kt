@@ -3,6 +3,7 @@ package com.example.vou_mobile.adapter
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
+import android.content.SharedPreferences
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,44 +18,21 @@ import com.example.vou_mobile.fragment.SendItem
 import com.example.vou_mobile.model.Brand
 import com.example.vou_mobile.model.Event
 import com.example.vou_mobile.model.Item
+import com.example.vou_mobile.model.ItemBelong
 import com.example.vou_mobile.model.ItemsOfEvent
+import com.example.vou_mobile.services.BrandService
+import com.example.vou_mobile.services.EventService
+import com.example.vou_mobile.services.RetrofitClient
+import com.example.vou_mobile.services.WarehouseService
 import com.squareup.picasso.Picasso
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
-class VerticalItemWarehouseAdapter(private val itemList: List<ItemsOfEvent>) : RecyclerView.Adapter<VerticalItemWarehouseAdapter.MyViewHolder>() {
+class VerticalItemWarehouseAdapter(private val itemList: List<ItemBelong>) : RecyclerView.Adapter<VerticalItemWarehouseAdapter.MyViewHolder>() {
     private var listener: OnItemClickListener? = null
-
-    val eventTest = listOf(
-        Event("0", "1", "Lắc xì may mắn", "https://thanhnien.mediacdn.vn/Uploaded/nthanhluan/2022_03_01/shopee-15-3-sieu-hoi-tieu-dung-4607.jpg", "01/01/2000", "01/02/2000", null, "Lắc xì", null),
-        Event("0", "1", "Lắc xì may mắn", "https://thanhnien.mediacdn.vn/Uploaded/nthanhluan/2022_03_01/shopee-15-3-sieu-hoi-tieu-dung-4607.jpg", "01/01/2000", "01/02/2000", null, "Lắc xì", null),
-        Event("0", "1", "Lắc xì may mắn", "https://thanhnien.mediacdn.vn/Uploaded/nthanhluan/2022_03_01/shopee-15-3-sieu-hoi-tieu-dung-4607.jpg", "01/01/2000", "01/02/2000", null, "Lắc xì", null),
-    )
-
-    val itemTest = listOf(
-        Item("0", "Ngọc Đỏ"),
-        Item("1", "Ngọc Xanh"),
-        Item("2", "Ngọc Vàng"),
-        Item("3", "Ngọc Trắng"),
-        Item("4", "Ngọc Cam"),
-        Item("5", "Mảnh Tranh"),
-        Item("6", "Mảnh Gốm"),
-        Item("7", "Mảnh Đá Quý"),
-        Item("8", "Mảnh Gương Vỡ"),
-        Item("9", "Ngọc Giáp Sắt"),
-        Item("10", "Đá Cẩm Thạch"),
-        Item("11", "Đá Nhân Tạo"),
-        Item("12", "Đá Khoáng Thạch"),
-        Item("13", "Đá Huyết Tinh")
-    )
-
-    val brandTest = listOf(
-        Brand("0", "https://downloadlogomienphi.com/sites/default/files/logos/download-logo-phuclong-mien-phi.jpg", "Phúc Long", "", "e", "0", "a", "", "Active", ""),
-        Brand("1", "https://play-lh.googleusercontent.com/KBMEAtNbnht-M9jqeJqiFCDqazutWY_OQk7UyfJfcO6QO1PI6EWWm0G6j1D60dgNN12-", "Shopee Food","", "e", "0", "a", "", "Active", ""),
-        Brand("2", "https://seeklogo.com/images/K/kfc-logo-A232F2E6D1-seeklogo.com.png", "KFC", "", "e", "0", "a", "", "Active", ""),
-        Brand("3", "https://logodix.com/logo/2015053.png", "Shopee", "", "e", "0", "a", "", "Active", ""),
-        Brand("4", "https://upload.wikimedia.org/wikipedia/vi/b/b1/Logo_GSM_xanh_SM.png", "Xanh SM", "", "e", "0", "a", "", "Active", ""),
-        Brand("5", "https://downloadlogomienphi.com/sites/default/files/logos/download-logo-phuclong-mien-phi.jpg", "Phúc Long", "", "e", "0", "a", "", "Active", ""),
-        Brand("6", "https://upload.wikimedia.org/wikipedia/vi/b/b1/Logo_GSM_xanh_SM.png", "Xanh SM", "", "e", "0", "a", "", "Active", "")
-    )
+    private lateinit var sharedPreferences: SharedPreferences
+    private var uuid: String? = null
 
     interface OnItemClickListener {
         fun onItemClick(position: Int)
@@ -80,18 +58,55 @@ class VerticalItemWarehouseAdapter(private val itemList: List<ItemsOfEvent>) : R
 
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        val eventID = itemList[position].eventID
-        val event = getEventByID(eventID)
-        val brand = getBrandByEventID(eventID)
+        val brandService = RetrofitClient.instance.create(BrandService::class.java)
+        val callBrand = brandService.getBrandByUuid(itemList[position].id_brand)
 
-        holder.brandName.text = brand!!.brand_name
-        holder.eventTime.text = event!!.start_time + " - " + event.end_time
-        holder.eventName.text = event.name
-        Picasso.get()
-            .load(brand.avatar)
-            .into(holder.brandImg)
+        callBrand.enqueue(object : Callback<Brand> {
+            override fun onResponse(call: Call<Brand>, response: Response<Brand>) {
+                if (response.isSuccessful) {
+                    val brand = response.body()
+                    if (brand != null) {
+                        holder.brandName.text = brand.brand_name
+                        Picasso.get()
+                            .load(brand.avatar)
+                            .into(holder.brandImg)
+                    } else {
+                        println("Error: ${response.code()}")
+                    }
+                } else {
+                    println("Error: ${response.code()}")
+                }
+            }
 
-        holder.itemView.setOnClickListener{
+            override fun onFailure(call: Call<Brand>, t: Throwable) {
+                println("Failed: ${t.message}")
+            }
+        })
+
+        val eventService = RetrofitClient.instance.create(EventService::class.java)
+        val callEvent = eventService.getEventByID(itemList[position].id_event)
+
+        callEvent.enqueue(object : Callback<Event> {
+            override fun onResponse(call: Call<Event>, response: Response<Event>) {
+                if (response.isSuccessful) {
+                    val event = response.body()
+                    if (event != null) {
+                        holder.eventName.text = event.name
+                        holder.eventTime.text = event.start_time + " - " + event.end_time
+                    } else {
+                        println("Error: ${response.code()}")
+                    }
+                } else {
+                    println("Error: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<Event>, t: Throwable) {
+                println("Failed: ${t.message}")
+            }
+        })
+
+        holder.itemView.setOnClickListener {
             listener?.onItemClick(position)
             showCustomDialog(holder.itemView.context, position)
         }
@@ -104,21 +119,80 @@ class VerticalItemWarehouseAdapter(private val itemList: List<ItemsOfEvent>) : R
             .setView(dialogView)
             .create()
 
-        val eventID = itemList[position].eventID
-        val event = getEventByID(eventID)
-        val brand = getBrandByEventID(eventID)
+        val brandService = RetrofitClient.instance.create(BrandService::class.java)
+        val callBrand = brandService.getBrandByUuid(itemList[position].id_brand)
 
-        dialogView.findViewById<TextView>(R.id.brand_name).text = brand!!.brand_name
-        dialogView.findViewById<TextView>(R.id.script).text = event!!.name
-        Picasso.get()
-            .load(brand.avatar)
-            .into(dialogView.findViewById<ImageView>(R.id.brandAvt))
-        Picasso.get()
-            .load(event.image)
-            .into(dialogView.findViewById<ImageView>(R.id.picture))
-        dialogView.findViewById<TextView>(R.id.Time).text = "Expiration: ${event.start_time} - ${event.end_time}"
-        dialogView.findViewById<TextView>(R.id.script2).text = event.name
-        dialogView.findViewById<TextView>(R.id.detail).text = getItemsListByEventID(event.id!!)
+        callBrand.enqueue(object : Callback<Brand> {
+            override fun onResponse(call: Call<Brand>, response: Response<Brand>) {
+                if (response.isSuccessful) {
+                    val brand = response.body()
+                    if (brand != null) {
+                        dialogView.findViewById<TextView>(R.id.brand_name).text = brand.brand_name
+                        Picasso.get()
+                            .load(brand.avatar)
+                            .into(dialogView.findViewById<ImageView>(R.id.brandAvt))
+                    } else {
+                        println("Error: ${response.code()}")
+                    }
+                } else {
+                    println("Error: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<Brand>, t: Throwable) {
+                println("Failed: ${t.message}")
+            }
+        })
+
+        val eventService = RetrofitClient.instance.create(EventService::class.java)
+        val callEvent = eventService.getEventByID(itemList[position].id_event)
+
+        callEvent.enqueue(object : Callback<Event> {
+            override fun onResponse(call: Call<Event>, response: Response<Event>) {
+                if (response.isSuccessful) {
+                    val event = response.body()
+                    if (event != null) {
+                        dialogView.findViewById<TextView>(R.id.script).text = event.name
+                        Picasso.get()
+                            .load(event.image)
+                            .into(dialogView.findViewById<ImageView>(R.id.picture))
+                        dialogView.findViewById<TextView>(R.id.Time).text = "Expiration: ${event.start_time} - ${event.end_time}"
+                        dialogView.findViewById<TextView>(R.id.script2).text = event.name
+
+                    } else {
+                        println("Error: ${response.code()}")
+                    }
+                } else {
+                    println("Error: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<Event>, t: Throwable) {
+                println("Failed: ${t.message}")
+            }
+        })
+
+        sharedPreferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        uuid = sharedPreferences.getString("uuid", null)
+
+        val warehouseService = RetrofitClient.instance.create(WarehouseService::class.java)
+        val callItems = warehouseService.getItemsOfEventByUser(uuid!!, itemList[position].id_event)
+        callItems.enqueue(object : Callback<List<Item>> {
+            override fun onResponse(call: Call<List<Item>>, response: Response<List<Item>>) {
+                if (response.isSuccessful) {
+                    val items = response.body()
+                    if (items != null) {
+                        dialogView.findViewById<TextView>(R.id.detail).text = itemsListToString(items)
+                    }
+                } else {
+                    println("Error: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<List<Item>>, t: Throwable) {
+                println("Failed: ${t.message}")
+            }
+        })
 
         dialogView.findViewById<Button>(R.id.btnDirection).text = "Send Item"
         dialogView.findViewById<Button>(R.id.btnDirection).setOnClickListener {
@@ -126,7 +200,10 @@ class VerticalItemWarehouseAdapter(private val itemList: List<ItemsOfEvent>) : R
 
             if (context is FragmentActivity) {
                 val mainActivity = context as HomePageActivity
-                mainActivity.replaceFragment(SendItem())
+                val brandId = itemList[position].id_brand  // Replace with your actual first string
+                val eventId = itemList[position].id_event // Replace with your actual second string
+                val sendItemFragment = SendItem.newInstance(brandId, eventId)
+                mainActivity.replaceFragment(sendItemFragment)
             }
         }
 
@@ -137,22 +214,11 @@ class VerticalItemWarehouseAdapter(private val itemList: List<ItemsOfEvent>) : R
 
         dialogBuilder.show()
     }
-
-    private fun getItemsListByEventID(id: String): String {
-        val itemsList = itemList.find { it.eventID == id }!!.items
-        var list = "Items List:\n"
-        for (item in itemsList) {
-            list += "${itemTest.find { it.ID == item.itemID }!!.itemName}: ${item.quantity} pcs\n"
+    private fun itemsListToString(items: List<Item>): String {
+        var result = ""
+        items.forEach {
+            result += "Item: ${it.name}\t\t Quantity: ${it.quantity}\n"
         }
-        return list
-    }
-
-    private fun getBrandByEventID(id: String): Brand? {
-        val event = eventTest.find { it.id == id }
-        return brandTest.find { it.id == event!!.id_brand }
-    }
-
-    private fun getEventByID(id: String): Event? {
-        return eventTest.find { it.id == id }
+        return result
     }
 }

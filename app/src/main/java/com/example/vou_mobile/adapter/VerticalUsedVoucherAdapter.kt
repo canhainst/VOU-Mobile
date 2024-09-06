@@ -9,7 +9,14 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.vou_mobile.R
+import com.example.vou_mobile.model.Brand
 import com.example.vou_mobile.model.Voucher
+import com.example.vou_mobile.services.BrandService
+import com.example.vou_mobile.services.RetrofitClient
+import com.squareup.picasso.Picasso
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class VerticalUsedVoucherAdapter (private val itemList: List<Voucher>) : RecyclerView.Adapter<VerticalUsedVoucherAdapter.MyViewHolder>() {
     private var listener: OnItemClickListener? = null
@@ -24,6 +31,7 @@ class VerticalUsedVoucherAdapter (private val itemList: List<Voucher>) : Recycle
         val voucherScript: TextView = itemView.findViewById(R.id.voucherScript)
         val expiryDate: TextView = itemView.findViewById(R.id.expiryDate)
         val imgBrand: ImageView = itemView.findViewById(R.id.imgBrand)
+        var quantity: TextView = itemView.findViewById(R.id.quantity)
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.all_my_voucher_item_layout, parent, false)
@@ -32,10 +40,31 @@ class VerticalUsedVoucherAdapter (private val itemList: List<Voucher>) : Recycle
     override fun getItemCount() = itemList.size
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
-        holder.brandName.text = "Brand Name"
+        val brandService = RetrofitClient.instance.create(BrandService::class.java)
+        val callBrand = brandService.getBrandByUuid(itemList[position].id_brand)
+        callBrand.enqueue(object : Callback<Brand> {
+            override fun onResponse(call: Call<Brand>, response: Response<Brand>) {
+                if (response.isSuccessful) {
+                    val brand = response.body()
+                    if (brand != null) {
+                        holder.brandName.text = brand.brand_name
+                        Picasso.get()
+                            .load(brand.avatar)
+                            .into(holder.imgBrand)
+                    }
+                } else {
+                    println("Error: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<Brand>, t: Throwable) {
+                println("Failed: ${t.message}")
+            }
+        })
         holder.voucherScript.text = itemList[position].description
         holder.expiryDate.setTextColor(ContextCompat.getColor(holder.itemView.context, R.color.red))
         holder.expiryDate.text = "Used"
+        holder.quantity.text = "x ${itemList[position].quantity}"
 
         holder.itemView.setOnClickListener{
             listener?.onItemClick(position)

@@ -83,7 +83,7 @@ class FavoriteEventAdapter(private var events: List<Event>, private val gameView
 
         holder.time.text = Helper.getTimeRangeString(eventUpdate)
         holder.notifButton.setOnClickListener {
-            showConfirmDialog(eventUpdate)
+            showConfirmDialog(event)
         }
         holder.itemView.setOnClickListener {
             showEventDialog(eventUpdate)

@@ -17,6 +17,8 @@ interface VoucherService {
     fun getAllVoucherActive(): Call<List<Voucher>>
     @GET("warehouse/get/{uuid}")
     fun getAllVoucherByUserUuid(@Path("uuid") uuid: String): Call<List<Voucher>>
+    @GET("warehouse/getUsed/{uuid}")
+    fun getAllUsedVoucherByUserUuid(@Path("uuid") uuid: String): Call<List<Voucher>>
     @POST("warehouse/addVoucher")
     fun addVoucherIntoWarehouse(@Body request: addVoucherRequest): Call<VoucherUser>
 }

@@ -8,4 +8,5 @@ import retrofit2.http.Path
 interface UserService {
     @GET("user/get/{uuid}")
     fun getUserByUUID(@Path("uuid") uuid: String): Call<User>
+
 }
