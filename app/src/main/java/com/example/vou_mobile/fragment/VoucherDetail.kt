@@ -13,7 +13,14 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.vou_mobile.R
 import com.example.vou_mobile.activity.ScanningActivity
+import com.example.vou_mobile.adapter.HorizontalBrandsAdapter
+import com.example.vou_mobile.model.Brand
+import com.example.vou_mobile.services.BrandService
+import com.example.vou_mobile.services.RetrofitClient
 import com.squareup.picasso.Picasso
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -42,10 +49,28 @@ class VoucherDetail : Fragment() {
             .load(data?.getString("voucherImgUrl"))
             .into(view.findViewById<ImageView>(R.id.brandImg))
 
-        view.findViewById<TextView>(R.id.brand_name).text = data?.getString("brandName")
-        view.findViewById<TextView>(R.id.script).text = data?.getString("script")
-        view.findViewById<TextView>(R.id.expiryDate).text = data?.getString("exp")
-        view.findViewById<TextView>(R.id.voucher_detail).text = data?.getString("detail")
+        val brandService = RetrofitClient.instance.create(BrandService::class.java)
+        val callBrand = brandService.getBrandByUuid(data?.getString("brandName")!!)
+        callBrand.enqueue(object : Callback<Brand> {
+            override fun onResponse(call: Call<Brand>, response: Response<Brand>) {
+                if (response.isSuccessful) {
+                    val brand = response.body()
+                    if (brand != null) {
+                        view.findViewById<TextView>(R.id.brand_name).text = brand.brand_name
+                    }
+                } else {
+                    println("Error: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<Brand>, t: Throwable) {
+                println("Failed: ${t.message}")
+            }
+        })
+
+        view.findViewById<TextView>(R.id.script).text = data.getString("script")
+        view.findViewById<TextView>(R.id.expiryDate).text = data.getString("exp")
+        view.findViewById<TextView>(R.id.voucher_detail).text = data.getString("detail")
 
         val btnUseVoucher = view.findViewById<Button>(R.id.btnUse)
         if(isUsed!!) {

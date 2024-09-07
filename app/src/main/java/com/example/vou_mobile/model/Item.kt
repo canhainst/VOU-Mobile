@@ -11,7 +11,6 @@ data class Item (
     var image: String,
     var quantity: Int
 )
-
 data class ItemBelong (
     var id_brand: String,
     var id_event: String

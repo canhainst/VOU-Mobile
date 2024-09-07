@@ -3,8 +3,12 @@ package com.example.vou_mobile.services
 import com.example.vou_mobile.model.GiftExchangesHistory
 import com.example.vou_mobile.model.Item
 import com.example.vou_mobile.model.ItemBelong
+import com.example.vou_mobile.model.SendGift
+import com.example.vou_mobile.model.SendItemsResponse
 import retrofit2.Call
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface WarehouseService {
@@ -16,4 +20,6 @@ interface WarehouseService {
     fun getItemById(@Path("uuid") uuid: String): Call<Item>
     @GET("user/gift_items_history/{uuid}")
     fun getGiftItemsHistoryByGiver(@Path("uuid") uuid: String): Call<List<GiftExchangesHistory>>
+    @POST("user/sendItems")
+    fun sendItems(@Body sendGift: SendGift): Call<SendItemsResponse>
 }

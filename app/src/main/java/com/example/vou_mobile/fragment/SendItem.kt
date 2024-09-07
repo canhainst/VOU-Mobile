@@ -1,5 +1,7 @@
 package com.example.vou_mobile.fragment
 
+import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -7,15 +9,21 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.airbnb.lottie.LottieAnimationView
 import com.example.vou_mobile.R
 import com.example.vou_mobile.adapter.GridItemsAdapter
 import com.example.vou_mobile.model.Brand
 import com.example.vou_mobile.model.Event
 import com.example.vou_mobile.model.Item
+import com.example.vou_mobile.model.ItemSent
+import com.example.vou_mobile.model.SendGift
+import com.example.vou_mobile.model.SendItemsResponse
 import com.example.vou_mobile.services.BrandService
 import com.example.vou_mobile.services.EventService
 import com.example.vou_mobile.services.RetrofitClient
@@ -41,6 +49,8 @@ class SendItem : Fragment() {
     private var eventId: String? = null
     private lateinit var sharedPreferences: SharedPreferences
     private var uuid: String? = null
+    private var selectedItems: MutableList<Item> = mutableListOf()
+    private var recipientUsername: String? = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,12 +59,10 @@ class SendItem : Fragment() {
             eventId = it.getString(ARG_PARAM2)
         }
     }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_send_item, container, false)
         val brandService = RetrofitClient.instance.create(BrandService::class.java)
         val callBrand = brandService.getBrandByUuid(brandId!!)
@@ -100,25 +108,21 @@ class SendItem : Fragment() {
             }
         })
 
-        // Khởi tạo RecyclerView
         val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
-
-        // Cài đặt GridLayoutManager với số cột là 3
-        val layoutManager = GridLayoutManager(requireContext(), 3)
-        recyclerView.layoutManager = layoutManager
+        recyclerView.layoutManager = GridLayoutManager(requireContext(), 3)
 
         sharedPreferences = requireContext().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
         uuid = sharedPreferences.getString("uuid", null)
 
         val warehouseService = RetrofitClient.instance.create(WarehouseService::class.java)
         val callItems = warehouseService.getItemsOfEventByUser(uuid!!, eventId!!)
+
         callItems.enqueue(object : Callback<List<Item>> {
             override fun onResponse(call: Call<List<Item>>, response: Response<List<Item>>) {
                 if (response.isSuccessful) {
                     val items = response.body()
                     if (items != null) {
-                        // Gán adapter cho RecyclerView
-                        recyclerView.adapter = GridItemsAdapter(items)
+                        recyclerView.adapter = GridItemsAdapter(items, selectedItems)
                     }
                 } else {
                     println("Error: ${response.code()}")
@@ -129,7 +133,84 @@ class SendItem : Fragment() {
                 println("Failed: ${t.message}")
             }
         })
+
+        view.findViewById<Button>(R.id.sendBtn).setOnClickListener {
+            recipientUsername = view.findViewById<EditText>(R.id.inputID).text.toString()
+            showCustomDialog(requireContext())
+        }
+
         return view
+    }
+
+    @SuppressLint("SetTextI18n")
+    private fun showCustomDialog(context: Context) {
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_send_items_result, null)
+        val dialogBuilder = AlertDialog.Builder(context)
+            .setView(dialogView)
+            .create()
+        val animationView = dialogView.findViewById<LottieAnimationView>(R.id.aniDialog)
+
+        if (selectedItems.isEmpty()){
+            dialogView.findViewById<TextView>(R.id.sendingResult).text = "Something went wrong?!"
+            dialogView.findViewById<TextView>(R.id.sendingDescription).text = "You can't send a gift with an empty basket like that :(\nTry choosing a gift <3"
+            animationView.setAnimation(R.raw.sad)
+            animationView.playAnimation()
+            dialogBuilder.show()
+        } else if (recipientUsername.isNullOrBlank()){
+            dialogView.findViewById<TextView>(R.id.sendingResult).text = "Something went wrong?!"
+            dialogView.findViewById<TextView>(R.id.sendingDescription).text = "Hey hey, you forgot to fill in the recipient's name:D"
+            animationView.setAnimation(R.raw.sad)
+            animationView.playAnimation()
+            dialogBuilder.show()
+        } else {
+            val gift = createAGift(uuid!!, recipientUsername!!, selectedItems)
+            val warehouseService = RetrofitClient.instance.create(WarehouseService::class.java)
+            val call = warehouseService.sendItems(gift)
+
+            call.enqueue(object : Callback<SendItemsResponse> {
+                override fun onResponse(call: Call<SendItemsResponse>, response: Response<SendItemsResponse>) {
+                    if (response.isSuccessful) {
+                        animationView.setAnimation(R.raw.send_successfully)
+                        dialogView.findViewById<TextView>(R.id.sendingResult).text = "Yay, delivery successful <3"
+                        dialogView.findViewById<TextView>(R.id.sendingDescription).text = "Looks like your gift has been delivered, the couriers are really hard working.\nSurely the recipient will feel very happy :3"
+                        animationView.playAnimation()
+                        dialogBuilder.show()
+                    } else {
+                        dialogView.findViewById<TextView>(R.id.sendingResult).text = "Something went wrong?!"
+                        dialogView.findViewById<TextView>(R.id.sendingDescription).text = "API error: ${response.code()}"
+                        animationView.setAnimation(R.raw.sad)
+                        animationView.playAnimation()
+                        dialogBuilder.show()
+                    }
+                }
+                override fun onFailure(call: Call<SendItemsResponse>, t: Throwable) {
+                    dialogView.findViewById<TextView>(R.id.sendingResult).text = "Something went wrong?!"
+                    dialogView.findViewById<TextView>(R.id.sendingDescription).text = "Request failed: ${t.message}"
+                    animationView.setAnimation(R.raw.sad)
+                    animationView.playAnimation()
+                    dialogBuilder.show()
+                }
+            })
+        }
+    }
+
+    fun createAGift(
+        uuid: String,
+        recipientUsername: String,
+        selectedItems: List<Item>
+    ): SendGift {
+        val itemsSentList = selectedItems.map { item ->
+            ItemSent(
+                id_item = item.id_item,
+                quantity = 1
+            )
+        }
+
+        return SendGift(
+            id_giver = uuid,
+            user_name = recipientUsername,
+            itemsList = itemsSentList
+        )
     }
 
     companion object {

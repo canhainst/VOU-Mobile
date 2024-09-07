@@ -83,8 +83,8 @@ class UnusedVouchers : Fragment(), VerticalUnusedVoucherAdapter.OnItemClickListe
         val data = Bundle().apply {
             putBoolean("isUsed", false)
             putString("voucherImgUrl", voucher.image)
-            putString("brandName", "Brand Name")
-            putString("script", "Voucher")
+            putString("brandName", voucher.id_brand)
+            putString("script", voucher.type)
             putString("exp", "exp")
             putString("detail", voucher.description)
         }

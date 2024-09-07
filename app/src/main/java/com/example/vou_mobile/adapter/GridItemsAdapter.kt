@@ -10,18 +10,16 @@ import com.example.vou_mobile.R
 import com.example.vou_mobile.model.Item
 import com.squareup.picasso.Picasso
 
-class GridItemsAdapter(private val itemList: List<Item>) : RecyclerView.Adapter<GridItemsAdapter.MyViewHolder>() {
-    private var listener: HorizontalEventsAdapter.OnItemClickListener? = null
-    private var selectedPosition = RecyclerView.NO_POSITION
-    class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val itemImg = itemView.findViewById<ImageView>(R.id.itemImg)
-        val itemName = itemView.findViewById<TextView>(R.id.itemName)
-        val itemQuantity = itemView.findViewById<TextView>(R.id.quantity)
-        var itemLayout: View = itemView.findViewById(R.id.itemLayout)
-    }
+class GridItemsAdapter(
+    private val itemList: List<Item>,
+    private val selectedItems: MutableList<Item>
+) : RecyclerView.Adapter<GridItemsAdapter.MyViewHolder>() {
 
-    interface OnItemClickListener {
-        fun onItemClick(position: Int)
+    class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val itemImg: ImageView = itemView.findViewById(R.id.itemImg)
+        val itemName: TextView = itemView.findViewById(R.id.itemName)
+        val itemQuantity: TextView = itemView.findViewById(R.id.quantity)
+        var itemLayout: View = itemView.findViewById(R.id.itemLayout)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -32,13 +30,15 @@ class GridItemsAdapter(private val itemList: List<Item>) : RecyclerView.Adapter<
     override fun getItemCount() = itemList.size
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+        val currentItem = itemList[position]
         Picasso.get()
-            .load(itemList[position].image)
+            .load(currentItem.image)
             .into(holder.itemImg)
-        holder.itemName.text = itemList[position].name
-        holder.itemQuantity.text = "x${itemList[position].quantity}"
+        holder.itemName.text = currentItem.name
+        holder.itemQuantity.text = "x${currentItem.quantity}"
 
-        val backgroundResource = if (holder.adapterPosition == selectedPosition) {
+        // Kiểm tra xem item này đã được chọn hay chưa
+        val backgroundResource = if (selectedItems.contains(currentItem)) {
             R.drawable.selected_background
         } else {
             R.drawable.unselected_background
@@ -46,12 +46,22 @@ class GridItemsAdapter(private val itemList: List<Item>) : RecyclerView.Adapter<
 
         holder.itemLayout.setBackgroundResource(backgroundResource)
 
-        holder.itemView.setOnClickListener{
-            val previousPosition = selectedPosition
-            selectedPosition = holder.adapterPosition
-            notifyItemChanged(previousPosition) // Update previously selected item
-            notifyItemChanged(selectedPosition) // Update currently selected item
-            listener?.onItemClick(selectedPosition) // Pass updated position
+        // Check if quantity is 0 to disable item selection
+        if (currentItem.quantity == 0) {
+            // Disable item click if quantity is 0
+            holder.itemLayout.setBackgroundResource(R.drawable.disabled_background)
+            holder.itemView.isClickable = false
+        } else {
+            // Enable item click if quantity is not 0
+            holder.itemView.isClickable = true
+            holder.itemView.setOnClickListener {
+                if (selectedItems.contains(currentItem)) {
+                    selectedItems.remove(currentItem) // Bỏ chọn nếu đã được chọn trước đó
+                } else {
+                    selectedItems.add(currentItem) // Chọn item nếu chưa được chọn
+                }
+                notifyItemChanged(position) // Cập nhật giao diện cho item được chọn/bỏ chọn
+            }
         }
     }
 }

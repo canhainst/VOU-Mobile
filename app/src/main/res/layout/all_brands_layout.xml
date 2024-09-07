@@ -26,6 +26,7 @@
         android:layout_marginTop="5dp"
         android:maxWidth="70dp"
         android:text="TextView"
+        android:gravity="center"
         android:textColor="@color/black"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
