@@ -1,6 +1,7 @@
 package com.example.vou_mobile.activity
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
@@ -38,6 +39,10 @@ import com.example.vou_mobile.model.payment.ZaloPay
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.WriterException
 import com.google.zxing.qrcode.QRCodeWriter
+import com.paypal.android.sdk.payments.PayPalService
+import com.paypal.android.sdk.payments.PaymentActivity
+import com.paypal.android.sdk.payments.PaymentConfirmation
+import org.json.JSONException
 import vn.zalopay.sdk.Environment
 import vn.zalopay.sdk.ZaloPaySDK
 
@@ -48,6 +53,9 @@ class ScanningActivity : AppCompatActivity(), HorizontalPaymentMethodsAdapter.On
     private lateinit var scannerView: CodeScannerView
     private lateinit var ivQRCode: ImageView
     private var selectedMethod: String = ""
+
+    private var paypal: Paypal? = null
+    private var zaloPay: ZaloPay? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_scaninng)
@@ -144,22 +152,18 @@ class ScanningActivity : AppCompatActivity(), HorizontalPaymentMethodsAdapter.On
                 when (selectedMethod) {
                     "PayPal" -> {
                         val billing = stringToBilling(it.text)
-                        val paypal = Paypal(billing!!, this)
-                        paypal.payment { success, message ->
-                            if (success) {
-                                // Payment succeeded
-                                Toast.makeText(this, "Payment successful: $message", Toast.LENGTH_LONG).show()
-                            } else {
-                                // Payment failed or canceled
-                                Toast.makeText(this, "Payment failed: $message", Toast.LENGTH_LONG).show()
-                            }
+                        paypal = Paypal(billing!!, this)
+                        paypal!!.payment { success, message ->
+                            // Handle payment result if needed
                         }
+                        // Start PayPal service here
+                        startPayPalService()
                         finish()
                     }
                     "ZaloPay" -> {
                         val billing = stringToBilling(it.text)
-                        val zaloPay = ZaloPay(billing!!, this)
-                        zaloPay.payment { success, message ->
+                        zaloPay = ZaloPay(billing!!, this)
+                        zaloPay!!.payment { success, message ->
                             if (success) {
                                 // Payment succeeded
                                 Toast.makeText(this, "Payment successful: $message", Toast.LENGTH_LONG).show()
@@ -234,5 +238,47 @@ class ScanningActivity : AppCompatActivity(), HorizontalPaymentMethodsAdapter.On
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         ZaloPaySDK.getInstance().onResult(intent)
+    }
+    private fun startPayPalService() {
+        paypal?.let {
+            val intent = Intent(this, PayPalService::class.java).apply {
+                putExtra(PayPalService.EXTRA_PAYPAL_CONFIGURATION, it.configuration)
+            }
+            startService(intent)
+        } ?: run {
+            Toast.makeText(this, "PayPal is not initialized", Toast.LENGTH_LONG).show()
+        }
+    }
+    override fun onStop() {
+        super.onStop()
+        val intent = Intent(this, PayPalService::class.java)
+        stopService(intent)
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == paypal!!.PAYPAL_REQUEST_CODE) {
+            when (resultCode) {
+                Activity.RESULT_OK -> {
+                    val confirmation = data?.getParcelableExtra<PaymentConfirmation>(PaymentActivity.EXTRA_RESULT_CONFIRMATION)
+                    try {
+                        confirmation?.let {
+                            val paymentDetails = it.toJSONObject().toString(4)
+                            // Handle the payment confirmation
+                            Toast.makeText(this, "Payment Successful: $paymentDetails", Toast.LENGTH_LONG).show()
+                        }
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
+                        Toast.makeText(this, "Payment failed: ${e.message}", Toast.LENGTH_LONG).show()
+                    }
+                }
+                Activity.RESULT_CANCELED -> {
+                    Toast.makeText(this, "Payment canceled.", Toast.LENGTH_LONG).show()
+                }
+                PaymentActivity.RESULT_EXTRAS_INVALID -> {
+                    Toast.makeText(this, "Invalid Payment.", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
     }
 }
