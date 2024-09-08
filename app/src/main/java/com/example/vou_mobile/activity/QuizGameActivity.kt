@@ -37,10 +37,10 @@ class QuizGameActivity : AppCompatActivity() {
         binding = ActivityQuizGameBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.btnClose.setOnClickListener {
-            gameViewModel.setGame(typeOfEvent, this)
-            gameViewModel.stopGame()
-        }
+//        binding.btnClose.setOnClickListener {
+//            gameViewModel.setGame(typeOfEvent, this)
+//            gameViewModel.stopGame()
+//        }
 
         // Bắt đầu cập nhật giao diện người dùng
         handler.post(runnable)

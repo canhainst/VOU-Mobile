@@ -23,7 +23,6 @@ import com.example.vou_mobile.model.Event
 import com.example.vou_mobile.services.BrandService
 import com.example.vou_mobile.services.RetrofitClient
 import com.example.vou_mobile.viewModel.GameViewModel
-import com.example.vou_mobile.viewModel.EventViewModel
 import com.example.vou_mobile.viewModel.EventViewModelProviderSingleton
 import com.squareup.picasso.Picasso
 import retrofit2.Call
@@ -173,8 +172,8 @@ class FavoriteEventAdapter(private var events: List<Event>, private val gameView
             }  else{
                 // Trong Activity đầu tiên
                 viewModel.chooseEvent(event)
-                gameViewModel.setGame(event.type!!, context)
-                gameViewModel.startGame()
+                gameViewModel.setGame(event.type!!, event.id)
+                gameViewModel.currentGame.value?.startGame(context)
             }
         }
 

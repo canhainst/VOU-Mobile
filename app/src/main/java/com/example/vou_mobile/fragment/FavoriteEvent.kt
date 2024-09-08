@@ -13,6 +13,7 @@ import com.example.vou_mobile.adapter.FavoriteEventAdapter
 import com.example.vou_mobile.databinding.FragmentFavoriteEventBinding
 import com.example.vou_mobile.viewModel.GameViewModel
 import com.example.vou_mobile.viewModel.EventViewModelProviderSingleton
+import com.example.vou_mobile.viewModel.GameViewModelProviderSingleton
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -30,7 +31,7 @@ class FavoriteEvent : Fragment() {
     private var param2: String? = null
 
     private val viewModel = EventViewModelProviderSingleton.getEventViewModel()
-    private val gameViewModel = GameViewModel()
+    private val gameViewModel = GameViewModelProviderSingleton.getGameViewModel()
     private lateinit var binding: FragmentFavoriteEventBinding
 
     private lateinit var sharedPreferences: SharedPreferences

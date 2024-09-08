@@ -24,7 +24,7 @@ import com.example.vou_mobile.services.BrandService
 import com.example.vou_mobile.services.RetrofitClient
 import com.example.vou_mobile.services.VoucherService
 import com.example.vou_mobile.viewModel.EventViewModelProviderSingleton
-import com.example.vou_mobile.viewModel.GameViewModel
+import com.example.vou_mobile.viewModel.GameViewModelProviderSingleton
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.squareup.picasso.Picasso
@@ -47,7 +47,7 @@ class HomePage : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
-    private val gameViewModel = GameViewModel()
+    private val gameViewModel = GameViewModelProviderSingleton.getGameViewModel()
     private lateinit var sharedPreferences: SharedPreferences
     private val gson = Gson()
     private lateinit var currentUser: User

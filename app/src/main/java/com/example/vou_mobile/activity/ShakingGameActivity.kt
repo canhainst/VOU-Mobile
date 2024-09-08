@@ -6,6 +6,7 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Typeface
 import android.hardware.Sensor
 import android.hardware.SensorManager
@@ -14,10 +15,13 @@ import android.os.Bundle
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.StyleSpan
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
+import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Observer
 import com.airbnb.lottie.LottieAnimationView
 import com.example.vou_mobile.R
 import com.example.vou_mobile.databinding.ActivityShakingGameBinding
@@ -25,25 +29,48 @@ import com.example.vou_mobile.databinding.DetailDialogBinding
 import com.example.vou_mobile.helper.Helper
 import com.example.vou_mobile.model.Event
 import com.example.vou_mobile.model.games.ShakeDetector
+import com.example.vou_mobile.services.EventService
+import com.example.vou_mobile.services.ItemListResponse
+import com.example.vou_mobile.services.ItemResponse
+import com.example.vou_mobile.services.PlayLacXiResponse
+import com.example.vou_mobile.services.PlaythroughResponse
+import com.example.vou_mobile.services.RetrofitClient
 import com.example.vou_mobile.viewModel.GameViewModel
+import com.example.vou_mobile.viewModel.GameViewModelProviderSingleton
 import com.squareup.picasso.Picasso
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class ShakingGameActivity : AppCompatActivity(), ShakeDetector.OnShakeListener {
     private lateinit var binding: ActivityShakingGameBinding
-    private val gameViewModel = GameViewModel()
+    private val gameViewModel = GameViewModelProviderSingleton.getGameViewModel()
     private var rotate = false
-    private val typeOfEvent = "Lắc xì"
+    private lateinit var userId: String
+    private lateinit var eventId: String
+
+    private lateinit var sharedPreferences: SharedPreferences
 
     private lateinit var sensorManager: SensorManager
     private lateinit var accelerometer: Sensor
     private lateinit var shakeDetector: ShakeDetector
 
     private lateinit var ttsUtil: TextToSpeechUtils
+    private val scripts = listOf(
+        "Chào mừng bạn đến với trò chơi Lắc xì! Lắc điện thoại để nhận các vật phẩm ngẫu nhiên.",
+        "Ghép các vật phẩm lại để đổi thưởng hoặc tặng, yêu cầu vật phẩm từ bạn bè.",
+        "Để nhận thêm lượt chơi bạn cần chia sẻ bài viết hoặc nhờ sự trợ giúp từ bạn bè!",
+        "Hãy lắc điện thoại nào!"
+    )
+    private var currentScriptIndex = 0
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityShakingGameBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+
 
         binding.animationGift.playAnimation()
 
@@ -53,9 +80,19 @@ class ShakingGameActivity : AppCompatActivity(), ShakeDetector.OnShakeListener {
             toggleFabMode(it)
         }
 
+        sharedPreferences = this.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        userId = sharedPreferences.getString("uuid", null)!!
+        eventId = intent.getStringExtra("idEvent") ?: ""
+
+        //playThrough
+        gameViewModel.loadPlaythrough(eventId, userId)
+        binding.playthrough.text = gameViewModel.playthrough.value.toString()
+        gameViewModel.playthrough.observe(this, Observer {
+            binding.playthrough.text = it.toString()
+        })
+
         binding.btnClose.setOnClickListener {
-            gameViewModel.setGame(typeOfEvent, this)
-            gameViewModel.stopGame()
+            gameViewModel.currentGame.value?.endGame(this)
         }
 
         binding.btnAddTurn.setOnClickListener {
@@ -80,7 +117,21 @@ class ShakingGameActivity : AppCompatActivity(), ShakeDetector.OnShakeListener {
 
         ttsUtil = TextToSpeechUtils(this) {
             // Callback được gọi khi TTS đã sẵn sàng
-            ttsUtil.speak(binding.tvGuidance.text.toString())
+            playNextScript()
+        }
+
+        binding.root.setOnClickListener {
+            playNextScript()
+        }
+    }
+
+    private fun playNextScript() {
+        if (currentScriptIndex < scripts.size) {
+            // Cập nhật văn bản hiển thị lên màn hình
+            binding.tvGuidance.text = scripts[currentScriptIndex]
+            currentScriptIndex++
+            // Đọc kịch bản hiện tại và định nghĩa hành động khi hoàn tất đọc
+            ttsUtil.speak(scripts[currentScriptIndex - 1]) {}
         }
     }
 
@@ -99,7 +150,6 @@ class ShakingGameActivity : AppCompatActivity(), ShakeDetector.OnShakeListener {
             .into(binding.picture)
         binding.Time.text = Helper.getTimeRangeString(event)
 
-        binding.detail.text = getItemsListByEventID()
         binding.detail.textSize = 15f // thay đổi kích thước chữ
         binding.detail.setTextColor(ContextCompat.getColor(this, R.color.black)) // thay đổi màu chữ
         binding.detail.setLineSpacing(10f, 1.2f) // điều chỉnh khoảng cách giữa các dòng
@@ -117,22 +167,64 @@ class ShakingGameActivity : AppCompatActivity(), ShakeDetector.OnShakeListener {
         binding.btnBack.setOnClickListener {
             dialogBuilder.dismiss()
         }
-        dialogBuilder.show()
+        getItemsListByEventID {
+            binding.detail.text = it
+            dialogBuilder.show()
+        }
     }
 
-    private fun getItemsListByEventID(): SpannableString {
-       //lay danh sach item tu firebase
-        val listTitle = "ITEMS LIST:\n" // Ghi hoa ITEMS LIST
-        val listContent = "Mảnh Tranh: 0 pcs\nMảnh Gốm: 1 pcs\nMảnh Giáp: 2 pcs\n"
-        val fullText = listTitle + listContent
+    private fun getItemsListByEventID(callback: (SpannableString) -> Unit) {
+        val listTitle = "ITEMS LIST:\n"
 
-        val spannableString = SpannableString(fullText)
-        // In đậm "ITEMS LIST:"
-        spannableString.setSpan(StyleSpan(Typeface.BOLD), 0, listTitle.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        getUserItems { itemsText ->
+            val fullText = listTitle + itemsText
+            val spannableString = SpannableString(fullText)
 
-        return spannableString
+            // In đậm "ITEMS LIST:"
+            spannableString.setSpan(
+                StyleSpan(Typeface.BOLD),
+                0,
+                listTitle.length,
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+            )
+
+            println(spannableString)
+            callback(spannableString)
+        }
     }
 
+    private fun getUserItems(callback: (SpannableString) -> Unit){
+        val api = RetrofitClient.instance.create(EventService::class.java)
+        api.getUserItemsForEvent(userId, eventId).enqueue(object :
+            Callback<ItemListResponse> {
+            override fun onResponse(call: Call<ItemListResponse>, response: Response<ItemListResponse>) {
+                if (response.isSuccessful) {
+                    val items = response.body()?.items ?: emptyList() // Lấy danh sách items từ phản hồi
+                    val listContent = items.joinToString("\n") {
+                        "${it.itemName}: ${it.quantity} pcs"
+                    }
+
+                    // Cập nhật giao diện người dùng với danh sách items
+                    val spannableString = SpannableString("ITEMS LIST:\n$listContent").apply {
+                        setSpan(
+                            StyleSpan(Typeface.BOLD),
+                            0,
+                            "ITEMS LIST:\n".length,
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
+                        )
+                    }
+                    callback(spannableString)
+
+                } else {
+                    Log.e("API Error", "Response code: ${response.code()}, message: ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<ItemListResponse>, t: Throwable) {
+                Log.e("API Failure", "Error occurred: ${t.message}", t)
+            }
+        })
+    }
 
     private fun rotateFab(v: View, rotate: Boolean): Boolean {
         v.animate()
@@ -197,15 +289,43 @@ class ShakingGameActivity : AppCompatActivity(), ShakeDetector.OnShakeListener {
             .create()
 
         sensorManager.unregisterListener(shakeDetector)
-        dialogView.findViewById<LottieAnimationView>(R.id.animation_gift).playAnimation()
-        val btnClaim = dialogView.findViewById<Button>(R.id.btn_Claim)
-        btnClaim.setOnClickListener {
-            // Handle the reward claiming logic here
-            sensorManager.registerListener(shakeDetector, accelerometer, SensorManager.SENSOR_DELAY_UI)
-            dialog.dismiss()
-        }
+        val api = RetrofitClient.instance.create(EventService::class.java)
+        api.playLacXiEvent(eventId, userId).enqueue(object :
+            Callback<PlayLacXiResponse> {
+            @SuppressLint("SetTextI18n")
+            override fun onResponse(call: Call<PlayLacXiResponse>, response: Response<PlayLacXiResponse>) {
+                if (response.isSuccessful) {
+                    val playLacXiResponse = response.body()
+                    if (playLacXiResponse != null) {
+                        if (playLacXiResponse.code == 200) {
+                            Log.d("API Success", "Item received: ${playLacXiResponse.item}")
 
-        dialog.show()
+                            // Xử lý logic khi thành công
+                            Picasso.get()
+                                .load(playLacXiResponse.item!!.image)
+                                .into(dialogView.findViewById<LottieAnimationView>(R.id.animation_gift))
+                            dialogView.findViewById<TextView>(R.id.textWithGift).text = "You have received a ${playLacXiResponse.item.name}"
+                            gameViewModel.loadPlaythrough(eventId, userId)
+                            val btnClaim = dialogView.findViewById<Button>(R.id.btn_Claim)
+                            btnClaim.setOnClickListener {
+                                // Handle the reward claiming logic here
+                                sensorManager.registerListener(shakeDetector, accelerometer, SensorManager.SENSOR_DELAY_UI)
+                                dialog.dismiss()
+                            }
+                            dialog.show()
+                        } else {
+                            Log.e("API Error", playLacXiResponse.message ?: "Error occurred")
+                        }
+                    }
+                } else {
+                    Log.e("API Error", "Response code: ${response.code()}, message: ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<PlayLacXiResponse>, t: Throwable) {
+                Log.e("API Failure", "Error occurred: ${t.message}", t)
+            }
+        })
     }
 
     override fun onResume() {

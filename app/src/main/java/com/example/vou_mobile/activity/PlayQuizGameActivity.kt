@@ -20,10 +20,10 @@ class PlayQuizGameActivity : AppCompatActivity() {
         binding = ActivityPlayQuizGameBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.btnClose.setOnClickListener {
-            gameViewModel.setGame(typeOfEvent, this)
-            gameViewModel.stopGame()
-        }
+//        binding.btnClose.setOnClickListener {
+//            gameViewModel.setGame(typeOfEvent, this)
+//            gameViewModel.stopGame()
+//        }
 
         ttsUtil = TextToSpeechUtils(this) {
             // Callback được gọi khi TTS đã sẵn sàng

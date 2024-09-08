@@ -30,20 +30,9 @@ class VerticalItemWarehouseAdapter(private val itemList: List<ItemsOfEvent>) : R
     )
 
     val itemTest = listOf(
-        Item("0", "Ngọc Đỏ"),
-        Item("1", "Ngọc Xanh"),
-        Item("2", "Ngọc Vàng"),
-        Item("3", "Ngọc Trắng"),
-        Item("4", "Ngọc Cam"),
-        Item("5", "Mảnh Tranh"),
-        Item("6", "Mảnh Gốm"),
-        Item("7", "Mảnh Đá Quý"),
-        Item("8", "Mảnh Gương Vỡ"),
-        Item("9", "Ngọc Giáp Sắt"),
-        Item("10", "Đá Cẩm Thạch"),
-        Item("11", "Đá Nhân Tạo"),
-        Item("12", "Đá Khoáng Thạch"),
-        Item("13", "Đá Huyết Tinh")
+        Item("0", "33274103-48ec-4167-b450-112a018e6a6d", "Item 2", "https://static.wikia.nocookie.net/party-animals/images/2/2e/HarryAvatar.png/revision/latest?cb=20230127124432"),
+        Item("1", "33274103-48ec-4167-b450-112a018e6a6d", "Item 2", "https://static.wikia.nocookie.net/party-animals/images/2/2e/HarryAvatar.png/revision/latest?cb=20230127124432"),
+        Item("2", "33274103-48ec-4167-b450-112a018e6a6d", "Item 2", "https://static.wikia.nocookie.net/party-animals/images/2/2e/HarryAvatar.png/revision/latest?cb=20230127124432"),
     )
 
     val brandTest = listOf(
@@ -142,7 +131,7 @@ class VerticalItemWarehouseAdapter(private val itemList: List<ItemsOfEvent>) : R
         val itemsList = itemList.find { it.eventID == id }!!.items
         var list = "Items List:\n"
         for (item in itemsList) {
-            list += "${itemTest.find { it.ID == item.itemID }!!.itemName}: ${item.quantity} pcs\n"
+            list += "${itemTest.find { it.id == item.itemID }!!.name}: ${item.quantity} pcs\n"
         }
         return list
     }

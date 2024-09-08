@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,10 +15,10 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.vou_mobile.R
 import com.example.vou_mobile.helper.Helper
+import com.example.vou_mobile.model.Brand
 import com.example.vou_mobile.model.Event
 import com.example.vou_mobile.model.FavEvents
-import com.example.vou_mobile.services.EventService
-import com.example.vou_mobile.services.FavoriteResponse
+import com.example.vou_mobile.services.BrandService
 import com.example.vou_mobile.services.RetrofitClient
 import com.example.vou_mobile.viewModel.EventViewModelProviderSingleton
 import com.example.vou_mobile.viewModel.GameViewModel
@@ -107,7 +106,25 @@ class HorizontalEventsAdapter(private var events: List<Event>, private var favEv
             .setView(dialogView)
             .create()
 
-        dialogView.findViewById<TextView>(R.id.brand_name).text = eventUpdate.id_brand
+        val brandService = RetrofitClient.instance.create(BrandService::class.java)
+        val callBrand = brandService.getBrandByUuid(eventUpdate.id_brand)
+        callBrand.enqueue(object : Callback<Brand> {
+            override fun onResponse(call: Call<Brand>, response: Response<Brand>) {
+                if (response.isSuccessful) {
+                    val brand = response.body()
+                    if (brand != null) {
+                        dialogView.findViewById<TextView>(R.id.brand_name).text = brand.brand_name
+                    }
+                } else {
+                    println("Error: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<Brand>, t: Throwable) {
+                println("Failed: ${t.message}")
+            }
+        })
+
         dialogView.findViewById<TextView>(R.id.script).text = eventUpdate.name
         Picasso.get()
             .load(eventUpdate.image)
@@ -140,8 +157,8 @@ class HorizontalEventsAdapter(private var events: List<Event>, private var favEv
                 Toast.makeText(context, "The event has not started yet!", Toast.LENGTH_SHORT).show()
             }  else{
                 EventViewModelProviderSingleton.getEventViewModel().chooseEvent(eventUpdate)
-                gameViewModel.setGame(eventUpdate.type!!, context)
-                gameViewModel.startGame()
+                gameViewModel.setGame(eventUpdate.type!!, eventUpdate.id)
+                gameViewModel.currentGame.value?.startGame(context)
             }
         }
 
