@@ -34,7 +34,7 @@ class VoucherDetail : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
     private val paymentMethod = listOf(
-        PaymentMethod("MOMO", "https://static.ybox.vn/2021/9/4/1631757348918-1631085786958-Thi%E1%BA%BFt%20k%E1%BA%BF%20kh%C3%B4ng%20t%C3%AAn%20-%202021-09-08T002253.248.png"),
+        PaymentMethod("PayPal", "https://rgb.vn/wp-content/uploads/2014/05/rgb_vn_new_branding_paypal_2014_logo_detail.png"),
         PaymentMethod("Zalo Pay", "https://r2.thoainguyentek.com/2021/11/zalopay-logo.png")
     )
     private var id: String? = null

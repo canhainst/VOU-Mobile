@@ -70,10 +70,6 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
-
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-
     implementation("com.google.code.gson:gson:2.10")
 
     implementation("androidx.appcompat:appcompat:1.7.0")
@@ -95,6 +91,8 @@ dependencies {
     )))
     implementation("com.squareup.okhttp3:okhttp:4.6.0")
     implementation("commons-codec:commons-codec:1.15")
+
+    implementation("com.paypal.sdk:paypal-android-sdk:2.16.0")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")

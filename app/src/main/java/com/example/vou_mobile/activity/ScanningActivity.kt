@@ -28,20 +28,18 @@ import com.budiyev.android.codescanner.CodeScannerView
 import com.budiyev.android.codescanner.DecodeCallback
 import com.budiyev.android.codescanner.ErrorCallback
 import com.budiyev.android.codescanner.ScanMode
-import com.example.vou_mobile.Api.CreateOrder
 import com.example.vou_mobile.R
 import com.example.vou_mobile.adapter.HorizontalPaymentMethodsAdapter
 import com.example.vou_mobile.model.Billing
 import com.example.vou_mobile.model.PaymentMethod
 import com.example.vou_mobile.model.VoucherScanner
+import com.example.vou_mobile.model.payment.Paypal
+import com.example.vou_mobile.model.payment.ZaloPay
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.WriterException
 import com.google.zxing.qrcode.QRCodeWriter
 import vn.zalopay.sdk.Environment
-import vn.zalopay.sdk.ZaloPayError
 import vn.zalopay.sdk.ZaloPaySDK
-import vn.zalopay.sdk.listeners.PayOrderListener
-
 
 class ScanningActivity : AppCompatActivity(), HorizontalPaymentMethodsAdapter.OnItemClickListener {
     private lateinit var codeScanner: CodeScanner
@@ -55,7 +53,7 @@ class ScanningActivity : AppCompatActivity(), HorizontalPaymentMethodsAdapter.On
         setContentView(R.layout.activity_scaninng)
 
         val paymentMethod = listOf(
-            PaymentMethod("MOMO", "https://static.ybox.vn/2021/9/4/1631757348918-1631085786958-Thi%E1%BA%BFt%20k%E1%BA%BF%20kh%C3%B4ng%20t%C3%AAn%20-%202021-09-08T002253.248.png"),
+            PaymentMethod("PayPal", "https://rgb.vn/wp-content/uploads/2014/05/rgb_vn_new_branding_paypal_2014_logo_detail.png"),
             PaymentMethod("Zalo Pay", "https://r2.thoainguyentek.com/2021/11/zalopay-logo.png")
         )
 
@@ -105,11 +103,10 @@ class ScanningActivity : AppCompatActivity(), HorizontalPaymentMethodsAdapter.On
     override fun onItemClick(position: Int) {
         // Update selectedMethod based on the clicked item
         selectedMethod = when (position) {
-            0 -> "MOMO"
+            0 -> "PayPal"
             1 -> "ZaloPay"
             else -> ""
         }
-        Toast.makeText(this, "Selected Method: $selectedMethod", Toast.LENGTH_SHORT).show()
     }
     private fun generateQR(data: String){
         if (data.isEmpty()){
@@ -144,44 +141,39 @@ class ScanningActivity : AppCompatActivity(), HorizontalPaymentMethodsAdapter.On
 
         codeScanner.decodeCallback = DecodeCallback {
             runOnUiThread{
-                if (selectedMethod == "MOMO") {
-
-                    finish()
-                } else if (selectedMethod == "ZaloPay"){
-                    val billing = stringToBilling(it.text)
-                    val orderApi = CreateOrder()
-                    try {
-                        val data = orderApi.createOrder(billing?.price.toString())
-                        val code = data.getString("return_code")
-                        Toast.makeText(applicationContext, "return_code: $code", Toast.LENGTH_LONG)
-                            .show()
-                        if (code == "1") {
-                            val token = data.getString("zp_trans_token")
-                            ZaloPaySDK.getInstance().payOrder(this, token, "demozpdk://app", object : PayOrderListener {
-                                override fun onPaymentSucceeded(p0: String?, p1: String?, p2: String?) {
-                                    println("thanh cong")
-                                }
-
-                                override fun onPaymentCanceled(p0: String?, p1: String?) {
-                                    println("huy")
-                                }
-
-                                override fun onPaymentError(
-                                    p0: ZaloPayError?,
-                                    p1: String?,
-                                    p2: String?
-                                ) {
-                                    println("that bai")
-                                }
-                            })
+                when (selectedMethod) {
+                    "PayPal" -> {
+                        val billing = stringToBilling(it.text)
+                        val paypal = Paypal(billing!!, this)
+                        paypal.payment { success, message ->
+                            if (success) {
+                                // Payment succeeded
+                                Toast.makeText(this, "Payment successful: $message", Toast.LENGTH_LONG).show()
+                            } else {
+                                // Payment failed or canceled
+                                Toast.makeText(this, "Payment failed: $message", Toast.LENGTH_LONG).show()
+                            }
                         }
-                    } catch (e: Exception) {
-                        e.printStackTrace()
+                        finish()
                     }
-                    finish()
-                } else {
-                    showCustomDialog(this)
-//                    onResume()
+                    "ZaloPay" -> {
+                        val billing = stringToBilling(it.text)
+                        val zaloPay = ZaloPay(billing!!, this)
+                        zaloPay.payment { success, message ->
+                            if (success) {
+                                // Payment succeeded
+                                Toast.makeText(this, "Payment successful: $message", Toast.LENGTH_LONG).show()
+                            } else {
+                                // Payment failed or canceled
+                                Toast.makeText(this, "Payment failed: $message", Toast.LENGTH_LONG).show()
+                            }
+                        }
+                        finish()
+                    }
+                    else -> {
+                        showCustomDialog(this)
+                        onResume()
+                    }
                 }
             }
         }
@@ -196,7 +188,8 @@ class ScanningActivity : AppCompatActivity(), HorizontalPaymentMethodsAdapter.On
 
         checkPermission(android.Manifest.permission.CAMERA, 200)
     }
-    fun stringToBilling(input: String): Billing? {
+
+    private fun stringToBilling(input: String): Billing? {
         val regex = Regex("""Billing\(brandName=(.*), price=([\d.]+)\)""")
         val matchResult = regex.find(input)
 
