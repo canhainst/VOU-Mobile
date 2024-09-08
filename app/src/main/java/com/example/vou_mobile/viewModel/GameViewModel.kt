@@ -1,15 +1,14 @@
 package com.example.vou_mobile.viewModel
 
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.vou_mobile.model.games.Game
 import com.example.vou_mobile.model.games.GameFactory
-import com.example.vou_mobile.services.EventService
-import com.example.vou_mobile.services.PlaythroughResponse
-import com.example.vou_mobile.services.RetrofitClient
+import com.example.vou_mobile.services.api.EventService
+import com.example.vou_mobile.services.api.PlaythroughResponse
+import com.example.vou_mobile.services.api.RetrofitClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

@@ -1,4 +1,4 @@
-package com.example.vou_mobile.services
+package com.example.vou_mobile.services.api
 
 import com.example.vou_mobile.model.Voucher
 import com.example.vou_mobile.model.VoucherUser

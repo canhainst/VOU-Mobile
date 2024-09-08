@@ -27,15 +27,14 @@ import com.example.vou_mobile.R
 import com.example.vou_mobile.databinding.ActivityShakingGameBinding
 import com.example.vou_mobile.databinding.DetailDialogBinding
 import com.example.vou_mobile.helper.Helper
+import com.example.vou_mobile.model.Brand
 import com.example.vou_mobile.model.Event
 import com.example.vou_mobile.model.games.ShakeDetector
-import com.example.vou_mobile.services.EventService
-import com.example.vou_mobile.services.ItemListResponse
-import com.example.vou_mobile.services.ItemResponse
-import com.example.vou_mobile.services.PlayLacXiResponse
-import com.example.vou_mobile.services.PlaythroughResponse
-import com.example.vou_mobile.services.RetrofitClient
-import com.example.vou_mobile.viewModel.GameViewModel
+import com.example.vou_mobile.services.api.BrandService
+import com.example.vou_mobile.services.api.EventService
+import com.example.vou_mobile.services.api.ItemListResponse
+import com.example.vou_mobile.services.api.PlayLacXiResponse
+import com.example.vou_mobile.services.api.RetrofitClient
 import com.example.vou_mobile.viewModel.GameViewModelProviderSingleton
 import com.squareup.picasso.Picasso
 import retrofit2.Call
@@ -106,8 +105,25 @@ class ShakingGameActivity : AppCompatActivity(), ShakeDetector.OnShakeListener {
         }
 
         binding.itemsFab.setOnClickListener {
-            val event = Event("", "0", "Shaking Game", "https://phuclong.com.vn/upload/files/a4%20htk-02.jpg", "18:00 26/07/2024", "18:00 30/08/2024", "", "Lắc xì", null)
-            showItemsDialog(event)
+            val api = RetrofitClient.instance.create(EventService::class.java)
+            api.getEventByID(eventId).enqueue(object : Callback<Event> {
+                override fun onResponse(call: Call<Event>, response: Response<Event>) {
+                    if (response.isSuccessful) {
+                        val event = response.body()
+                        // Xử lý sự kiện, ví dụ, cập nhật UI
+                        event?.let {
+                            // Hiển thị thông tin sự kiện
+                            showItemsDialog(event)
+                        }
+                    } else {
+                        Log.e("API Error", "Response code: ${response.code()}, message: ${response.message()}")
+                    }
+                }
+
+                override fun onFailure(call: Call<Event>, t: Throwable) {
+                    Log.e("API Failure", "Error occurred: ${t.message}", t)
+                }
+            })
         }
 
         //Cảm biến gia tốc
@@ -142,7 +158,28 @@ class ShakingGameActivity : AppCompatActivity(), ShakeDetector.OnShakeListener {
             .setView(binding.root)
             .create()
 
-        binding.brandName.text = event.id_brand
+        val brandService = RetrofitClient.instance.create(BrandService::class.java)
+        val callBrand = brandService.getBrandByUuid(event.id_brand)
+        callBrand.enqueue(object : Callback<Brand> {
+            override fun onResponse(call: Call<Brand>, response: Response<Brand>) {
+                if (response.isSuccessful) {
+                    val brand = response.body()
+                    if (brand != null) {
+                        binding.brandName.text = brand.brand_name
+                        Picasso.get()
+                            .load(brand.avatar)
+                            .into(binding.brandAvt)
+                    }
+                } else {
+                    println("Error: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<Brand>, t: Throwable) {
+                println("Failed: ${t.message}")
+            }
+        })
+
         binding.script.text = event.name
         binding.script2.text = event.name
         Picasso.get()
@@ -167,30 +204,10 @@ class ShakingGameActivity : AppCompatActivity(), ShakeDetector.OnShakeListener {
         binding.btnBack.setOnClickListener {
             dialogBuilder.dismiss()
         }
-        getItemsListByEventID {
+        getUserItems {
             binding.detail.text = it
-            dialogBuilder.show()
         }
-    }
-
-    private fun getItemsListByEventID(callback: (SpannableString) -> Unit) {
-        val listTitle = "ITEMS LIST:\n"
-
-        getUserItems { itemsText ->
-            val fullText = listTitle + itemsText
-            val spannableString = SpannableString(fullText)
-
-            // In đậm "ITEMS LIST:"
-            spannableString.setSpan(
-                StyleSpan(Typeface.BOLD),
-                0,
-                listTitle.length,
-                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE
-            )
-
-            println(spannableString)
-            callback(spannableString)
-        }
+        dialogBuilder.show()
     }
 
     private fun getUserItems(callback: (SpannableString) -> Unit){

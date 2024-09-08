@@ -18,8 +18,8 @@ import com.example.vou_mobile.helper.Helper
 import com.example.vou_mobile.model.Brand
 import com.example.vou_mobile.model.Event
 import com.example.vou_mobile.model.FavEvents
-import com.example.vou_mobile.services.BrandService
-import com.example.vou_mobile.services.RetrofitClient
+import com.example.vou_mobile.services.api.BrandService
+import com.example.vou_mobile.services.api.RetrofitClient
 import com.example.vou_mobile.viewModel.EventViewModelProviderSingleton
 import com.example.vou_mobile.viewModel.GameViewModel
 import com.squareup.picasso.Picasso
@@ -114,6 +114,9 @@ class HorizontalEventsAdapter(private var events: List<Event>, private var favEv
                     val brand = response.body()
                     if (brand != null) {
                         dialogView.findViewById<TextView>(R.id.brand_name).text = brand.brand_name
+                        Picasso.get()
+                            .load(brand.avatar)
+                            .into(dialogView.findViewById<ImageView>(R.id.brandAvt))
                     }
                 } else {
                     println("Error: ${response.code()}")

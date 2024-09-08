@@ -2,7 +2,6 @@ package com.example.vou_mobile.viewModel
 
 import android.Manifest
 import android.app.Activity
-import android.app.Application
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
@@ -17,8 +16,8 @@ import com.example.vou_mobile.broadcastReceiver.scheduleEventReminder
 import com.example.vou_mobile.helper.Helper
 import com.example.vou_mobile.model.Event
 import com.example.vou_mobile.model.FavEvents
-import com.example.vou_mobile.services.EventService
-import com.example.vou_mobile.services.RetrofitClient
+import com.example.vou_mobile.services.api.EventService
+import com.example.vou_mobile.services.api.RetrofitClient
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

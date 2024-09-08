@@ -20,8 +20,8 @@ import com.example.vou_mobile.databinding.DetailDialogBinding
 import com.example.vou_mobile.helper.Helper
 import com.example.vou_mobile.model.Brand
 import com.example.vou_mobile.model.Event
-import com.example.vou_mobile.services.BrandService
-import com.example.vou_mobile.services.RetrofitClient
+import com.example.vou_mobile.services.api.BrandService
+import com.example.vou_mobile.services.api.RetrofitClient
 import com.example.vou_mobile.viewModel.GameViewModel
 import com.example.vou_mobile.viewModel.EventViewModelProviderSingleton
 import com.squareup.picasso.Picasso
@@ -129,6 +129,9 @@ class FavoriteEventAdapter(private var events: List<Event>, private val gameView
                     val brand = response.body()
                     if (brand != null) {
                         binding.brandName.text = brand.brand_name
+                        Picasso.get()
+                            .load(brand.avatar)
+                            .into(binding.brandAvt)
                     }
                 } else {
                     println("Error: ${response.code()}")

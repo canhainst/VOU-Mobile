@@ -49,7 +49,7 @@
         android:background="@drawable/rounded_bg"
         android:gravity="center"
         android:padding="8dp"
-        android:text="Chào mừng bạn đến với HQ Trivia"
+        android:text="Chào mừng đến với Quiz Game!\n Hãy trả lời đúng thật nhiều các câu hỏi để nhận về các Voucher hấp dẫn nhé!"
         android:textColor="@color/black"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="@+id/imgLogo"

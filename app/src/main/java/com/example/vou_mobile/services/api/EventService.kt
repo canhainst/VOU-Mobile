@@ -1,4 +1,4 @@
-package com.example.vou_mobile.services
+package com.example.vou_mobile.services.api
 import com.example.vou_mobile.model.Event
 import com.example.vou_mobile.model.FavEvents
 import com.example.vou_mobile.model.Item
