@@ -11,12 +11,17 @@ import com.example.vou_mobile.R
 import com.example.vou_mobile.model.PaymentMethod
 import com.squareup.picasso.Picasso
 
-class HorizontalPaymentMethodsAdapter(private var itemList: List<PaymentMethod>): RecyclerView.Adapter<HorizontalPaymentMethodsAdapter.MyViewHolder>() {
-    private var listener: OnItemClickListener? = null
+class HorizontalPaymentMethodsAdapter(
+    private var itemList: List<PaymentMethod>,
+    private val listener: OnItemClickListener
+) : RecyclerView.Adapter<HorizontalPaymentMethodsAdapter.MyViewHolder>() {
+
     private var selectedPosition = RecyclerView.NO_POSITION
+
     interface OnItemClickListener {
         fun onItemClick(position: Int)
     }
+
     class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var paymentMethodImg: ImageView = itemView.findViewById(R.id.paymentMethodImg)
         var paymentMethod: TextView = itemView.findViewById(R.id.paymentMethod)
@@ -51,7 +56,7 @@ class HorizontalPaymentMethodsAdapter(private var itemList: List<PaymentMethod>)
             selectedPosition = holder.adapterPosition
             notifyItemChanged(previousPosition) // Update previously selected item
             notifyItemChanged(selectedPosition) // Update currently selected item
-            listener?.onItemClick(selectedPosition) // Pass updated position
+            listener.onItemClick(selectedPosition) // Pass updated position to listener
         }
     }
 }

@@ -7,3 +7,8 @@ data class VoucherUser (
     var used: Int?,
     var time_update: String
 )
+data class VoucherScanner (
+    var voucherId: String,
+    var discountPercent: Int?,
+    var maxDiscount: Int?
+)

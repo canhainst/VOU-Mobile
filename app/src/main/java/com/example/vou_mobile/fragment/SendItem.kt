@@ -152,13 +152,13 @@ class SendItem : Fragment() {
 
         if (selectedItems.isEmpty()){
             dialogView.findViewById<TextView>(R.id.sendingResult).text = "Something went wrong?!"
-            dialogView.findViewById<TextView>(R.id.sendingDescription).text = "You can't send a gift with an empty basket like that :(\nTry choosing a gift <3"
+            dialogView.findViewById<TextView>(R.id.sendingDescription).text = "You can't send a gift with an empty basket like that :(\nTry choosing a gift <3\n(」° ロ °)」"
             animationView.setAnimation(R.raw.sad)
             animationView.playAnimation()
             dialogBuilder.show()
         } else if (recipientUsername.isNullOrBlank()){
             dialogView.findViewById<TextView>(R.id.sendingResult).text = "Something went wrong?!"
-            dialogView.findViewById<TextView>(R.id.sendingDescription).text = "Hey hey, you forgot to fill in the recipient's name:D"
+            dialogView.findViewById<TextView>(R.id.sendingDescription).text = "Hey hey, you forgot to fill in the recipient's name:D\n(￢_￢)"
             animationView.setAnimation(R.raw.sad)
             animationView.playAnimation()
             dialogBuilder.show()
@@ -171,13 +171,17 @@ class SendItem : Fragment() {
                 override fun onResponse(call: Call<SendItemsResponse>, response: Response<SendItemsResponse>) {
                     if (response.isSuccessful) {
                         animationView.setAnimation(R.raw.send_successfully)
-                        dialogView.findViewById<TextView>(R.id.sendingResult).text = "Yay, delivery successful <3"
-                        dialogView.findViewById<TextView>(R.id.sendingDescription).text = "Looks like your gift has been delivered, the couriers are really hard working.\nSurely the recipient will feel very happy :3"
+                        dialogView.findViewById<TextView>(R.id.sendingResult).text = "Yay, delivery successfully <3"
+                        dialogView.findViewById<TextView>(R.id.sendingDescription).text = "Looks like your gift has been delivered, the couriers are really hard working.\nSurely the recipient will feel very happy :3\n(つ ✧ω✧) つ"
                         animationView.playAnimation()
+
+                        dialogBuilder.setOnCancelListener {
+                            requireActivity().supportFragmentManager.popBackStack()
+                        }
                         dialogBuilder.show()
                     } else {
                         dialogView.findViewById<TextView>(R.id.sendingResult).text = "Something went wrong?!"
-                        dialogView.findViewById<TextView>(R.id.sendingDescription).text = "API error: ${response.code()}"
+                        dialogView.findViewById<TextView>(R.id.sendingDescription).text = "API error: ${response.code()}\n╮ (￣ ～ ￣) ╭"
                         animationView.setAnimation(R.raw.sad)
                         animationView.playAnimation()
                         dialogBuilder.show()
@@ -185,7 +189,7 @@ class SendItem : Fragment() {
                 }
                 override fun onFailure(call: Call<SendItemsResponse>, t: Throwable) {
                     dialogView.findViewById<TextView>(R.id.sendingResult).text = "Something went wrong?!"
-                    dialogView.findViewById<TextView>(R.id.sendingDescription).text = "Request failed: ${t.message}"
+                    dialogView.findViewById<TextView>(R.id.sendingDescription).text = "Request failed: ${t.message}\n╮ (￣ ～ ￣) ╭"
                     animationView.setAnimation(R.raw.sad)
                     animationView.playAnimation()
                     dialogBuilder.show()

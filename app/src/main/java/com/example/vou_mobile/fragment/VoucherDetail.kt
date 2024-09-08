@@ -1,6 +1,8 @@
 package com.example.vou_mobile.fragment
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,10 +13,13 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.vou_mobile.R
 import com.example.vou_mobile.activity.ScanningActivity
-import com.example.vou_mobile.adapter.HorizontalBrandsAdapter
+import com.example.vou_mobile.adapter.VerticalPaymentMethodAdapter
 import com.example.vou_mobile.model.Brand
+import com.example.vou_mobile.model.PaymentMethod
 import com.example.vou_mobile.services.BrandService
 import com.example.vou_mobile.services.RetrofitClient
 import com.squareup.picasso.Picasso
@@ -28,6 +33,13 @@ private const val ARG_PARAM2 = "param2"
 class VoucherDetail : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
+    private val paymentMethod = listOf(
+        PaymentMethod("MOMO", "https://static.ybox.vn/2021/9/4/1631757348918-1631085786958-Thi%E1%BA%BFt%20k%E1%BA%BF%20kh%C3%B4ng%20t%C3%AAn%20-%202021-09-08T002253.248.png"),
+        PaymentMethod("Zalo Pay", "https://r2.thoainguyentek.com/2021/11/zalopay-logo.png")
+    )
+    private var id: String? = null
+    private var value: Int? = null
+    private var maxDiscount: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +56,10 @@ class VoucherDetail : Fragment() {
         val view = inflater.inflate(R.layout.fragment_voucher_detail, container, false)
         val data = arguments
         val isUsed = data?.getBoolean("isUsed")
+
+        id = data?.getString("voucherId")
+        value = data?.getInt("value")
+        maxDiscount = data?.getInt("maxDiscount")
 
         Picasso.get()
             .load(data?.getString("voucherImgUrl"))
@@ -80,13 +96,32 @@ class VoucherDetail : Fragment() {
         }
 
         btnUseVoucher.setOnClickListener {
-            val scanActivity = Intent(activity, ScanningActivity::class.java)
-            startActivity(scanActivity)
+            if (data.getString("script") == "ONLINE"){
+                showCustomDialog(requireContext())
+            } else {
+                val scanActivity = Intent(activity, ScanningActivity::class.java)
+                scanActivity.putExtra("voucherId", id)
+                scanActivity.putExtra("value", value)
+                scanActivity.putExtra("maxDiscount", maxDiscount)
+                startActivity(scanActivity)
+            }
         }
 
         return view
     }
 
+    private fun showCustomDialog(context: Context) {
+        val dialogView = LayoutInflater.from(context).inflate(R.layout.all_method_online_layout, null)
+        val dialogBuilder = AlertDialog.Builder(context)
+            .setView(dialogView)
+            .create()
+
+        val allPaymentMethodRecyclerView = dialogView.findViewById<RecyclerView>(R.id.paymentMethodRecyclerView)
+        allPaymentMethodRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+
+        allPaymentMethodRecyclerView.adapter = VerticalPaymentMethodAdapter(paymentMethod)
+        dialogBuilder.show()
+    }
     companion object {
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
