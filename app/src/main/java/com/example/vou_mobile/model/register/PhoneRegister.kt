@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit
 
 class PhoneRegister(
     private val activity: Activity,
-    private val phoneNumber: String
+    private val phoneNumber: String,
 ) : RegisterMethod {
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
     private var storedVerificationId: String? = null
@@ -34,12 +34,10 @@ class PhoneRegister(
 
                 override fun onVerificationCompleted(credential: PhoneAuthCredential) {
                     // Auto-retrieval or instant verification
-                    Log.d(TAG, "onVerificationCompleted:$credential")
                     signInWithPhoneAuthCredential(credential, callback)
                 }
 
                 override fun onVerificationFailed(e: FirebaseException) {
-                    Log.w(TAG, "onVerificationFailed", e)
                     callback(false, e.message)
                 }
 
@@ -47,7 +45,6 @@ class PhoneRegister(
                     verificationId: String,
                     token: PhoneAuthProvider.ForceResendingToken
                 ) {
-                    Log.d(TAG, "onCodeSent:$verificationId")
                     storedVerificationId = verificationId
                     resendToken = token
                     val verifyCodeIntent = Intent(activity, VerifyCodeActivity::class.java)

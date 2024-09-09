@@ -37,18 +37,15 @@ class SignUpActivity : AppCompatActivity() {
             val password = editTextPassword.text.toString()
 
             if (termCheckbox.isChecked && username.isNotEmpty() && phoneNumber.isNotEmpty() && password.isNotEmpty()) {
-                saveCredentialsToLocal(username, password)
+                saveCredentialsToLocal(username, password, phoneNumber)
                 val phoneRegister = PhoneRegister(this, phoneNumber)
                 authViewModel.registerWithMethod(phoneRegister)
                 authViewModel.registerResult.observe(this) { result ->
                     result?.let {
                         val (isSuccessful, message) = it
                         if (isSuccessful) {
-                            // Handle successful registration
                             showToast("Registration successful")
-                            // Proceed to next activity or update UI
                         } else {
-                            // Handle registration failure
                             showToast(message ?: "Registration failed")
                         }
                     }
@@ -64,9 +61,10 @@ class SignUpActivity : AppCompatActivity() {
             finish()
         }
     }
-    private fun saveCredentialsToLocal(username: String, password: String) {
+    private fun saveCredentialsToLocal(username: String, password: String, number: String) {
         val sharedPreferences = getSharedPreferences("UserCredentials", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
+        editor.putString("number", number)
         editor.putString("username", username)
         editor.putString("password", password)
         editor.apply()

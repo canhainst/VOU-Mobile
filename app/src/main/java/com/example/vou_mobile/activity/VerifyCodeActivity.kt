@@ -28,6 +28,9 @@ class VerifyCodeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_verify_code)
 
+        val sharedPreferences = getSharedPreferences("UserCredentials", Context.MODE_PRIVATE)
+        val number = sharedPreferences.getString("number", null)
+
         authViewModel = ViewModelProvider(this)[AuthViewModel::class.java]
 
         codeViews = listOf(
@@ -45,7 +48,7 @@ class VerifyCodeActivity : AppCompatActivity() {
             codeInputted = getCodeFromViews()
             if (codeInputted.length == 6) {
                 val credential = PhoneAuthProvider.getCredential(verificationId, codeInputted)
-                val phoneRegister = PhoneRegister(this, "") // Empty phone number since it is not needed here
+                val phoneRegister = PhoneRegister(this, number!!)
                 authViewModel.registerWithMethod(object : RegisterMethod {
                     override fun register(callback: (Boolean, String?) -> Unit) {
                         phoneRegister.signInWithPhoneAuthCredential(credential, callback)

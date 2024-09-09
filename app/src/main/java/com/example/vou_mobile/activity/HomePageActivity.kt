@@ -15,6 +15,7 @@ import com.example.vou_mobile.fragment.SendItem
 import com.example.vou_mobile.model.User
 import com.example.vou_mobile.services.api.RetrofitClient
 import com.example.vou_mobile.services.api.UserService
+import com.example.vou_mobile.utilities.UserUtils
 import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
@@ -27,31 +28,38 @@ class HomePageActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityHomePageBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         // Khởi tạo sharedPreferences bên trong onCreate
         sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
 
-        // Lấy UUID từ UserUtils và lưu vào SharedPreferences
+        val uuid = sharedPreferences.getString("uuid", null)
+
 //        UserUtils.getUuidById { uuid ->
 //            with(sharedPreferences.edit()) {
 //                putString("uuid", uuid)
 //                apply()
+//                getUserByUUID(uuid!!){
+//                    replaceFragment(HomePage())
+//                }
 //            }
 //        }
 
-        with(sharedPreferences.edit()) {
-            putString("uuid", "01724dc6-775a-4f52-95fd-245c615f2e77")
-            apply()
-        }
-
-        // Lấy UUID từ SharedPreferences và in ra
-        val uuid = sharedPreferences.getString("uuid", "")
-
-        binding = ActivityHomePageBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-
-        getUserByUUID(uuid!!){
-            replaceFragment(HomePage())
+        if (uuid == null) {
+            UserUtils.getUuidById { uuid ->
+                with(sharedPreferences.edit()) {
+                    putString("uuid", uuid)
+                    apply()
+                    getUserByUUID(uuid!!){
+                        replaceFragment(HomePage())
+                    }
+                }
+            }
+        } else {
+            getUserByUUID(uuid){
+                replaceFragment(HomePage())
+            }
         }
 
         binding.bottomNavigationView.setOnItemSelectedListener {

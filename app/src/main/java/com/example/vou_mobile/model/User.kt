@@ -17,3 +17,16 @@ data class User(
     var status: String,
     var time_update: String
 )
+data class NewUser(
+    var full_name: String,
+    var user_name: String,
+    var password: String,
+    var avatar: String?,
+    var dob: String?,
+    var gender: String?,
+    var fb_acc: String?,
+    var email: String?,
+    var phone: String,
+    var type: String,
+    var status: String
+)

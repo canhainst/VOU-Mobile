@@ -81,16 +81,14 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4")
     implementation("androidx.test:core-ktx:1.6.1")
 
-    // ZaloPay
-
     implementation("com.squareup.okhttp3:okhttp:4.9.3")
     implementation("commons-codec:commons-codec:1.15")
 
     implementation("com.paypal.sdk:paypal-android-sdk:2.16.0")
 
-    //zalo
+    // ZaloPay
     implementation(fileTree(mapOf(
-        "dir" to "D:\\ZaloPayLib\\ZaloPayLib",
+        "dir" to "../ZaloPayLib",
         "include" to listOf("*.aar", "*.jar"),
         "exclude" to listOf("")
     )))

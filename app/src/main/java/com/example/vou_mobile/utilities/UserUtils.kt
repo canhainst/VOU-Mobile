@@ -1,5 +1,6 @@
 package com.example.vou_mobile.utilities
 
+import com.example.vou_mobile.model.User
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
@@ -11,7 +12,21 @@ import com.google.firebase.database.ValueEventListener
 object UserUtils {
     private var auth: FirebaseAuth = Firebase.auth
     val userID = auth.currentUser!!.uid
+    fun addNewUser(user: User, callback: (Boolean?) -> Unit){
+        println(user)
+        println(userID)
+        val database = FirebaseDatabase.getInstance().reference
 
+        database.child(userID).child("uuid").setValue(user.id)
+            .addOnSuccessListener {
+                // Handle success (optional)
+                callback(true)
+            }
+            .addOnFailureListener { e ->
+                // Handle failure (optional)
+                callback(false)
+            }
+    }
 
     fun getUuidById(callback: (String?) -> Unit) {
         val database = FirebaseDatabase.getInstance().reference
