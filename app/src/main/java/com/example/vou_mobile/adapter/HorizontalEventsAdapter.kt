@@ -151,6 +151,7 @@ class HorizontalEventsAdapter(private var events: List<Event>, private var favEv
             dialogView.findViewById<Button>(R.id.btnDirection).visibility = View.GONE
             Toast.makeText(context, "The event has ended!", Toast.LENGTH_SHORT).show()
         } else if (eventUpdate.type?.lowercase() == "quiz" && Helper.isTimeAfter(curTime, time2)){
+//            println("$curTime - $time2")
             dialogView.findViewById<Button>(R.id.btnDirection).visibility = View.GONE
             Toast.makeText(context, "The event has started!", Toast.LENGTH_SHORT).show()
         }

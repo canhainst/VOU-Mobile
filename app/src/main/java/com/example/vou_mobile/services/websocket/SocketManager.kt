@@ -4,7 +4,7 @@ import android.util.Log
 import io.socket.client.IO
 import io.socket.client.Socket
 import io.socket.emitter.Emitter
-import org.json.JSONArray
+import io.socket.engineio.client.transports.WebSocket
 import org.json.JSONObject
 import java.net.URISyntaxException
 
@@ -41,8 +41,21 @@ class SocketManager private constructor() {
 
     fun connect(eventId: String, userId: String) {
         try {
-            socket = IO.socket("http://10.100.77.64:5000")
 
+//            socket = IO.socket("http://10.100.77.64:5000")
+
+//            val opts = IO.Options()
+//            opts.transports = arrayOf<String>(WebSocket.NAME)
+
+            val opts = IO.Options().apply {
+                transports = arrayOf("websocket", "polling") // Chỉ sử dụng WebSocket
+                reconnection = true // Tự động kết nối lại nếu kết nối bị mất
+                reconnectionAttempts = 5 // Số lần thử kết nối lại
+                reconnectionDelay = 1000 // Thời gian chờ giữa các lần thử kết nối lại (ms)
+            }
+
+
+            socket = IO.socket("http://10.100.77.64:80", opts)
             socket?.connect()
 
             socket?.on(Socket.EVENT_CONNECT, onConnect)
@@ -106,7 +119,7 @@ class SocketManager private constructor() {
 
     private val onError = Emitter.Listener { args ->
         val error = args[0] as Exception
-        Log.e("SocketManager", "Connection error: ${error.message}")
+        Log.e("SocketManager", "Connection error: ${error}")
         onErrorListener?.invoke(error)
     }
 

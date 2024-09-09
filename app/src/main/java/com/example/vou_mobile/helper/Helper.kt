@@ -7,7 +7,7 @@ import java.util.Date
 import java.util.Locale
 
 object Helper {
-    private const val dateTimeFormat: String = "13:14 dd/MM/yyyy"
+    private const val dateTimeFormat: String = "19:41 dd/MM/yyyy"
     private fun convertDateString(dateString: String): String {
         val fullFormat = SimpleDateFormat("HH:mm dd/MM/yyyy", Locale.getDefault())
         val shortFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())

@@ -2,6 +2,7 @@ package com.example.vou_mobile.services.api
 import com.example.vou_mobile.model.Event
 import com.example.vou_mobile.model.FavEvents
 import com.example.vou_mobile.model.Item
+import com.example.vou_mobile.model.Voucher
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -29,6 +30,12 @@ data class ItemResponse(
     val quantity: Int
 )
 
+data class RedeemGifResponse(
+    val code: Int,
+    val message: String?,
+    val item: Voucher,
+)
+
 interface EventService {
     //event
     @GET("event/getEvent/{id}")
@@ -43,6 +50,8 @@ interface EventService {
     fun playLacXiEvent(@Path("uuid") uuid: String, @Path("userId") userId: String): Call<PlayLacXiResponse>
     @GET("event/lacxi/getUserItemsForEvent/{userId}/{eventId}")
     fun getUserItemsForEvent(@Path("userId") userId: String, @Path("eventId") eventId: String): Call<ItemListResponse>
+    @GET("event/lacxi/redeem/{userId}/{uuid}")
+    fun redeemGift(@Path("userId") userId: String, @Path("uuid") uuid: String): Call<RedeemGifResponse>
 
     //fav event
     @POST("event/addFavEvent")
