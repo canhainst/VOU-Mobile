@@ -31,8 +31,8 @@ class GameViewModel() : ViewModel() {
     private val _playthrough = MutableLiveData<Int>()
     val playthrough: LiveData<Int> get() = _playthrough
 
-    fun setGame(gameType: String, eventId: String) {
-        val game = GameFactory.createGame(gameType, eventId)
+    fun setGame(gameType: String) {
+        val game = GameFactory.createGame(gameType)
         _currentGame.value = game
     }
 

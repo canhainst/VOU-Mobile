@@ -11,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -24,11 +23,10 @@ import com.example.vou_mobile.model.Item
 import com.example.vou_mobile.model.ItemSent
 import com.example.vou_mobile.model.SendGift
 import com.example.vou_mobile.model.SendItemsResponse
-import com.example.vou_mobile.services.BrandService
-import com.example.vou_mobile.services.EventService
-import com.example.vou_mobile.services.RetrofitClient
-import com.example.vou_mobile.services.WarehouseService
-import com.squareup.picasso.Picasso
+import com.example.vou_mobile.services.api.BrandService
+import com.example.vou_mobile.services.api.EventService
+import com.example.vou_mobile.services.api.RetrofitClient
+import com.example.vou_mobile.services.api.WarehouseService
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

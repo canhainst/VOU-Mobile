@@ -16,7 +16,7 @@ data class PlaythroughResponse(
 
 data class PlayLacXiResponse(
     val code: Int,
-    val item: Item?, // Thay đổi kiểu dữ liệu cho phù hợp với phản hồi từ server
+    val item: Item?,
     val message: String? = null
 )
 

@@ -20,8 +20,8 @@ import com.example.vou_mobile.activity.ScanningActivity
 import com.example.vou_mobile.adapter.VerticalPaymentMethodAdapter
 import com.example.vou_mobile.model.Brand
 import com.example.vou_mobile.model.PaymentMethod
-import com.example.vou_mobile.services.BrandService
-import com.example.vou_mobile.services.RetrofitClient
+import com.example.vou_mobile.services.api.BrandService
+import com.example.vou_mobile.services.api.RetrofitClient
 import com.squareup.picasso.Picasso
 import retrofit2.Call
 import retrofit2.Callback

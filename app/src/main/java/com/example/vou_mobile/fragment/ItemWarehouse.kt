@@ -12,8 +12,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.vou_mobile.R
 import com.example.vou_mobile.adapter.VerticalItemWarehouseAdapter
 import com.example.vou_mobile.model.ItemBelong
-import com.example.vou_mobile.services.RetrofitClient
-import com.example.vou_mobile.services.WarehouseService
+import com.example.vou_mobile.services.api.RetrofitClient
+import com.example.vou_mobile.services.api.WarehouseService
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

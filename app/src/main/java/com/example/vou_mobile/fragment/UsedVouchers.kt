@@ -13,8 +13,8 @@ import com.example.vou_mobile.R
 import com.example.vou_mobile.adapter.VerticalUnusedVoucherAdapter
 import com.example.vou_mobile.adapter.VerticalUsedVoucherAdapter
 import com.example.vou_mobile.model.Voucher
-import com.example.vou_mobile.services.RetrofitClient
-import com.example.vou_mobile.services.VoucherService
+import com.example.vou_mobile.services.api.RetrofitClient
+import com.example.vou_mobile.services.api.VoucherService
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

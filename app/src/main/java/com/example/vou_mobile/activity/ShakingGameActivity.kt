@@ -316,6 +316,7 @@ class ShakingGameActivity : AppCompatActivity(), ShakeDetector.OnShakeListener {
             override fun onResponse(call: Call<PlayLacXiResponse>, response: Response<PlayLacXiResponse>) {
                 if (response.isSuccessful) {
                     val playLacXiResponse = response.body()
+                    Log.d("API Success", playLacXiResponse.toString())
                     if (playLacXiResponse != null) {
                         if (playLacXiResponse.code == 200) {
                             Log.d("API Success", "Item received: ${playLacXiResponse.item}")

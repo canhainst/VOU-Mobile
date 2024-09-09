@@ -1,17 +1,13 @@
 package com.example.vou_mobile.helper
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import com.example.vou_mobile.model.Event
 import java.text.ParseException
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 
 object Helper {
-    private const val dateTimeFormat: String = "03:00 dd/MM/yyyy"
+    private const val dateTimeFormat: String = "13:14 dd/MM/yyyy"
     private fun convertDateString(dateString: String): String {
         val fullFormat = SimpleDateFormat("HH:mm dd/MM/yyyy", Locale.getDefault())
         val shortFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())

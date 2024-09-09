@@ -6,6 +6,6 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 
 interface ItemService {
-    @GET("getByIdEvent/{uuid}") // Make sure this matches your route in the backend
+    @GET("getByIdEvent/{uuid}")
     fun getItemsByIdEvent(@Path("uuid") idEvent: String): Call<List<Item>>
 }

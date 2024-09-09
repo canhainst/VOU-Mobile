@@ -175,7 +175,7 @@ class FavoriteEventAdapter(private var events: List<Event>, private val gameView
             }  else{
                 // Trong Activity đầu tiên
                 viewModel.chooseEvent(event)
-                gameViewModel.setGame(event.type!!, event.id)
+                gameViewModel.setGame(event.type!!)
                 gameViewModel.currentGame.value?.startGame(context)
             }
         }

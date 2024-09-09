@@ -160,7 +160,7 @@ class HorizontalEventsAdapter(private var events: List<Event>, private var favEv
                 Toast.makeText(context, "The event has not started yet!", Toast.LENGTH_SHORT).show()
             }  else{
                 viewModel.chooseEvent(eventUpdate)
-                gameViewModel.setGame(eventUpdate.type!!, eventUpdate.id)
+                gameViewModel.setGame(eventUpdate.type!!)
                 gameViewModel.currentGame.value?.startGame(context)
             }
         }
