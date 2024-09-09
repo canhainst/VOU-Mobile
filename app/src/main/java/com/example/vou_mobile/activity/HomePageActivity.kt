@@ -34,31 +34,13 @@ class HomePageActivity : AppCompatActivity() {
         // Khởi tạo sharedPreferences bên trong onCreate
         sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
 
-        val uuid = sharedPreferences.getString("uuid", null)
-
-//        UserUtils.getUuidById { uuid ->
-//            with(sharedPreferences.edit()) {
-//                putString("uuid", uuid)
-//                apply()
-//                getUserByUUID(uuid!!){
-//                    replaceFragment(HomePage())
-//                }
-//            }
-//        }
-
-        if (uuid == null) {
-            UserUtils.getUuidById { uuid ->
-                with(sharedPreferences.edit()) {
-                    putString("uuid", uuid)
-                    apply()
-                    getUserByUUID(uuid!!){
-                        replaceFragment(HomePage())
-                    }
+        UserUtils.getUuidById { uuid ->
+            with(sharedPreferences.edit()) {
+                putString("uuid", uuid)
+                apply()
+                getUserByUUID(uuid!!){
+                    replaceFragment(HomePage())
                 }
-            }
-        } else {
-            getUserByUUID(uuid){
-                replaceFragment(HomePage())
             }
         }
 
