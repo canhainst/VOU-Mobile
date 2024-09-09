@@ -7,20 +7,30 @@ import java.util.Date
 import java.util.Locale
 
 object Helper {
-    private const val dateTimeFormat: String = "19:41 dd/MM/yyyy"
+    private const val dateTimeFormat: String = "04:12 dd/MM/yyyy"
     private fun convertDateString(dateString: String): String {
+        // Định dạng đầu vào
         val fullFormat = SimpleDateFormat("HH:mm dd/MM/yyyy", Locale.getDefault())
         val shortFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val isoFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
         return try {
+            // Kiểm tra nếu chuỗi đã ở định dạng HH:mm dd/MM/yyyy
             fullFormat.parse(dateString)
-            dateString // Chuỗi đã ở định dạng HH:mm dd/MM/yyyy, trả về nguyên bản
+            dateString // Trả về chuỗi gốc nếu đã đúng định dạng
         } catch (e: Exception) {
             try {
+                // Chuyển đổi từ định dạng dd/MM/yyyy sang HH:mm dd/MM/yyyy
                 val date = shortFormat.parse(dateString)
-                fullFormat.format(date!!) // Chuyển đổi thành định dạng HH:mm dd/MM/yyyy
+                fullFormat.format(date!!)
             } catch (e: Exception) {
-                "Invalid date format"
+                try {
+                    // Chuyển đổi từ định dạng yyyy-MM-dd sang HH:mm dd/MM/yyyy
+                    val date = isoFormat.parse(dateString)
+                    fullFormat.format(date!!)
+                } catch (e: Exception) {
+                    "Invalid date format" // Trả về chuỗi thông báo lỗi nếu không khớp với định dạng nào
+                }
             }
         }
     }
@@ -72,6 +82,7 @@ object Helper {
 
         val Time = convertDateString(time!!)
         val Time2 = convertDateString(time2!!)
+        println("$time - $time2")
         val dateFormat = SimpleDateFormat("HH:mm dd/MM/yyyy", Locale.getDefault())
         val t1: Date? = Time.let { dateFormat.parse(it) }
         val t2: Date? = Time2.let { dateFormat.parse(it) }
@@ -115,12 +126,18 @@ object Helper {
         return dateFormat.parse(time)
     }
 
-    fun getTimeRangeString(event: Event): String?{
-        return when (event.type?.lowercase()) {
-            "lắc xì" -> "${event.start_time} - ${event.end_time}"
-            "quiz" -> event.start_time
-            else -> ""
+    fun getTimeRangeString(event: Event): String{
+        var str = ""
+        when (event.type?.lowercase()) {
+            "lắc xì" -> {
+                str = "${event.start_time} - ${event.end_time}"
+            }
+            "quiz" -> {
+                val updateEvent = fixEventTime(event)
+                str = "${updateEvent.start_time}"
+            }
         }
+        return str
     }
 
 

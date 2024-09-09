@@ -12,7 +12,7 @@
         android:layout_height="70dp"
         android:background="@drawable/circle_background_imageview"
         android:clipToOutline="true"
-        android:src="@drawable/placeholder_image"
+        android:src="@drawable/logo_vou"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

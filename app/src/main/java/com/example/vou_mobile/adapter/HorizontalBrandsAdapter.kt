@@ -26,6 +26,7 @@ class HorizontalBrandsAdapter(private val itemList: List<Brand>): RecyclerView.A
         Picasso.get()
             .load(item.avatar)
             .into(holder.brandAvtUrl)
+
         holder.brandName.text = item.brand_name
     }
 

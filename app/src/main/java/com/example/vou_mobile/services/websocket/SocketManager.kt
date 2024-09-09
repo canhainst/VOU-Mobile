@@ -41,21 +41,9 @@ class SocketManager private constructor() {
 
     fun connect(eventId: String, userId: String) {
         try {
-
-//            socket = IO.socket("http://10.100.77.64:5000")
-
-//            val opts = IO.Options()
-//            opts.transports = arrayOf<String>(WebSocket.NAME)
-
-            val opts = IO.Options().apply {
-                transports = arrayOf("websocket", "polling") // Chỉ sử dụng WebSocket
-                reconnection = true // Tự động kết nối lại nếu kết nối bị mất
-                reconnectionAttempts = 5 // Số lần thử kết nối lại
-                reconnectionDelay = 1000 // Thời gian chờ giữa các lần thử kết nối lại (ms)
-            }
-
-
-            socket = IO.socket("http://10.100.77.64:80", opts)
+            val opts = IO.Options()
+            opts.transports = arrayOf<String>(WebSocket.NAME)
+            socket = IO.socket("http://192.168.1.3:5000", opts)
             socket?.connect()
 
             socket?.on(Socket.EVENT_CONNECT, onConnect)
