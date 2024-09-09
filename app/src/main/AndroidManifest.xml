@@ -29,7 +29,7 @@
             android:exported="false" />
 
         <receiver
-            android:name=".broadcastReceiver.EventReminderReceiver"
+            android:name=".services.broadcastReceiver.EventReminderReceiver"
             android:exported="false" />
 
         <activity

@@ -159,7 +159,7 @@ class HorizontalEventsAdapter(private var events: List<Event>, private var favEv
             if (eventUpdate.type?.lowercase() == "lắc xì"  && Helper.isTimeBefore(curTime, eventUpdate.start_time)){
                 Toast.makeText(context, "The event has not started yet!", Toast.LENGTH_SHORT).show()
             }  else{
-                EventViewModelProviderSingleton.getEventViewModel().chooseEvent(eventUpdate)
+                viewModel.chooseEvent(eventUpdate)
                 gameViewModel.setGame(eventUpdate.type!!, eventUpdate.id)
                 gameViewModel.currentGame.value?.startGame(context)
             }

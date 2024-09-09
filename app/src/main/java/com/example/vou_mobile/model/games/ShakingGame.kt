@@ -9,11 +9,9 @@ import android.hardware.SensorManager
 import androidx.appcompat.app.AppCompatActivity
 import com.example.vou_mobile.activity.ShakingGameActivity
 
-class ShakingGame(private val eventId: String): Game {
+class ShakingGame(): Game {
     override fun startGame(context: Context) {
-        val intent = Intent(context, ShakingGameActivity::class.java).apply {
-            putExtra("idEvent", eventId) // Truyền idEvent vào Intent
-        }
+        val intent = Intent(context, ShakingGameActivity::class.java)
         context.startActivity(intent)
     }
 

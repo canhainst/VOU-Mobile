@@ -1,4 +1,4 @@
-package com.example.vou_mobile.broadcastReceiver
+package com.example.vou_mobile.services.broadcastReceiver
 
 import android.Manifest
 import android.annotation.SuppressLint

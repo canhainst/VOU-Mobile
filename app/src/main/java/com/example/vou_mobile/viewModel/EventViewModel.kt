@@ -11,8 +11,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.vou_mobile.activity.RequestPermissionsActivity
-import com.example.vou_mobile.broadcastReceiver.cancelEventReminder
-import com.example.vou_mobile.broadcastReceiver.scheduleEventReminder
+import com.example.vou_mobile.services.broadcastReceiver.cancelEventReminder
+import com.example.vou_mobile.services.broadcastReceiver.scheduleEventReminder
 import com.example.vou_mobile.helper.Helper
 import com.example.vou_mobile.model.Event
 import com.example.vou_mobile.model.FavEvents

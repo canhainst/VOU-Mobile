@@ -35,6 +35,7 @@ import com.example.vou_mobile.services.api.EventService
 import com.example.vou_mobile.services.api.ItemListResponse
 import com.example.vou_mobile.services.api.PlayLacXiResponse
 import com.example.vou_mobile.services.api.RetrofitClient
+import com.example.vou_mobile.viewModel.EventViewModelProviderSingleton
 import com.example.vou_mobile.viewModel.GameViewModelProviderSingleton
 import com.squareup.picasso.Picasso
 import retrofit2.Call
@@ -44,6 +45,8 @@ import retrofit2.Response
 class ShakingGameActivity : AppCompatActivity(), ShakeDetector.OnShakeListener {
     private lateinit var binding: ActivityShakingGameBinding
     private val gameViewModel = GameViewModelProviderSingleton.getGameViewModel()
+    private val eventViewModel = EventViewModelProviderSingleton.getEventViewModel()
+
     private var rotate = false
     private lateinit var userId: String
     private lateinit var eventId: String
@@ -81,7 +84,7 @@ class ShakingGameActivity : AppCompatActivity(), ShakeDetector.OnShakeListener {
 
         sharedPreferences = this.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
         userId = sharedPreferences.getString("uuid", null)!!
-        eventId = intent.getStringExtra("idEvent") ?: ""
+        eventId = eventViewModel.curEvent.value!!.id
 
         //playThrough
         gameViewModel.loadPlaythrough(eventId, userId)

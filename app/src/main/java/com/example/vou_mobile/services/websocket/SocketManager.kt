@@ -41,7 +41,7 @@ class SocketManager private constructor() {
 
     fun connect(eventId: String, userId: String) {
         try {
-            socket = IO.socket("http://192.168.1.2:5000")
+            socket = IO.socket("http:// 192.168.1.4:5000")
 
             socket?.connect()
 
