@@ -20,10 +20,9 @@ import com.example.vou_mobile.databinding.DetailDialogBinding
 import com.example.vou_mobile.helper.Helper
 import com.example.vou_mobile.model.Brand
 import com.example.vou_mobile.model.Event
-import com.example.vou_mobile.services.BrandService
-import com.example.vou_mobile.services.RetrofitClient
+import com.example.vou_mobile.services.api.BrandService
+import com.example.vou_mobile.services.api.RetrofitClient
 import com.example.vou_mobile.viewModel.GameViewModel
-import com.example.vou_mobile.viewModel.EventViewModel
 import com.example.vou_mobile.viewModel.EventViewModelProviderSingleton
 import com.squareup.picasso.Picasso
 import retrofit2.Call
@@ -35,6 +34,8 @@ import java.util.Date
 class FavoriteEventAdapter(private var events: List<Event>, private val gameViewModel: GameViewModel) : RecyclerView.Adapter<FavoriteEventAdapter.ViewHolder>() {
     private lateinit var context: Context
     private val viewModel =  EventViewModelProviderSingleton.getEventViewModel()
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var uuid: String
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val brand: TextView = itemView.findViewById(R.id.brand)
@@ -53,8 +54,11 @@ class FavoriteEventAdapter(private var events: List<Event>, private val gameView
         return events.size
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        sharedPreferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        uuid = sharedPreferences.getString("uuid", "")!!
         val event = events[position]
         val eventUpdate = Helper.fixEventTime(event)
         val brandService = RetrofitClient.instance.create(BrandService::class.java)
@@ -80,7 +84,6 @@ class FavoriteEventAdapter(private var events: List<Event>, private val gameView
             .into(holder.imageView)
 
         holder.notifButton.setImageResource(R.drawable.baseline_notifications_active_24)
-
         holder.time.text = Helper.getTimeRangeString(eventUpdate)
         holder.notifButton.setOnClickListener {
             showConfirmDialog(event)
@@ -95,7 +98,7 @@ class FavoriteEventAdapter(private var events: List<Event>, private val gameView
             .setTitle("Confirm")
             .setMessage("Are you sure you want to remove this event from your favorites?")
             .setPositiveButton("Remove") { dialog, _ ->
-                viewModel.removeFavoriteEvent(event, "01724dc6-775a-4f52-95fd-245c615f2e77"){
+                viewModel.removeFavoriteEvent(context, event, uuid){
                     dialog.dismiss()
                     Toast.makeText(context, "Event marking has been removed", Toast.LENGTH_SHORT).show()
                 }
@@ -126,6 +129,9 @@ class FavoriteEventAdapter(private var events: List<Event>, private val gameView
                     val brand = response.body()
                     if (brand != null) {
                         binding.brandName.text = brand.brand_name
+                        Picasso.get()
+                            .load(brand.avatar)
+                            .into(binding.brandAvt)
                     }
                 } else {
                     println("Error: ${response.code()}")
@@ -155,25 +161,32 @@ class FavoriteEventAdapter(private var events: List<Event>, private val gameView
         calendar.add(Calendar.MINUTE, 10)
         val time2 = Helper.dateToString(calendar.time) //thoi gian sau 10p ke tu khi bat dau
 
-        if (event.type == "Lắc xì" && Helper.isTimeAfter(curTime, event.end_time)) {
+        if (event.type?.lowercase() == "lắc xì" && Helper.isTimeAfter(curTime, event.end_time)) {
             binding.btnDirection.visibility = View.GONE
             Toast.makeText(context, "The event has ended!", Toast.LENGTH_SHORT).show()
-        } else if (event.type == "Quiz" && Helper.isTimeAfter(curTime, time2)){
+        } else if (event.type?.lowercase() == "quiz" && Helper.isTimeAfter(curTime, time2)){
             binding.btnDirection.visibility = View.GONE
             Toast.makeText(context, "The event has started!", Toast.LENGTH_SHORT).show()
         }
 
         binding.btnDirection.setOnClickListener {
-            if (event.type == "Lắc xì" && Helper.isTimeBefore(curTime, event.start_time)){
+            if (event.type?.lowercase() == "lắc xì" && Helper.isTimeBefore(curTime, event.start_time)){
                 Toast.makeText(context, "The event has not started yet!", Toast.LENGTH_SHORT).show()
             }  else{
                 // Trong Activity đầu tiên
                 viewModel.chooseEvent(event)
-                gameViewModel.setGame(event.type!!, context)
-                gameViewModel.startGame()
+                gameViewModel.setGame(event.type!!, event.id)
+                gameViewModel.currentGame.value?.startGame(context)
             }
         }
 
         dialogBuilder.show()
     }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateEvents(newEvents: List<Event>) {
+        events = newEvents
+        notifyDataSetChanged()
+    }
+
 }

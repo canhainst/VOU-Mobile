@@ -1,6 +1,7 @@
-package com.example.vou_mobile.services
+package com.example.vou_mobile.services.api
 
 import com.example.vou_mobile.model.Voucher
+import com.example.vou_mobile.model.VoucherInEvent
 import com.example.vou_mobile.model.VoucherUser
 import retrofit2.Call
 import retrofit2.http.Body
@@ -21,4 +22,8 @@ interface VoucherService {
     fun getAllUsedVoucherByUserUuid(@Path("uuid") uuid: String): Call<List<Voucher>>
     @POST("warehouse/addVoucher")
     fun addVoucherIntoWarehouse(@Body request: addVoucherRequest): Call<VoucherUser>
+
+    //vouchers in event
+    @GET("/getVoucherByIdEvent/{uuid}")
+    fun getVoucherByIdEvent(@Path("uuid") uuid: String): Call<List<VoucherInEvent>>
 }

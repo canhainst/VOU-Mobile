@@ -1,26 +1,34 @@
 package com.example.vou_mobile.activity
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.example.vou_mobile.R
 import com.example.vou_mobile.databinding.ActivityQuizGameBinding
 import com.example.vou_mobile.helper.Helper
+import com.example.vou_mobile.services.websocket.SocketManager
 import com.example.vou_mobile.utilities.TextToSpeechUtils
 import com.example.vou_mobile.viewModel.EventViewModelProviderSingleton
-import com.example.vou_mobile.viewModel.GameViewModel
+import com.example.vou_mobile.viewModel.GameViewModelProviderSingleton
 import java.util.Calendar
 import java.util.Date
 
 class QuizGameActivity : AppCompatActivity() {
     private lateinit var binding: ActivityQuizGameBinding
-    private val gameViewModel = GameViewModel()
     private val eventViewModel = EventViewModelProviderSingleton.getEventViewModel()
-    private val typeOfEvent = "Quiz"
+    private val gameViewModel = GameViewModelProviderSingleton.getGameViewModel()
     private var time2: String? = null
 
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var userId: String
+    private lateinit var eventId: String
+
+    private lateinit var socketManager: SocketManager
     private lateinit var ttsUtil: TextToSpeechUtils
 
     private val handler = android.os.Handler()
@@ -37,9 +45,12 @@ class QuizGameActivity : AppCompatActivity() {
         binding = ActivityQuizGameBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        sharedPreferences = this.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        userId = sharedPreferences.getString("uuid", null)!!
+        eventId = intent.getStringExtra("idEvent") ?: ""
+
         binding.btnClose.setOnClickListener {
-            gameViewModel.setGame(typeOfEvent, this)
-            gameViewModel.stopGame()
+            gameViewModel.currentGame.value?.endGame(this)
         }
 
         // Bắt đầu cập nhật giao diện người dùng
@@ -50,9 +61,42 @@ class QuizGameActivity : AppCompatActivity() {
         calendar.add(Calendar.MINUTE, 10)
         time2 = Helper.dateToString(calendar.time)
 
-        //text to speech
+        // Khởi tạo SocketManager nhưng chưa kết nối
+        socketManager = SocketManager.getInstance()
+
+        // Đăng ký callback cho sự kiện eventStart từ server
+        socketManager.onEventStart { countDown ->
+            runOnUiThread {
+                binding.tvTime.text = "Game starts in: $countDown seconds"
+            }
+        }
+
+        // Đăng ký callback cho sự kiện nhận câu hỏi
+        socketManager.onQuestionReceived { questionData ->
+            runOnUiThread {
+                val intent = Intent(this, PlayQuizGameActivity::class.java)
+                questionData.let {
+                    intent.putExtra("question", it.ques)
+                    intent.putExtra("choice_1", it.choice_1)
+                    intent.putExtra("choice_2", it.choice_2)
+                    intent.putExtra("choice_3", it.choice_3)
+                    intent.putExtra("choice_4", it.choice_4)
+                    intent.putExtra("timer", it.timer)
+                }
+                finish()
+                startActivity(intent)
+            }
+        }
+
+        // Xử lý lỗi kết nối nếu có
+        socketManager.onError { error ->
+            runOnUiThread {
+                Toast.makeText(this, "Error: ${error.message}", Toast.LENGTH_LONG).show()
+            }
+        }
+
+        // Text-to-speech setup
         ttsUtil = TextToSpeechUtils(this) {
-            // Callback được gọi khi TTS đã sẵn sàng
             ttsUtil.speak(binding.tvWelcome.text.toString())
         }
     }
@@ -68,15 +112,14 @@ class QuizGameActivity : AppCompatActivity() {
             } else if (Helper.isTimeAfter(curTime, time2)) {
                 binding.btnPlay.isClickable = false
                 binding.btnPlay.backgroundTintList = ContextCompat.getColorStateList(this, R.color.light_grey)
-                binding.btnPlay.text = "Oh no! You must join within 10 minutes of start."
-            } else{
+                binding.btnPlay.text = "You must join within 10 minutes of start."
+            } else {
                 binding.btnPlay.isClickable = true
                 binding.btnPlay.backgroundTintList = ContextCompat.getColorStateList(this, R.color.green_correct)
                 binding.btnPlay.text = "Start"
                 binding.btnPlay.setOnClickListener {
-                    val intent = Intent(this, PlayQuizGameActivity::class.java)
-                    startActivity(intent)
-                    finish()
+                    // Kết nối WebSocket khi nhấn nút Start
+                    socketManager.connect(eventId, userId)
                 }
             }
         }

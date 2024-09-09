@@ -13,8 +13,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.vou_mobile.R
 import com.example.vou_mobile.model.Brand
 import com.example.vou_mobile.model.Voucher
-import com.example.vou_mobile.services.BrandService
-import com.example.vou_mobile.services.RetrofitClient
+import com.example.vou_mobile.services.api.BrandService
+import com.example.vou_mobile.services.api.RetrofitClient
 import com.squareup.picasso.Picasso
 import retrofit2.Call
 import retrofit2.Callback

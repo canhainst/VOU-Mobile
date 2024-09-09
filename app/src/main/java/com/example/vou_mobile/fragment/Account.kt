@@ -12,23 +12,16 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import com.example.vou_mobile.R
 import com.example.vou_mobile.activity.ChangePassword
 import com.example.vou_mobile.activity.HomePageActivity
-import com.example.vou_mobile.activity.ResetPasswordActivity
 import com.example.vou_mobile.activity.SignInActivity
 import com.example.vou_mobile.activity.UpdateAccount
 import com.example.vou_mobile.model.User
-import com.example.vou_mobile.services.RetrofitClient
-import com.example.vou_mobile.services.UserService
 import com.google.firebase.auth.FirebaseAuth
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.squareup.picasso.Picasso
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER

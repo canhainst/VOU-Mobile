@@ -19,11 +19,11 @@ import com.example.vou_mobile.adapter.HorizontalVouchersAdapter
 import com.example.vou_mobile.model.Brand
 import com.example.vou_mobile.model.User
 import com.example.vou_mobile.model.Voucher
-import com.example.vou_mobile.services.BrandService
-import com.example.vou_mobile.services.RetrofitClient
-import com.example.vou_mobile.services.VoucherService
+import com.example.vou_mobile.services.api.BrandService
+import com.example.vou_mobile.services.api.RetrofitClient
+import com.example.vou_mobile.services.api.VoucherService
 import com.example.vou_mobile.viewModel.EventViewModelProviderSingleton
-import com.example.vou_mobile.viewModel.GameViewModel
+import com.example.vou_mobile.viewModel.GameViewModelProviderSingleton
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.squareup.picasso.Picasso
@@ -46,7 +46,7 @@ class HomePage : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
-    private val gameViewModel = GameViewModel()
+    private val gameViewModel = GameViewModelProviderSingleton.getGameViewModel()
     private lateinit var sharedPreferences: SharedPreferences
     private val gson = Gson()
     private lateinit var currentUser: User
@@ -106,12 +106,20 @@ class HomePage : Fragment() {
         })
 
         val allEventRecyclerView = view.findViewById<RecyclerView>(R.id.event)
-        viewModel.loadAllEvents()
-        viewModel.events.observe(viewLifecycleOwner, Observer { items ->
-            allEventRecyclerView?.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
-            allEventRecyclerView?.adapter = HorizontalEventsAdapter(items, gameViewModel)
-        })
 
+        viewModel.loadAllEvents()
+        viewModel.loadFavoriteEvents(uuid!!, requireContext())
+
+        allEventRecyclerView?.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        val adapter = HorizontalEventsAdapter(viewModel.events.value!!, viewModel.favoriteEvents.value!!, gameViewModel)
+        allEventRecyclerView?.adapter = adapter
+
+        viewModel.events.observe(viewLifecycleOwner, Observer { items ->
+            adapter.updateData("events", items)
+        })
+        viewModel.favoriteEvents.observe(viewLifecycleOwner, Observer { items ->
+            adapter.updateData("favEvents", items)
+        })
 
         val allVouchersRecyclerView = view.findViewById<RecyclerView>(R.id.voucher)
         allVouchersRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)

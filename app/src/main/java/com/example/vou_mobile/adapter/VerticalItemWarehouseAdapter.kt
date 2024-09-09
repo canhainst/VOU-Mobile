@@ -19,11 +19,10 @@ import com.example.vou_mobile.model.Brand
 import com.example.vou_mobile.model.Event
 import com.example.vou_mobile.model.Item
 import com.example.vou_mobile.model.ItemBelong
-import com.example.vou_mobile.model.ItemsOfEvent
-import com.example.vou_mobile.services.BrandService
-import com.example.vou_mobile.services.EventService
-import com.example.vou_mobile.services.RetrofitClient
-import com.example.vou_mobile.services.WarehouseService
+import com.example.vou_mobile.services.api.WarehouseService
+import com.example.vou_mobile.services.api.BrandService
+import com.example.vou_mobile.services.api.EventService
+import com.example.vou_mobile.services.api.RetrofitClient
 import com.squareup.picasso.Picasso
 import retrofit2.Call
 import retrofit2.Callback
@@ -214,6 +213,7 @@ class VerticalItemWarehouseAdapter(private val itemList: List<ItemBelong>) : Rec
 
         dialogBuilder.show()
     }
+
     private fun itemsListToString(items: List<Item>): String {
         var result = ""
         items.forEach {

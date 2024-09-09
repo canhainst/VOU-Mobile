@@ -9,13 +9,13 @@ import android.hardware.SensorManager
 import androidx.appcompat.app.AppCompatActivity
 import com.example.vou_mobile.activity.ShakingGameActivity
 
-class ShakingGame(private val context: Context): Game {
-    override fun startGame() {
+class ShakingGame(): Game {
+    override fun startGame(context: Context) {
         val intent = Intent(context, ShakingGameActivity::class.java)
         context.startActivity(intent)
     }
 
-    override fun endGame() {
+    override fun endGame(context: Context) {
         if (context is AppCompatActivity) {
             context.finish()
         }
@@ -58,6 +58,6 @@ class ShakeDetector(private val onShakeListener: OnShakeListener) : SensorEventL
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
-        // Không sử dụng trong trường hợp này
+        // Không sử dụng
     }
 }

@@ -1,5 +1,7 @@
 package com.example.vou_mobile.fragment
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -11,6 +13,7 @@ import com.example.vou_mobile.adapter.FavoriteEventAdapter
 import com.example.vou_mobile.databinding.FragmentFavoriteEventBinding
 import com.example.vou_mobile.viewModel.GameViewModel
 import com.example.vou_mobile.viewModel.EventViewModelProviderSingleton
+import com.example.vou_mobile.viewModel.GameViewModelProviderSingleton
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -28,8 +31,11 @@ class FavoriteEvent : Fragment() {
     private var param2: String? = null
 
     private val viewModel = EventViewModelProviderSingleton.getEventViewModel()
-    private val gameViewModel = GameViewModel()
+    private val gameViewModel = GameViewModelProviderSingleton.getGameViewModel()
     private lateinit var binding: FragmentFavoriteEventBinding
+
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var uuid: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,15 +51,23 @@ class FavoriteEvent : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         binding = FragmentFavoriteEventBinding.inflate(inflater, container, false)
-        initFavoriteEvents()
+
+        sharedPreferences = requireActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        uuid = sharedPreferences.getString("uuid", null)!!
+        initFavoriteEvents(uuid)
+
         return binding.root
     }
 
-    private fun initFavoriteEvents() {
-        viewModel.loadFavoriteEvents("01724dc6-775a-4f52-95fd-245c615f2e77")
+    private fun initFavoriteEvents(uuid: String) {
+        viewModel.loadFavoriteEvents(uuid, requireContext())
+
+        binding.rcvEvents.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        val adapter = FavoriteEventAdapter(viewModel.favoriteEvents.value!!, gameViewModel) // Khởi tạo adapter với danh sách trống
+        binding.rcvEvents.adapter = adapter
+
         viewModel.favoriteEvents.observe(viewLifecycleOwner, Observer { items ->
-            binding.rcvEvents.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-            binding.rcvEvents.adapter = FavoriteEventAdapter(items, gameViewModel)
+            adapter.updateEvents(items)
         })
 
     }

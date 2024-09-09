@@ -11,7 +11,8 @@ import java.util.Date
 import java.util.Locale
 
 object Helper {
-    fun convertDateString(dateString: String): String {
+    private const val dateTimeFormat: String = "03:00 dd/MM/yyyy"
+    private fun convertDateString(dateString: String): String {
         val fullFormat = SimpleDateFormat("HH:mm dd/MM/yyyy", Locale.getDefault())
         val shortFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 
@@ -21,7 +22,7 @@ object Helper {
         } catch (e: Exception) {
             try {
                 val date = shortFormat.parse(dateString)
-                fullFormat.format(date) // Chuyển đổi thành định dạng HH:mm dd/MM/yyyy
+                fullFormat.format(date!!) // Chuyển đổi thành định dạng HH:mm dd/MM/yyyy
             } catch (e: Exception) {
                 "Invalid date format"
             }
@@ -31,7 +32,7 @@ object Helper {
     fun fixEventTime(event: Event): Event {
         // Định dạng ngày giờ đầu vào và đầu ra
         val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-        val outputFormat = SimpleDateFormat("15:00 dd/MM/yyyy", Locale.getDefault())
+        val outputFormat = SimpleDateFormat(dateTimeFormat, Locale.getDefault())
 
         // Hàm giúp chuyển đổi chuỗi ngày giờ
         fun formatDate(dateStr: String): String {
@@ -50,6 +51,24 @@ object Helper {
             start_time = newStartTime,
             end_time = newEndTime
         )
+    }
+
+    fun fixTime(time: String): String{
+        // Định dạng ngày giờ đầu vào và đầu ra
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val outputFormat = SimpleDateFormat(dateTimeFormat, Locale.getDefault())
+
+        // Hàm giúp chuyển đổi chuỗi ngày giờ
+        fun formatDate(dateStr: String): String {
+            return try {
+                val date = inputFormat.parse(dateStr) ?: return ""
+                outputFormat.format(date)
+            } catch (e: ParseException) {
+                ""
+            }
+        }
+
+        return formatDate(time)
     }
 
     //kiem tra time1 có sau time2 khong
@@ -101,9 +120,9 @@ object Helper {
     }
 
     fun getTimeRangeString(event: Event): String?{
-        return when (event.type){
-            "Lắc xì" -> "${event.start_time} - ${event.end_time}"
-            "Quiz" -> event.start_time
+        return when (event.type?.lowercase()) {
+            "lắc xì" -> "${event.start_time} - ${event.end_time}"
+            "quiz" -> event.start_time
             else -> ""
         }
     }

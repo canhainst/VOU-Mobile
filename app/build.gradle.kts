@@ -70,7 +70,8 @@ dependencies {
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
-    implementation("com.google.code.gson:gson:2.10")
+    //webSocket
+    implementation ("io.socket:socket.io-client:2.0.1")
 
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")
@@ -78,21 +79,21 @@ dependencies {
     implementation("androidx.annotation:annotation:1.8.2")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.4")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4")
-
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.8.4")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4")
     implementation("androidx.test:core-ktx:1.6.1")
 
     // ZaloPay
-    implementation(fileTree(mapOf(
-        "dir" to "/Users/nguyenthanh/Downloads/SOURCE/Kiến Trúc Phần Mềm/ZaloPayLib",
-        "include" to listOf("*.aar", "*.jar"),
-        "exclude" to listOf("")
-    )))
-    implementation("com.squareup.okhttp3:okhttp:4.6.0")
+
+    implementation("com.squareup.okhttp3:okhttp:4.9.3")
     implementation("commons-codec:commons-codec:1.15")
 
     implementation("com.paypal.sdk:paypal-android-sdk:2.16.0")
+
+    //zalo
+    implementation(fileTree(mapOf(
+        "dir" to "D:\\ZaloPayLib\\ZaloPayLib",
+        "include" to listOf("*.aar", "*.jar"),
+        "exclude" to listOf("")
+    )))
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
