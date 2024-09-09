@@ -99,10 +99,7 @@ class EventViewModel() : ViewModel() {
                             // Check if the event time is in the future
                             if (eventTimeMillis > System.currentTimeMillis()) {
                                 // Schedule notification only if not already shown
-                                if (!isEventNotified(context, event.id)) {
-                                    scheduleEventReminder(context, event.id, event.name!!, eventTimeMillis)
-                                    markEventAsNotified(context, event.id)
-                                }
+                                scheduleEventReminder(context, event.id, event.name!!, eventTimeMillis)
                             }
                         }
                     }

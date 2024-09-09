@@ -72,8 +72,6 @@ class EventReminderReceiver : BroadcastReceiver() {
 
 @SuppressLint("ScheduleExactAlarm")
 fun scheduleEventReminder(context: Context, id: String, eventName: String, eventTime: Long) {
-    // Hủy bỏ báo thức cũ trước khi đặt báo thức mới
-    cancelEventReminder(context, id)
 
     // Tính toán thời gian gửi thông báo (trước 5 phút)
     val reminderTime = eventTime - 5 * 60 * 1000
