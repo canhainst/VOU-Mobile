@@ -87,7 +87,7 @@ class UnusedVouchers : Fragment(), VerticalUnusedVoucherAdapter.OnItemClickListe
             putString("voucherImgUrl", voucher.image)
             putString("brandName", voucher.id_brand)
             putString("script", voucher.type)
-            putString("exp", "exp")
+            putString("exp", "30/09/2024")
             putString("detail", voucher.description)
         }
         replaceFragment(VoucherDetail(), data)

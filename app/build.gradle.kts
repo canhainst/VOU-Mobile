@@ -71,7 +71,7 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 
     //webSocket
-    implementation ("io.socket:socket.io-client:2.0.1")
+    implementation ("io.socket:socket.io-client:2.1.1")
 
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")

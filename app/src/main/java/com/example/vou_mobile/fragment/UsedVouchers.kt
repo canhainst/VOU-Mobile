@@ -91,7 +91,7 @@ class UsedVouchers : Fragment(), VerticalUsedVoucherAdapter.OnItemClickListener 
             putString("voucherImgUrl", voucherList[position].image)
             putString("brandName", "Brand Name")
             putString("script", "Voucher")
-            putString("exp", "exp")
+            putString("exp", "30/09/2024")
             putString("detail", voucherList[position].description)
         }
         replaceFragment(VoucherDetail(), data)
