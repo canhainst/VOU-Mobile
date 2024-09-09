@@ -5,28 +5,21 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.airbnb.lottie.LottieAnimationView
 import com.example.vou_mobile.R
-import com.example.vou_mobile.adapter.GetVoucherAdapter
-import com.example.vou_mobile.adapter.GridItemsAdapter
 import com.example.vou_mobile.adapter.ShowGridItemsAdapter
 import com.example.vou_mobile.databinding.ActivityGetVoucherBinding
 import com.example.vou_mobile.model.Brand
 import com.example.vou_mobile.model.Item
-import com.example.vou_mobile.model.VoucherInEvent
 import com.example.vou_mobile.services.api.BrandService
 import com.example.vou_mobile.services.api.EventService
 import com.example.vou_mobile.services.api.RedeemGifResponse
 import com.example.vou_mobile.services.api.RetrofitClient
-import com.example.vou_mobile.services.api.VoucherService
 import com.example.vou_mobile.services.api.WarehouseService
 import com.example.vou_mobile.viewModel.EventViewModelProviderSingleton
 import retrofit2.Call
@@ -84,7 +77,7 @@ class GetVoucherActivity : AppCompatActivity() {
                         response: Response<RedeemGifResponse>
                     ) {
                         val res = response.body()
-                        println("! ${res}")
+                        println("${res}")
 
                         if (res != null){
                             showCustomDialog(res)
@@ -92,7 +85,7 @@ class GetVoucherActivity : AppCompatActivity() {
                     }
 
                     override fun onFailure(call: Call<RedeemGifResponse>, t: Throwable) {
-                        println("!! ${t.message}")
+                        println("${t.message}")
                     }
 
                 }
