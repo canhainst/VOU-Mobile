@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -61,11 +62,9 @@ class HorizontalEventsAdapter(private var events: List<Event>, private var favEv
             .load(item.image)
             .into(holder.eventPicture)
 
-        val eventUpdate = Helper.fixEventTime(events[position])
-
         holder.itemView.setOnClickListener{
             listener?.onItemClick(position)
-            showCustomDialog(holder.itemView.context, eventUpdate)
+            showCustomDialog(holder.itemView.context, events[position])
         }
 
         var isFavorite = false
@@ -100,14 +99,14 @@ class HorizontalEventsAdapter(private var events: List<Event>, private var favEv
     }
 
     @SuppressLint("InflateParams", "SetTextI18n", "CutPasteId")
-    private fun showCustomDialog(context: Context, eventUpdate: Event) {
+    private fun showCustomDialog(context: Context, event: Event) {
         val dialogView = LayoutInflater.from(context).inflate(R.layout.detail_dialog, null)
         val dialogBuilder = AlertDialog.Builder(context)
             .setView(dialogView)
             .create()
 
         val brandService = RetrofitClient.instance.create(BrandService::class.java)
-        val callBrand = brandService.getBrandByUuid(eventUpdate.id_brand)
+        val callBrand = brandService.getBrandByUuid(event.id_brand)
         callBrand.enqueue(object : Callback<Brand> {
             override fun onResponse(call: Call<Brand>, response: Response<Brand>) {
                 if (response.isSuccessful) {
@@ -119,44 +118,47 @@ class HorizontalEventsAdapter(private var events: List<Event>, private var favEv
                             .into(dialogView.findViewById<ImageView>(R.id.brandAvt))
                     }
                 } else {
-                    println("Error: ${response.code()}")
+                    Log.e("Error", "${response.code()}")
                 }
             }
 
             override fun onFailure(call: Call<Brand>, t: Throwable) {
-                println("Failed: ${t.message}")
+                Log.e("Failed", "${t.message}")
             }
         })
 
-        dialogView.findViewById<TextView>(R.id.script).text = eventUpdate.name
+        dialogView.findViewById<TextView>(R.id.script).text = event.name
         Picasso.get()
-            .load(eventUpdate.image)
+            .load(event.image)
             .into(dialogView.findViewById<ImageView>(R.id.picture))
-        dialogView.findViewById<TextView>(R.id.Time).text = Helper.getTimeRangeString(eventUpdate)
-        dialogView.findViewById<TextView>(R.id.script2).text = eventUpdate.name
+        dialogView.findViewById<TextView>(R.id.Time).text = Helper.getTimeRangeString(event)
+        dialogView.findViewById<TextView>(R.id.script2).text = event.name
         dialogView.findViewById<Button>(R.id.btnDirection).text = "Play"
         dialogView.findViewById<Button>(R.id.btnBack).text = "Back"
         dialogView.findViewById<Button>(R.id.btnBack).setOnClickListener {
             dialogBuilder.dismiss()
         }
 
+        val eventUpdate = Helper.fixEventTime(event)
         //lay ngay hien tai
         val curTime = Helper.dateToString(Date())
+
+        //lay thoi diem cach thoi gian bat dau Quiz 20p
         val calendar = Calendar.getInstance()
         calendar.time = Helper.stringToDate(eventUpdate.start_time!!)!!
-        calendar.add(Calendar.MINUTE, 10)
+        calendar.add(Calendar.MINUTE, 20)
         val time2 = Helper.dateToString(calendar.time)
 
-        if (eventUpdate.type?.lowercase() == "lắc xì" && Helper.isTimeAfter(curTime, eventUpdate.end_time)) {
+        if (event.type?.lowercase() == "lắc xì" && Helper.isTimeAfter(curTime, event.end_time)) {
             dialogView.findViewById<Button>(R.id.btnDirection).visibility = View.GONE
             Toast.makeText(context, "The event has ended!", Toast.LENGTH_SHORT).show()
-        } else if (eventUpdate.type?.lowercase() == "quiz" && Helper.isTimeAfter(curTime, time2)){
+        } else if (event.type?.lowercase() == "quiz" && Helper.isTimeAfter(curTime, time2)){
             dialogView.findViewById<Button>(R.id.btnDirection).visibility = View.GONE
             Toast.makeText(context, "The event has started!", Toast.LENGTH_SHORT).show()
         }
 
         dialogView.findViewById<Button>(R.id.btnDirection).setOnClickListener {
-            if (eventUpdate.type?.lowercase() == "lắc xì"  && Helper.isTimeBefore(curTime, eventUpdate.start_time)){
+            if (event.type?.lowercase() == "lắc xì"  && Helper.isTimeBefore(curTime, event.start_time)){
                 Toast.makeText(context, "The event has not started yet!", Toast.LENGTH_SHORT).show()
             }  else{
                 viewModel.chooseEvent(eventUpdate)

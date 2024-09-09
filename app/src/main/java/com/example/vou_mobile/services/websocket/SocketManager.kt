@@ -4,7 +4,7 @@ import android.util.Log
 import io.socket.client.IO
 import io.socket.client.Socket
 import io.socket.emitter.Emitter
-import org.json.JSONArray
+import io.socket.engineio.client.transports.WebSocket
 import org.json.JSONObject
 import java.net.URISyntaxException
 
@@ -41,8 +41,9 @@ class SocketManager private constructor() {
 
     fun connect(eventId: String, userId: String) {
         try {
-            socket = IO.socket("http://10.100.77.64:5000")
-
+            val opts = IO.Options()
+            opts.transports = arrayOf<String>(WebSocket.NAME)
+            socket = IO.socket("http://192.168.1.3:5000", opts)
             socket?.connect()
 
             socket?.on(Socket.EVENT_CONNECT, onConnect)
@@ -106,7 +107,7 @@ class SocketManager private constructor() {
 
     private val onError = Emitter.Listener { args ->
         val error = args[0] as Exception
-        Log.e("SocketManager", "Connection error: ${error.message}")
+        Log.e("SocketManager", "Connection error: ${error}")
         onErrorListener?.invoke(error)
     }
 

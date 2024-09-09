@@ -60,9 +60,9 @@ class FavoriteEventAdapter(private var events: List<Event>, private val gameView
         sharedPreferences = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
         uuid = sharedPreferences.getString("uuid", "")!!
         val event = events[position]
-        val eventUpdate = Helper.fixEventTime(event)
+
         val brandService = RetrofitClient.instance.create(BrandService::class.java)
-        val callBrand = brandService.getBrandByUuid(eventUpdate.id_brand)
+        val callBrand = brandService.getBrandByUuid(event.id_brand)
         callBrand.enqueue(object : Callback<Brand> {
             override fun onResponse(call: Call<Brand>, response: Response<Brand>) {
                 if (response.isSuccessful) {
@@ -80,16 +80,16 @@ class FavoriteEventAdapter(private var events: List<Event>, private val gameView
             }
         })
         Picasso.get()
-            .load(eventUpdate.image)
+            .load(event.image)
             .into(holder.imageView)
 
         holder.notifButton.setImageResource(R.drawable.baseline_notifications_active_24)
-        holder.time.text = Helper.getTimeRangeString(eventUpdate)
+        holder.time.text = Helper.getTimeRangeString(event)
         holder.notifButton.setOnClickListener {
             showConfirmDialog(event)
         }
         holder.itemView.setOnClickListener {
-            showEventDialog(eventUpdate)
+            showEventDialog(event)
         }
     }
 
@@ -148,17 +148,21 @@ class FavoriteEventAdapter(private var events: List<Event>, private val gameView
             .load(event.image)
             .into(binding.picture)
 
+
         binding.Time.text = Helper.getTimeRangeString(event)
 
         binding.btnBack.setOnClickListener {
             dialogBuilder.dismiss()
         }
 
+        val eventUpdate = Helper.fixEventTime(event)
         //lay ngay hien tai
         val curTime = Helper.dateToString(Date())
+
+        //lay thoi diem cach thoi gian bat dau Quiz 20p
         val calendar = Calendar.getInstance()
-        calendar.time = Helper.stringToDate(event.start_time!!)!!
-        calendar.add(Calendar.MINUTE, 10)
+        calendar.time = Helper.stringToDate(eventUpdate.start_time!!)!!
+        calendar.add(Calendar.MINUTE, 20)
         val time2 = Helper.dateToString(calendar.time) //thoi gian sau 10p ke tu khi bat dau
 
         if (event.type?.lowercase() == "lắc xì" && Helper.isTimeAfter(curTime, event.end_time)) {

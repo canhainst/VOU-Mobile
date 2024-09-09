@@ -47,7 +47,7 @@ class QuizGameActivity : AppCompatActivity() {
 
         sharedPreferences = this.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
         userId = sharedPreferences.getString("uuid", null)!!
-        eventId = intent.getStringExtra("idEvent") ?: ""
+        eventId = eventViewModel.curEvent.value!!.id
 
         binding.btnClose.setOnClickListener {
             gameViewModel.currentGame.value?.endGame(this)
@@ -58,7 +58,7 @@ class QuizGameActivity : AppCompatActivity() {
         binding.tvTime.text = "The game will start at\n${eventViewModel.curEvent.value?.start_time}"
         val calendar = Calendar.getInstance()
         calendar.time = Helper.stringToDate(eventViewModel.curEvent.value?.start_time!!)!!
-        calendar.add(Calendar.MINUTE, 10)
+        calendar.add(Calendar.MINUTE, 20)
         time2 = Helper.dateToString(calendar.time)
 
         // Khởi tạo SocketManager nhưng chưa kết nối
@@ -112,7 +112,7 @@ class QuizGameActivity : AppCompatActivity() {
             } else if (Helper.isTimeAfter(curTime, time2)) {
                 binding.btnPlay.isClickable = false
                 binding.btnPlay.backgroundTintList = ContextCompat.getColorStateList(this, R.color.light_grey)
-                binding.btnPlay.text = "You must join within 10 minutes of start."
+                binding.btnPlay.text = "You must join within 20 minutes of start."
             } else {
                 binding.btnPlay.isClickable = true
                 binding.btnPlay.backgroundTintList = ContextCompat.getColorStateList(this, R.color.green_correct)
