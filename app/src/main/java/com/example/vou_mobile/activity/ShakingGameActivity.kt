@@ -198,10 +198,7 @@ class ShakingGameActivity : AppCompatActivity(), ShakeDetector.OnShakeListener {
         binding.btnDirection.text = "Send Item"
         binding.btnDirection.setOnClickListener {
             dialogBuilder.dismiss()
-            val intent = Intent(this@ShakingGameActivity, HomePageActivity::class.java).apply {
-                putExtra("sendItem", true)
-                putExtra("fromShakingGame", true)
-            }
+            val intent = Intent(this@ShakingGameActivity, SendItemActivity::class.java)
             startActivity(intent)
         }
         binding.btnBack.setOnClickListener {
