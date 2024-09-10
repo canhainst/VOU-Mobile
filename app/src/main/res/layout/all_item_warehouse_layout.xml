@@ -41,12 +41,13 @@
 
     <TextView
         android:id="@+id/brand_name"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
         android:text=""
         android:textColor="@color/black"
         android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@+id/eventTime"
         app:layout_constraintStart_toEndOf="@+id/brandImg"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="HardcodedText" />

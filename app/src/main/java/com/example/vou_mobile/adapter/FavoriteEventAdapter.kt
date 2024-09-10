@@ -178,8 +178,8 @@ class FavoriteEventAdapter(private var events: List<Event>, private val gameView
                 Toast.makeText(context, "The event has not started yet!", Toast.LENGTH_SHORT).show()
             }  else{
                 // Trong Activity đầu tiên
-                viewModel.chooseEvent(event)
-                gameViewModel.setGame(event.type!!)
+                viewModel.chooseEvent(eventUpdate)
+                gameViewModel.setGame(eventUpdate.type!!)
                 gameViewModel.currentGame.value?.startGame(context)
             }
         }
